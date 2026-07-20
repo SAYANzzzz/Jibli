@@ -27,6 +27,7 @@ textarea {
 }
 
 .navbar {
+  position: relative;
   height: 90px;
   background: #ffffff;
   border-bottom: 1px solid #e5e7eb;
@@ -34,6 +35,18 @@ textarea {
   align-items: center;
   justify-content: space-between;
   padding: 0 clamp(24px, 6vw, 90px);
+}
+
+.navMenuToggle {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border: 0;
+  background: none;
+  color: #001f5b;
+  cursor: pointer;
 }
 
 .brand,
@@ -2093,10 +2106,80 @@ textarea {
   color: #9a3412;
 }
 
+.qoSheinFranceLink {
+  display: inline-block;
+  margin-top: 10px;
+  height: 36px;
+  padding: 0 16px;
+  line-height: 36px;
+  background: #9a3412;
+  color: #ffffff;
+  font-weight: 800;
+  font-size: 13px;
+  text-decoration: none;
+}
+
 .noticeBox.success {
   background: #ecfdf5;
   border-left-color: #16a34a;
   color: #166534;
+}
+
+.modalOverlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  z-index: 1000;
+}
+
+.modalCard {
+  background: #ffffff;
+  width: 100%;
+  max-width: 440px;
+  padding: 36px 32px;
+  text-align: center;
+  box-shadow: 12px 12px 0 rgba(0, 31, 91, 0.22);
+}
+
+.modalCard h2 {
+  margin: 0 0 14px;
+  color: #001f5b;
+  font-size: 22px;
+}
+
+.modalCard p {
+  margin: 0 0 26px;
+  color: #444444;
+  line-height: 1.55;
+  font-size: 15px;
+}
+
+.modalWhatsappBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 54px;
+  background: #22c55e;
+  color: #ffffff;
+  font-weight: 800;
+  font-size: 16px;
+  text-decoration: none;
+  margin-bottom: 12px;
+}
+
+.modalCloseBtn {
+  width: 100%;
+  height: 44px;
+  border: 1px solid #d9d9d9;
+  background: #ffffff;
+  color: #666666;
+  cursor: pointer;
+  font-weight: 700;
 }
 
 .platformPanel {
@@ -2285,6 +2368,12 @@ textarea {
   height: 58px;
 }
 
+.productImage img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
 .trackingContent {
   flex: 1;
 }
@@ -2316,7 +2405,7 @@ textarea {
 
 .orderInfo {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(3, 1fr);
   gap: 20px;
   margin-top: 18px;
 }
@@ -2340,43 +2429,20 @@ textarea {
   color: #001f5b;
   font-size: 13px;
   font-weight: 800;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
 }
 
-.timeline {
-  background: #ffffff;
-  border: 1px solid #d9d9d9;
-  border-top: 0;
-  padding: 32px 20px;
-  display: grid;
-  grid-template-columns: repeat(7, 1fr);
-  gap: 10px;
+.trackedItemLink.withPhoto {
+  padding: 6px 12px 6px 6px;
 }
 
-.timelineItem {
-  text-align: center;
-  color: #777777;
-  font-size: 13px;
-}
-
-.circle {
-  width: 42px;
-  height: 42px;
-  margin: 0 auto 10px;
-  border-radius: 50%;
-  border: 1px solid #d9d9d9;
-  display: grid;
-  place-items: center;
-}
-
-.timelineItem.active {
-  color: #001f5b;
-  font-weight: 700;
-}
-
-.timelineItem.active .circle {
-  background: #001f5b;
-  color: #ffffff;
-  border-color: #001f5b;
+.trackedItemLink img {
+  width: 28px;
+  height: 28px;
+  object-fit: cover;
+  flex-shrink: 0;
 }
 
 .whatsappBox {
@@ -2770,13 +2836,54 @@ textarea {
   min-width: 0;
 }
 
-.managedOrderLinks {
+.managedOrderItemsEdit {
   display: flex;
-  flex-wrap: wrap;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.managedOrderItemEditRow {
+  display: flex;
+  gap: 12px;
+  padding: 10px;
+  background: #f7f8fa;
+  border: 1px solid #e5e7eb;
+}
+
+.managedOrderItemPreview {
+  width: 56px;
+  height: 56px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #ffffff;
+  border: 1px solid #d9d9d9;
+  overflow: hidden;
+}
+
+.managedOrderItemPreview img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.managedOrderItemPreviewEmpty {
+  font-size: 10px;
+  color: #9ca3af;
+  text-align: center;
+  padding: 0 4px;
+}
+
+.managedOrderItemFields {
+  flex: 1;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) minmax(0, 1fr) auto;
+  align-items: center;
   gap: 8px;
 }
 
-.managedOrderLinks a {
+.managedOrderItemLink {
   min-height: 32px;
   padding: 0 10px;
   display: inline-flex;
@@ -2786,6 +2893,19 @@ textarea {
   color: #001f5b;
   font-size: 12px;
   font-weight: 800;
+  white-space: nowrap;
+}
+
+.managedOrderItemFields input[type="text"],
+.managedOrderItemFields input:not([type]) {
+  height: 36px;
+}
+
+.managedOrderItemFields input[type="file"] {
+  font-size: 12px;
+  height: auto;
+  border: 0;
+  padding: 0;
 }
 
 .orderProcessForm {
@@ -3043,8 +3163,48 @@ td {
     padding: 0 22px;
   }
 
+  .managedOrderItemEditRow {
+    flex-direction: column;
+  }
+
+  .managedOrderItemFields {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .navMenuToggle {
+    display: flex;
+  }
+
   .navLinks {
     display: none;
+    position: absolute;
+    top: 90px;
+    left: 0;
+    right: 0;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+    background: #ffffff;
+    border-bottom: 1px solid #e5e7eb;
+    padding: 18px 22px 24px;
+    box-shadow: 0 16px 24px rgba(15, 23, 42, 0.1);
+    z-index: 50;
+  }
+
+  .navLinks.open {
+    display: flex;
+  }
+
+  .navLinks .outlineBtn,
+  .navLinks .primaryBtn,
+  .navLinks .profileNavLink {
+    width: 100%;
+  }
+
+  .navLinks .profileNavLink {
+    flex-direction: row;
+    justify-content: flex-start;
+    gap: 12px;
   }
 
   .hero,
@@ -3219,4 +3379,418 @@ td {
   .requestHeroVisual {
     align-content: center;
   }
+
+  .qoShopGrid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .qoOptionsGrid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .qoExtraOptionRow {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .qoSummaryRow {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+  }
+}
+
+/* Quick order page */
+
+.qoShopGrid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+  margin: 18px 0 4px;
+}
+
+.qoShopBadge {
+  height: 64px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px;
+  border: 1px solid #d9d9d9;
+  background: #ffffff;
+  opacity: 0.45;
+}
+
+.qoShopBadge.active {
+  opacity: 1;
+  border-color: #001f5b;
+  box-shadow: 6px 6px 0 rgba(0, 31, 91, 0.14);
+}
+
+.qoShopBadge img {
+  max-height: 34px;
+  max-width: 100%;
+  object-fit: contain;
+}
+
+.qoShopBadge strong {
+  color: #001f5b;
+  letter-spacing: 0.02em;
+}
+
+.qoPreviewCard {
+  margin-top: 16px;
+  padding: 16px;
+  background: #f7f8fa;
+  border-left: 4px solid #001f5b;
+}
+
+.qoPreviewRow {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.qoPreviewImage {
+  width: 56px;
+  height: 56px;
+  object-fit: cover;
+  border: 1px solid #e5e7eb;
+  flex-shrink: 0;
+}
+
+.qoPreviewRow div {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.qoOptionsGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0 20px;
+}
+
+.qoPriceInputRow {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 10px;
+  align-items: stretch;
+}
+
+.qoCurrencyToggle {
+  display: flex;
+  height: 48px;
+  border: 1px solid #001f5b;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.qoCurrencyToggle button {
+  width: 72px;
+  height: 100%;
+  border: 0;
+  background: #ffffff;
+  color: #001f5b;
+  font-weight: 800;
+  font-size: 14px;
+  letter-spacing: 0.02em;
+  cursor: pointer;
+}
+
+.qoCurrencyToggle button + button {
+  border-left: 1px solid #001f5b;
+}
+
+.qoCurrencyToggle button.active {
+  background: #001f5b;
+  color: #ffffff;
+}
+
+.qoExtraOptionRow {
+  display: grid;
+  grid-template-columns: 1fr 1fr auto;
+  gap: 10px;
+  align-items: center;
+  margin-top: 10px;
+}
+
+.qoExtraOptionRow button {
+  height: 44px;
+  padding: 0 14px;
+  border: 1px solid #d9d9d9;
+  background: #ffffff;
+  color: #9a3412;
+  cursor: pointer;
+  font-weight: 700;
+}
+
+.qoPriceResult {
+  margin-top: 22px;
+}
+
+.qoSummaryList {
+  margin-top: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.qoSummaryRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #eef0f3;
+  font-size: 14px;
+}
+
+.qoSummaryRow span:first-child {
+  color: #666666;
+}
+
+.qoSummaryRow a {
+  color: #001f5b;
+  font-weight: 700;
+  text-decoration: none;
+  max-width: 60%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Order tracking timeline */
+
+.otlCard {
+  margin-top: 24px;
+  padding: 24px 28px;
+  background: #ffffff;
+  border: 1px solid #d9d9d9;
+}
+
+.otlHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid #e5e7eb;
+  margin-bottom: 22px;
+}
+
+.otlHeader > div {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.otlHeader .mutedText {
+  margin: 0;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.otlHeader strong {
+  font-size: 16px;
+  letter-spacing: 0.02em;
+}
+
+.otlCopyBtn {
+  border: 1px solid #001f5b;
+  background: #ffffff;
+  color: #001f5b;
+  font-weight: 700;
+  cursor: pointer;
+  font-size: 13px;
+  height: 36px;
+  padding: 0 16px;
+  flex-shrink: 0;
+}
+
+.otlEmpty {
+  margin: 0;
+}
+
+.otlList {
+  display: flex;
+  flex-direction: column;
+}
+
+.otlRow {
+  display: grid;
+  grid-template-columns: 20px 1fr;
+  gap: 16px;
+}
+
+.otlDotCol {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.otlDot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: #d9d9d9;
+  margin-top: 4px;
+  flex-shrink: 0;
+}
+
+.otlRow.current .otlDot {
+  width: 16px;
+  height: 16px;
+  background: #111111;
+  margin-top: 2px;
+}
+
+.otlDotCol::after {
+  content: "";
+  flex: 1;
+  width: 1px;
+  min-height: 22px;
+  background: #e5e7eb;
+  margin: 4px 0;
+}
+
+.otlRow:last-child .otlDotCol::after {
+  display: none;
+}
+
+.otlBody {
+  padding-bottom: 22px;
+}
+
+.otlBody strong {
+  display: block;
+  font-size: 14px;
+  color: #666666;
+  font-weight: 600;
+}
+
+.otlRow.current .otlBody strong {
+  color: #111111;
+  font-size: 15px;
+  font-weight: 800;
+}
+
+.otlBody p {
+  margin: 4px 0 0;
+  font-size: 13px;
+  color: #888888;
+}
+
+.otlDate {
+  display: block;
+  margin-top: 4px;
+  font-size: 12px;
+  color: #9ca3af;
+}
+
+.qoPriceBox {
+  margin-top: 18px;
+  padding: 18px;
+  background: #f7f8fa;
+  border-left: 4px solid #001f5b;
+}
+
+.qoPriceRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 15px;
+  padding: 4px 0;
+}
+
+.qoPriceTotal {
+  font-size: 22px;
+  font-weight: 900;
+  color: #001f5b;
+}
+
+.qoShippingHint {
+  color: #9a3412;
+  font-weight: 700;
+}
+
+.qoWhatsappBtn {
+  margin-top: 20px;
+  width: 100%;
+  height: 52px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #22c55e;
+  color: #ffffff;
+  font-weight: 800;
+  text-decoration: none;
+  border: 0;
+  cursor: pointer;
+  font-size: 15px;
+  font-family: inherit;
+}
+
+.qoWhatsappBtn.disabled {
+  background: #d9d9d9;
+  color: #888888;
+  cursor: not-allowed;
+}
+
+.qoItemCard {
+  margin-top: 22px;
+}
+
+.qoItemCard:first-of-type {
+  margin-top: 0;
+}
+
+.qoItemHeaderActions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.qoRemoveItemBtn {
+  height: 36px;
+  padding: 0 14px;
+  border: 1px solid #d9d9d9;
+  background: #ffffff;
+  color: #9a3412;
+  cursor: pointer;
+  font-weight: 700;
+}
+
+.qoAddProductBtn {
+  margin: 22px 0;
+  width: 100%;
+}
+
+.adminNotifyBanner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.adminNotifyBannerActions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.adminNotifyBannerActions .primaryMiniBtn {
+  display: inline-flex;
+  align-items: center;
+  text-decoration: none;
+}
+
+.dismissNotifyBtn {
+  height: 36px;
+  padding: 0 14px;
+  border: 1px solid #d9d9d9;
+  background: #ffffff;
+  color: #666666;
+  cursor: pointer;
+  font-weight: 700;
 }

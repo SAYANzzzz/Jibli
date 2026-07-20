@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
 import type { FormEvent } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import logo from "../assets/Fast-Logo.gif";
 import { Link as LinkIcon, CreditCard, ShieldCheck, Truck } from "lucide-react";
 import { getCurrentSession } from "../auth";
+import Navbar from "../components/Navbar";
 import ProfileNavLink from "../components/ProfileNavLink";
 import { supabase } from "../supabase";
 
@@ -32,31 +32,24 @@ function Home() {
     event.preventDefault();
     const trimmedLink = productLink.trim();
 
-    navigate(trimmedLink ? `/request?link=${encodeURIComponent(trimmedLink)}` : "/request");
+    navigate(trimmedLink ? `/order?link=${encodeURIComponent(trimmedLink)}` : "/order");
   };
 
   return (
     <div>
-      <nav className="navbar">
-        <Link to="/" className="brand">
-          <img src={logo} alt="Jibli logo" className="logoImg" />
-          <span>Jibli</span>
-        </Link>
-
-        <div className="navLinks">
-          {isAuthenticated ? (
-            <>
-              <Link to="/tracking#panier" className="outlineBtn">Panier</Link>
-              <ProfileNavLink />
-            </>
-          ) : (
-            <>
-              <Link to="/login" className="outlineBtn">Login</Link>
-              <Link to="/register" className="primaryBtn">Register</Link>
-            </>
-          )}
-        </div>
-      </nav>
+      <Navbar>
+        {isAuthenticated ? (
+          <>
+            <Link to="/tracking#panier" className="outlineBtn">Panier</Link>
+            <ProfileNavLink />
+          </>
+        ) : (
+          <>
+            <Link to="/login" className="outlineBtn">Login</Link>
+            <Link to="/register" className="primaryBtn">Register</Link>
+          </>
+        )}
+      </Navbar>
 
       <section className="hero">
         <div className="heroText">

@@ -1,10 +1,14 @@
-from fastapi import Depends, FastAPI, HTTPException, status
+from typing import Annotated
+from uuid import uuid4
+
+from fastapi import Depends, FastAPI, File, Form, HTTPException, UploadFile, status
 from fastapi.middleware.cors import CORSMiddleware
 
 from .auth import get_current_profile, get_current_user, require_admin
 from .config import get_settings
+from .pricing import calculate_price
 from .product_preview import preview_product
-from .schemas import CartRequestIn, PreviewRequest, ProfileUpdateIn
+from .schemas import CartRequestIn, PreviewRequest, ProfileUpdateIn, QuickOrderPriceIn, QuickPreviewIn
 from .supabase_client import get_supabase_admin
 
 settings = get_settings()
@@ -34,6 +38,19 @@ def health() -> dict:
 @app.post("/products/preview")
 def preview_products(payload: PreviewRequest, user: dict = Depends(get_current_user)) -> dict:
   return {"items": [preview_product(link) for link in payload.links]}
+
+
+@app.post("/quick-order/preview")
+def quick_order_preview(payload: QuickPreviewIn) -> dict:
+  return preview_product(payload.link)
+
+
+@app.post("/quick-order/price")
+def quick_order_price(payload: QuickOrderPriceIn) -> dict:
+  try:
+    return calculate_price(payload.shop, payload.amount, payload.quantity, payload.currency)
+  except ValueError as error:
+    raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(error))
 
 
 @app.get("/me/profile")
@@ -90,23 +107,6 @@ def get_cart(user: dict = Depends(get_current_user)) -> dict:
   )
 
   return {"cart": cart, "items": items.data}
-
-
-@app.get("/shein-panier")
-def get_shein_panier(_: dict = Depends(get_current_user)) -> dict:
-  items = (
-    get_supabase_admin()
-    .table("cart_items")
-    .select("estimated_price, quantity, shop")
-    .eq("shop", "shein")
-    .execute()
-  )
-  total = 0.0
-
-  for item in items.data or []:
-    total += float(item.get("estimated_price") or 0) * int(item.get("quantity") or 1)
-
-  return {"total": total, "item_count": len(items.data or [])}
 
 
 @app.post("/cart/items")
@@ -339,6 +339,41 @@ def update_order_status(
   ).execute()
 
   return {"order": order}
+
+
+@app.patch("/admin/order-items/{item_id}")
+async def update_order_item(
+  item_id: str,
+  product_name: Annotated[str | None, Form()] = None,
+  image: Annotated[UploadFile | None, File()] = None,
+  _: dict = Depends(require_admin),
+) -> dict:
+  supabase = get_supabase_admin()
+  update_data: dict = {}
+
+  if product_name is not None:
+    update_data["product_name"] = product_name.strip() or None
+
+  if image is not None:
+    if not image.content_type or not image.content_type.startswith("image/"):
+      raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="File must be an image.")
+
+    contents = await image.read()
+    extension = image.filename.rsplit(".", 1)[-1] if image.filename and "." in image.filename else "jpg"
+    path = f"{item_id}/{uuid4()}.{extension}"
+
+    supabase.storage.from_("order-photos").upload(path, contents, {"content-type": image.content_type})
+    update_data["image_url"] = supabase.storage.from_("order-photos").get_public_url(path)
+
+  if not update_data:
+    raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Nothing to update.")
+
+  updated = supabase.table("cart_items").update(update_data).eq("id", item_id).execute()
+
+  if not updated.data:
+    raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Item not found.")
+
+  return {"item": updated.data[0]}
 
 
 @app.delete("/admin/orders/{order_id}")

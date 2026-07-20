@@ -3,7 +3,7 @@ import type { ChangeEvent, FormEvent } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { isAdminEmail } from "../admin";
 import { supabase } from "../supabase";
-import logo from "../assets/Fast-Logo.gif";
+import Navbar from "../components/Navbar";
 
 const tunisianGovernorates = [
   "Ariana",
@@ -208,21 +208,14 @@ function Account() {
 
   return (
     <div>
-      <nav className="navbar">
-        <Link to="/" className="brand">
-          <img src={logo} alt="Jibli logo" className="logoImg" />
-          <span>Jibli</span>
-        </Link>
-
-        <div className="navLinks">
-          <Link to="/request">New order</Link>
-          <Link to="/tracking">Track orders</Link>
-          {canAccessAdmin && <Link to="/admin">Admin</Link>}
-          <button className="outlineBtn accountLogoutBtn" type="button" onClick={handleLogout}>
-            Logout
-          </button>
-        </div>
-      </nav>
+      <Navbar>
+        <Link to="/request">New order</Link>
+        <Link to="/tracking">Track orders</Link>
+        {canAccessAdmin && <Link to="/admin">Admin</Link>}
+        <button className="outlineBtn accountLogoutBtn" type="button" onClick={handleLogout}>
+          Logout
+        </button>
+      </Navbar>
 
       <main className="accountPage profileExperience">
         <section className="profileIntro">

@@ -2,11 +2,23 @@ from typing import Any, Literal
 
 from pydantic import BaseModel, Field, HttpUrl
 
-Shop = Literal["aliexpress", "shein"]
+Shop = Literal["aliexpress", "shein", "temu"]
+Currency = Literal["usd", "eur"]
 
 
 class PreviewRequest(BaseModel):
   links: list[str] = Field(min_length=1)
+
+
+class QuickPreviewIn(BaseModel):
+  link: str = Field(min_length=1)
+
+
+class QuickOrderPriceIn(BaseModel):
+  shop: Shop
+  amount: float = Field(gt=0)
+  currency: Currency = "usd"
+  quantity: int = Field(default=1, ge=1)
 
 
 class CartItemIn(BaseModel):
@@ -20,7 +32,6 @@ class CartItemIn(BaseModel):
 
 class CartRequestIn(BaseModel):
   items: list[CartItemIn] = Field(min_length=1)
-  shein_panier_total: float | None = None
   notes: str | None = None
 
 

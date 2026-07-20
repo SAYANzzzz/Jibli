@@ -57,6 +57,7 @@ create table if not exists public.cart_items (
   product_link text not null,
   shop text not null check (shop in ('aliexpress', 'shein')),
   product_name text,
+  image_url text,
   selected_color text,
   selected_size text,
   selected_options jsonb not null default '{}'::jsonb,
@@ -65,9 +66,11 @@ create table if not exists public.cart_items (
   created_at timestamptz not null default now()
 );
 
+alter table public.cart_items add column if not exists image_url text;
+
 alter table public.cart_items drop constraint if exists cart_items_shop_check;
 alter table public.cart_items
-add constraint cart_items_shop_check check (shop in ('aliexpress', 'shein'));
+add constraint cart_items_shop_check check (shop in ('aliexpress', 'shein', 'temu'));
 
 create table if not exists public.orders (
   id uuid primary key default gen_random_uuid(),
@@ -83,29 +86,30 @@ create table if not exists public.orders (
 
 alter table public.orders add column if not exists updated_at timestamptz not null default now();
 
-do $$
-begin
-  if not exists (
-    select 1 from pg_constraint where conname = 'orders_status_check'
-  ) then
-    alter table public.orders
-    add constraint orders_status_check check (
-      status in (
-        'new_request',
-        'price_confirmed',
-        'waiting_confirmation',
-        'deposit_paid',
-        'ordered',
-        'shipped',
-        'arrived_tunisia',
-        'out_for_delivery',
-        'delivered',
-        'cancelled'
-      )
-    );
-  end if;
-end;
-$$;
+alter table public.orders drop constraint if exists orders_status_check;
+alter table public.orders
+add constraint orders_status_check check (
+  status in (
+    'new_request',
+    'waiting_confirmation',
+    'price_confirmed',
+    'deposit_paid',
+    'ordered',
+    'preparing',
+    'collected_by_carrier',
+    'at_origin_sorting',
+    'left_origin_sorting',
+    'at_origin_airport',
+    'awaiting_flight',
+    'leaving_origin_country',
+    'arrived_transit_country',
+    'left_transit_country',
+    'arrived_tunisia',
+    'out_for_delivery',
+    'delivered',
+    'cancelled'
+  )
+);
 
 create table if not exists public.order_events (
   id uuid primary key default gen_random_uuid(),

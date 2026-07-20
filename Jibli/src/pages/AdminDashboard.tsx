@@ -1,21 +1,10 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { CheckCircle2, ExternalLink, RefreshCw, Trash2 } from "lucide-react";
-import { deleteAdminOrder, getAdminOrders, updateAdminOrderStatus } from "../api";
-import type { Order } from "../api";
-import logo from "../assets/Fast-Logo.gif";
-
-const processStatuses = [
-  { value: "price_confirmed", label: "Price confirmed" },
-  { value: "waiting_confirmation", label: "Waiting confirmation" },
-  { value: "deposit_paid", label: "Deposit paid" },
-  { value: "ordered", label: "Ordered" },
-  { value: "shipped", label: "Shipped" },
-  { value: "arrived_tunisia", label: "Arrived in Tunisia" },
-  { value: "out_for_delivery", label: "Out for delivery" },
-  { value: "delivered", label: "Delivered" },
-  { value: "cancelled", label: "Cancelled" },
-];
+import { deleteAdminOrder, getAdminOrders, updateAdminOrderItem, updateAdminOrderStatus } from "../api";
+import type { CartItem, Order } from "../api";
+import { PROCESS_STAGES, STATUS_LABELS } from "../orderStatus";
+import Navbar from "../components/Navbar";
 
 type OrderDraft = {
   status: string;
@@ -43,6 +32,65 @@ function getCustomerDetails(order: Order) {
   return [order.profiles?.phone, order.profiles?.city].filter(Boolean).join(" - ");
 }
 
+function sanitizePhoneForWhatsApp(phone: string | null | undefined): string | null {
+  if (!phone) {
+    return null;
+  }
+
+  const digits = phone.replace(/[^0-9]/g, "");
+
+  if (!digits) {
+    return null;
+  }
+
+  if (digits.startsWith("216")) {
+    return digits;
+  }
+
+  if (digits.length === 8) {
+    return `216${digits}`;
+  }
+
+  return digits;
+}
+
+function buildWhatsAppNotifyUrl(phone: string, message: string) {
+  return `https://wa.me/${phone}?text=${encodeURIComponent(message)}`;
+}
+
+function buildStatusNotifyMessage(order: Order, params: { status: string; trackingNumber?: string }) {
+  const statusLabel = STATUS_LABELS[params.status] ?? params.status;
+  const lines = [
+    `Hi ${order.profiles?.full_name || "there"}, this is Jibli.`,
+    `Update on your order #${order.id.slice(0, 8).toUpperCase()}:`,
+    `Status: ${statusLabel}`,
+    params.trackingNumber?.trim() ? `Tracking number: ${params.trackingNumber.trim()}` : "",
+    `Order updated to ${statusLabel}.`,
+  ].filter(Boolean);
+
+  return lines.join("\n");
+}
+
+function buildConfirmNotifyMessage(order: Order) {
+  return [
+    `Hi ${order.profiles?.full_name || "there"}, this is Jibli.`,
+    `Update on your order #${order.id.slice(0, 8).toUpperCase()}:`,
+    `Status: Order confirmed by admin`,
+  ].join("\n");
+}
+
+function buildRemovalNotifyMessage(order: Order) {
+  return [
+    `Hi ${order.profiles?.full_name || "there"}, this is Jibli.`,
+    `Your order #${order.id.slice(0, 8).toUpperCase()} has been removed. Contact us on WhatsApp if you have any questions.`,
+  ].join("\n");
+}
+
+type PendingNotify = {
+  customerName: string;
+  url: string;
+};
+
 function AdminDashboard() {
   const [orders, setOrders] = useState<Order[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -51,6 +99,11 @@ function AdminDashboard() {
   const [removingOrderId, setRemovingOrderId] = useState("");
   const [orderNotes, setOrderNotes] = useState<Record<string, string>>({});
   const [orderDrafts, setOrderDrafts] = useState<Record<string, OrderDraft>>({});
+  const [pendingNotify, setPendingNotify] = useState<PendingNotify | null>(null);
+  const [notifyWarning, setNotifyWarning] = useState("");
+  const [itemNameDrafts, setItemNameDrafts] = useState<Record<string, string>>({});
+  const [itemFileDrafts, setItemFileDrafts] = useState<Record<string, File | null>>({});
+  const [savingItemId, setSavingItemId] = useState("");
 
   const loadOrders = async () => {
     setIsLoading(true);
@@ -99,16 +152,33 @@ function AdminDashboard() {
     [orders],
   );
 
+  const notifyCustomer = (order: Order, message: string) => {
+    const phone = sanitizePhoneForWhatsApp(order.profiles?.phone);
+
+    if (!phone) {
+      setNotifyWarning(`Could not prepare a WhatsApp notification for ${getCustomerName(order)} — no phone number on file.`);
+      return;
+    }
+
+    setNotifyWarning("");
+    setPendingNotify({
+      customerName: getCustomerName(order),
+      url: buildWhatsAppNotifyUrl(phone, message),
+    });
+  };
+
   const handleConfirm = async (order: Order) => {
     setUpdatingOrderId(order.id);
     setErrorMessage("");
 
     try {
+      const note = orderNotes[order.id]?.trim() || "Order confirmed by admin.";
       await updateAdminOrderStatus(order.id, {
         status: "price_confirmed",
-        note: orderNotes[order.id]?.trim() || "Order confirmed by admin.",
+        note,
       });
       setOrderNotes((currentNotes) => ({ ...currentNotes, [order.id]: "" }));
+      notifyCustomer(order, buildConfirmNotifyMessage(order));
       await loadOrders();
     } catch (error) {
       console.error("Could not confirm order", error);
@@ -130,12 +200,39 @@ function AdminDashboard() {
 
     try {
       await deleteAdminOrder(order.id);
+      notifyCustomer(order, buildRemovalNotifyMessage(order));
       await loadOrders();
     } catch (error) {
       console.error("Could not remove order", error);
       setErrorMessage(error instanceof Error ? error.message : "Could not remove order.");
     } finally {
       setRemovingOrderId("");
+    }
+  };
+
+  const handleSaveItem = async (item: CartItem) => {
+    const name = itemNameDrafts[item.id];
+    const file = itemFileDrafts[item.id];
+
+    if (name === undefined && !file) {
+      return;
+    }
+
+    setSavingItemId(item.id);
+    setErrorMessage("");
+
+    try {
+      await updateAdminOrderItem(item.id, {
+        productName: name,
+        imageFile: file ?? undefined,
+      });
+      setItemFileDrafts((current) => ({ ...current, [item.id]: null }));
+      await loadOrders();
+    } catch (error) {
+      console.error("Could not update item", error);
+      setErrorMessage(error instanceof Error ? error.message : "Could not update item.");
+    } finally {
+      setSavingItemId("");
     }
   };
 
@@ -169,12 +266,13 @@ function AdminDashboard() {
     setErrorMessage("");
 
     try {
+      const note = draft.note.trim() || `Order updated to ${STATUS_LABELS[draft.status] ?? draft.status}.`;
       await updateAdminOrderStatus(order.id, {
         status: draft.status,
         final_price: draft.final_price ? Number(draft.final_price) : undefined,
         deposit_amount: draft.deposit_amount ? Number(draft.deposit_amount) : undefined,
         tracking_number: draft.tracking_number.trim() || undefined,
-        note: draft.note.trim() || `Order updated to ${draft.status}.`,
+        note,
       });
       setOrderDrafts((currentDrafts) => ({
         ...currentDrafts,
@@ -183,6 +281,13 @@ function AdminDashboard() {
           note: "",
         },
       }));
+      notifyCustomer(
+        order,
+        buildStatusNotifyMessage(order, {
+          status: draft.status,
+          trackingNumber: draft.tracking_number,
+        }),
+      );
       await loadOrders();
     } catch (error) {
       console.error("Could not update order process", error);
@@ -194,20 +299,13 @@ function AdminDashboard() {
 
   return (
     <div className="simpleAdminPage">
-      <nav className="navbar">
-        <Link to="/" className="brand">
-          <img src={logo} alt="Jibli logo" className="logoImg" />
-          <span>Jibli</span>
-        </Link>
-
-        <div className="navLinks">
-          <button className="outlineBtn" type="button" onClick={loadOrders}>
-            <RefreshCw size={16} />
-            Refresh
-          </button>
-          <Link to="/" className="primaryBtn">Website</Link>
-        </div>
-      </nav>
+      <Navbar>
+        <button className="outlineBtn" type="button" onClick={loadOrders}>
+          <RefreshCw size={16} />
+          Refresh
+        </button>
+        <Link to="/" className="primaryBtn">Website</Link>
+      </Navbar>
 
       <main className="simpleAdminMain">
         <section className="simpleAdminHeader">
@@ -228,6 +326,27 @@ function AdminDashboard() {
         </section>
 
         {errorMessage && <div className="noticeBox warning adminNotice">{errorMessage}</div>}
+        {notifyWarning && <div className="noticeBox warning adminNotice">{notifyWarning}</div>}
+
+        {pendingNotify && (
+          <div className="noticeBox success adminNotice adminNotifyBanner">
+            <span>Ready to notify {pendingNotify.customerName} on WhatsApp.</span>
+            <div className="adminNotifyBannerActions">
+              <a
+                className="primaryMiniBtn"
+                href={pendingNotify.url}
+                target="_blank"
+                rel="noreferrer"
+                onClick={() => setPendingNotify(null)}
+              >
+                Notify on WhatsApp
+              </a>
+              <button type="button" className="dismissNotifyBtn" onClick={() => setPendingNotify(null)}>
+                Dismiss
+              </button>
+            </div>
+          </div>
+        )}
 
         <section className="simpleAdminPanel">
           <div className="tableTop">
@@ -302,7 +421,7 @@ function AdminDashboard() {
                       <strong>Notes history</strong>
                       {order.events.map((event) => (
                         <p key={event.id}>
-                          <span>{event.status}</span>
+                          <span>{STATUS_LABELS[event.status] ?? event.status}</span>
                           {event.note || "No note"}
                         </p>
                       ))}
@@ -359,12 +478,48 @@ function AdminDashboard() {
                         </small>
                       )}
                     </div>
-                    <div className="managedOrderLinks">
+                    <div className="managedOrderItemsEdit">
                       {order.items.map((item, index) => (
-                        <a href={item.product_link} target="_blank" rel="noreferrer" key={item.id}>
-                          Link {index + 1}
-                          <ExternalLink size={13} />
-                        </a>
+                        <div className="managedOrderItemEditRow" key={item.id}>
+                          <div className="managedOrderItemPreview">
+                            {item.image_url ? (
+                              <img src={item.image_url} alt={item.product_name || `Item ${index + 1}`} />
+                            ) : (
+                              <span className="managedOrderItemPreviewEmpty">No photo</span>
+                            )}
+                          </div>
+                          <div className="managedOrderItemFields">
+                            <a href={item.product_link} target="_blank" rel="noreferrer" className="managedOrderItemLink">
+                              Link {index + 1}
+                              <ExternalLink size={13} />
+                            </a>
+                            <input
+                              value={itemNameDrafts[item.id] ?? item.product_name ?? ""}
+                              onChange={(event) =>
+                                setItemNameDrafts((current) => ({ ...current, [item.id]: event.target.value }))
+                              }
+                              placeholder="Item name shown to the customer"
+                            />
+                            <input
+                              type="file"
+                              accept="image/*"
+                              onChange={(event) =>
+                                setItemFileDrafts((current) => ({
+                                  ...current,
+                                  [item.id]: event.target.files?.[0] ?? null,
+                                }))
+                              }
+                            />
+                            <button
+                              type="button"
+                              className="primaryMiniBtn"
+                              disabled={savingItemId === item.id}
+                              onClick={() => handleSaveItem(item)}
+                            >
+                              {savingItemId === item.id ? "Saving..." : "Save item"}
+                            </button>
+                          </div>
+                        </div>
                       ))}
                     </div>
                     <div className="orderProcessForm">
@@ -374,7 +529,7 @@ function AdminDashboard() {
                           value={orderDrafts[order.id]?.status ?? order.status}
                           onChange={(event) => updateOrderDraft(order.id, "status", event.target.value)}
                         >
-                          {processStatuses.map((status) => (
+                          {PROCESS_STAGES.map((status) => (
                             <option value={status.value} key={status.value}>
                               {status.label}
                             </option>
@@ -413,13 +568,13 @@ function AdminDashboard() {
                         <textarea
                           value={orderDrafts[order.id]?.note ?? ""}
                           onChange={(event) => updateOrderDraft(order.id, "note", event.target.value)}
-                          placeholder="What changed? This note appears in the order history."
+                          placeholder="Example: Your package arrived at local airport. Shown under this status on the customer's tracking timeline."
                         />
                       </label>
                     </div>
                   </div>
                   <div className="confirmedOrderActions">
-                    <span className="badge green">{order.status}</span>
+                    <span className="badge green">{STATUS_LABELS[order.status] ?? order.status}</span>
                     <button
                       className="primaryMiniBtn"
                       type="button"

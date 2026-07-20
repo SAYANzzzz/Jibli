@@ -8,6 +8,7 @@ import AuthCallback from "./pages/AuthCallback.tsx";
 import ResetPassword from "./pages/ResetPassword.tsx";
 import Account from "./pages/Account.tsx";
 import ProductRequest from "./pages/ProductRequest.tsx";
+import QuickOrder from "./pages/QuickOrder.tsx";
 import OrderTracking from "./pages/OrderTracking.tsx";
 import AdminDashboard from "./pages/AdminDashboard";
 import { isAdminEmail } from "./admin";
@@ -198,6 +199,7 @@ function App() {
             </ProtectedRoute>
           }
         />
+        <Route path="/order" element={<QuickOrder />} />
         <Route
           path="/tracking"
           element={

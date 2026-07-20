@@ -19,10 +19,11 @@ async function getAccessToken() {
 async function apiFetch(path: string, options: RequestInit = {}) {
   const token = await getAccessToken();
   let response: Response;
+  const isFormData = typeof FormData !== "undefined" && options.body instanceof FormData;
   const requestOptions: RequestInit = {
     ...options,
     headers: {
-      "Content-Type": "application/json",
+      ...(isFormData ? {} : { "Content-Type": "application/json" }),
       Authorization: `Bearer ${token}`,
       ...options.headers,
     },
@@ -58,9 +59,11 @@ async function apiFetch(path: string, options: RequestInit = {}) {
   return data;
 }
 
+export type Shop = "aliexpress" | "shein" | "temu";
+
 export type CartItemPayload = {
   product_link: string;
-  shop: "aliexpress" | "shein";
+  shop: Shop;
   product_name?: string;
   selected_options: Record<string, string>;
   quantity: number;
@@ -71,8 +74,9 @@ export type CartItem = {
   id: string;
   cart_id: string;
   product_link: string;
-  shop: "aliexpress" | "shein";
+  shop: Shop;
   product_name: string | null;
+  image_url: string | null;
   selected_options: Record<string, string> | null;
   quantity: number;
   estimated_price: number | null;
@@ -132,7 +136,7 @@ export type AdminUser = {
 
 export type ProductPreview = {
   link: string;
-  shop: "aliexpress" | "shein" | null;
+  shop: Shop | null;
   supported: boolean;
   name?: string;
   price?: string;
@@ -154,11 +158,7 @@ export async function previewProducts(links: string[]) {
   }) as Promise<{ items: ProductPreview[] }>;
 }
 
-export async function saveCartItems(payload: {
-  items: CartItemPayload[];
-  shein_panier_total?: number;
-  notes?: string;
-}) {
+export async function saveCartItems(payload: { items: CartItemPayload[]; notes?: string }) {
   return apiFetch("/cart/items", {
     method: "POST",
     body: JSON.stringify(payload),
@@ -169,10 +169,6 @@ export async function submitOrder() {
   return apiFetch("/orders/submit", {
     method: "POST",
   });
-}
-
-export async function getSheinPanier() {
-  return apiFetch("/shein-panier") as Promise<{ total: number; item_count: number }>;
 }
 
 export async function getOrders() {
@@ -209,6 +205,26 @@ export async function deleteAdminOrder(orderId: string) {
   }) as Promise<{ deleted: boolean; order_id: string }>;
 }
 
+export async function updateAdminOrderItem(
+  itemId: string,
+  payload: { productName?: string; imageFile?: File },
+) {
+  const formData = new FormData();
+
+  if (payload.productName !== undefined) {
+    formData.append("product_name", payload.productName);
+  }
+
+  if (payload.imageFile) {
+    formData.append("image", payload.imageFile);
+  }
+
+  return apiFetch(`/admin/order-items/${itemId}`, {
+    method: "PATCH",
+    body: formData,
+  }) as Promise<{ item: CartItem }>;
+}
+
 export async function getProfile(): Promise<Profile> {
   return apiFetch("/me/profile") as Promise<Profile>;
 }
@@ -225,4 +241,85 @@ export async function updateProfile(payload: {
     method: "PUT",
     body: JSON.stringify(payload),
   });
+}
+
+async function publicApiFetch(path: string, options: RequestInit = {}) {
+  let response: Response;
+  const requestOptions: RequestInit = {
+    ...options,
+    headers: {
+      "Content-Type": "application/json",
+      ...options.headers,
+    },
+  };
+
+  try {
+    response = await fetch(`${API_URL}${path}`, requestOptions);
+  } catch {
+    try {
+      response = await fetch(`${API_FALLBACK_URL}${path}`, requestOptions);
+    } catch {
+      throw new Error(
+        `Cannot reach the backend at ${API_URL} or ${API_FALLBACK_URL}. Start FastAPI, then refresh this page.`,
+      );
+    }
+  }
+
+  const data = await response.json().catch(() => ({}));
+
+  if (!response.ok) {
+    const detail =
+      typeof data.detail === "string"
+        ? data.detail
+        : typeof data.message === "string"
+          ? data.message
+          : typeof data.error === "string"
+            ? data.error
+            : null;
+
+    throw new Error(detail ?? `Request failed with status ${response.status}.`);
+  }
+
+  return data;
+}
+
+export type QuickOrderShop = Shop;
+
+export type QuickOrderPreview = {
+  link: string;
+  shop: QuickOrderShop | null;
+  supported: boolean;
+  name?: string;
+  price?: string;
+  image_url?: string | null;
+  error?: string;
+};
+
+export async function quickOrderPreview(link: string) {
+  return publicApiFetch("/quick-order/preview", {
+    method: "POST",
+    body: JSON.stringify({ link }),
+  }) as Promise<QuickOrderPreview>;
+}
+
+export type PriceCurrency = "usd" | "eur";
+
+export type QuickOrderPriceResult = {
+  shop: QuickOrderShop;
+  usd_price: number;
+  quantity: number;
+  unit_price_tnd: number;
+  total_price_tnd: number;
+};
+
+export async function quickOrderPrice(
+  shop: QuickOrderShop,
+  amount: number,
+  quantity: number,
+  currency: PriceCurrency,
+) {
+  return publicApiFetch("/quick-order/price", {
+    method: "POST",
+    body: JSON.stringify({ shop, amount, quantity, currency }),
+  }) as Promise<QuickOrderPriceResult>;
 }

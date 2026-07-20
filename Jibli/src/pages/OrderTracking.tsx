@@ -3,30 +3,9 @@ import { Link } from "react-router-dom";
 import { MessageCircle, Package } from "lucide-react";
 import { getOrders } from "../api";
 import type { Order } from "../api";
+import { STATUS_LABELS } from "../orderStatus";
+import Navbar from "../components/Navbar";
 import ProfileNavLink from "../components/ProfileNavLink";
-import logo from "../assets/Fast-Logo.gif";
-
-const steps = [
-  { label: "Price confirmed", status: "price_confirmed" },
-  { label: "Deposit paid", status: "deposit_paid" },
-  { label: "Ordered", status: "ordered" },
-  { label: "Shipped", status: "shipped" },
-  { label: "Arrived in Tunisia", status: "arrived_tunisia" },
-  { label: "Out for delivery", status: "out_for_delivery" },
-  { label: "Delivered", status: "delivered" },
-];
-
-const statusLabels: Record<string, string> = {
-  price_confirmed: "Price confirmed",
-  waiting_confirmation: "Waiting confirmation",
-  deposit_paid: "Deposit paid",
-  ordered: "Ordered",
-  shipped: "Shipped",
-  arrived_tunisia: "Arrived in Tunisia",
-  out_for_delivery: "Out for delivery",
-  delivered: "Delivered",
-  cancelled: "Cancelled",
-};
 
 function formatDate(value: string) {
   return new Intl.DateTimeFormat("en-GB", {
@@ -34,6 +13,19 @@ function formatDate(value: string) {
     month: "2-digit",
     year: "numeric",
   }).format(new Date(value));
+}
+
+function formatTrackingDate(value: string) {
+  const date = new Date(value);
+  const weekday = new Intl.DateTimeFormat("en-US", { weekday: "short" }).format(date);
+  const month = new Intl.DateTimeFormat("en-US", { month: "short" }).format(date);
+  const time = new Intl.DateTimeFormat("en-US", {
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: false,
+  }).format(date);
+
+  return `${weekday} | ${month}. ${date.getDate()} ${time}`;
 }
 
 function getOrderTitle(order: Order) {
@@ -50,15 +42,15 @@ function getOrderTitle(order: Order) {
   return `${firstItem.product_name || `${firstItem.shop} order`} + ${order.items.length - 1} more`;
 }
 
-function getActiveStepIndex(status: string) {
-  const index = steps.findIndex((step) => step.status === status);
-  return index >= 0 ? index : 0;
+function getOrderPhoto(order: Order) {
+  return order.items.find((item) => item.image_url)?.image_url ?? null;
 }
 
 function OrderTracking() {
   const [orders, setOrders] = useState<Order[]>([]);
   const [selectedOrderId, setSelectedOrderId] = useState("");
   const [isLoading, setIsLoading] = useState(true);
+  const [copiedTrackingId, setCopiedTrackingId] = useState("");
 
   useEffect(() => {
     getOrders()
@@ -78,21 +70,28 @@ function OrderTracking() {
     () => orders.find((order) => order.id === selectedOrderId) ?? orders[0],
     [orders, selectedOrderId],
   );
-  const activeStepIndex = selectedOrder ? getActiveStepIndex(selectedOrder.status) : 0;
+
+  const timelineEvents = useMemo(
+    () => (selectedOrder?.events ? [...selectedOrder.events].reverse() : []),
+    [selectedOrder],
+  );
+
+  const handleCopyTracking = async (orderId: string, trackingNumber: string) => {
+    try {
+      await navigator.clipboard.writeText(trackingNumber);
+      setCopiedTrackingId(orderId);
+      setTimeout(() => setCopiedTrackingId(""), 2000);
+    } catch (error) {
+      console.error("Could not copy tracking number", error);
+    }
+  };
 
   return (
     <div>
-      <nav className="navbar">
-        <Link to="/" className="brand">
-          <img src={logo} alt="Jibli logo" className="logoImg" />
-          <span>Jibli</span>
-        </Link>
-
-        <div className="navLinks">
-          <Link to="/request">Request order</Link>
-          <ProfileNavLink />
-        </div>
-      </nav>
+      <Navbar>
+        <Link to="/request">Request order</Link>
+        <ProfileNavLink />
+      </Navbar>
 
       <main className="page">
         <section className="tableCard panierTrackingSection" id="panier">
@@ -132,13 +131,17 @@ function OrderTracking() {
                   onClick={() => setSelectedOrderId(order.id)}
                 >
                   <span className="productImage small">
-                    <Package size={28} />
+                    {getOrderPhoto(order) ? (
+                      <img src={getOrderPhoto(order)!} alt="" />
+                    ) : (
+                      <Package size={28} />
+                    )}
                   </span>
                   <div>
                     <strong>{getOrderTitle(order)}</strong>
                     <small>{order.items.length} item(s) • {formatDate(order.created_at)}</small>
                   </div>
-                  <span className="badge">{statusLabels[order.status] ?? order.status}</span>
+                  <span className="badge">{STATUS_LABELS[order.status] ?? order.status}</span>
                 </button>
               ))}
             </div>
@@ -147,14 +150,18 @@ function OrderTracking() {
               <>
                 <div className="trackingCard">
                   <div className="productImage">
-                    <Package size={58} />
+                    {getOrderPhoto(selectedOrder) ? (
+                      <img src={getOrderPhoto(selectedOrder)!} alt="" />
+                    ) : (
+                      <Package size={58} />
+                    )}
                   </div>
 
                   <div className="trackingContent">
                     <div className="trackingHeader">
                       <h2>{getOrderTitle(selectedOrder)}</h2>
                       <span className="badge green">
-                        {statusLabels[selectedOrder.status] ?? selectedOrder.status}
+                        {STATUS_LABELS[selectedOrder.status] ?? selectedOrder.status}
                       </span>
                     </div>
 
@@ -175,16 +182,18 @@ function OrderTracking() {
                         <small>Order date</small>
                         <strong>{formatDate(selectedOrder.created_at)}</strong>
                       </div>
-
-                      <div>
-                        <small>Tracking number</small>
-                        <strong>{selectedOrder.tracking_number || "Pending"}</strong>
-                      </div>
                     </div>
 
                     <div className="trackedItemsList">
                       {selectedOrder.items.map((item) => (
-                        <a href={item.product_link} target="_blank" rel="noreferrer" key={item.id}>
+                        <a
+                          href={item.product_link}
+                          target="_blank"
+                          rel="noreferrer"
+                          key={item.id}
+                          className={item.image_url ? "trackedItemLink withPhoto" : "trackedItemLink"}
+                        >
+                          {item.image_url && <img src={item.image_url} alt="" />}
                           {item.product_name || `${item.shop} item`}
                         </a>
                       ))}
@@ -192,30 +201,42 @@ function OrderTracking() {
                   </div>
                 </div>
 
-                <div className="timeline">
-                  {steps.map((step, index) => (
-                    <div
-                      className={index <= activeStepIndex ? "timelineItem active" : "timelineItem"}
-                      key={step.status}
-                    >
-                      <div className="circle">{index <= activeStepIndex ? "✓" : ""}</div>
-                      <span>{step.label}</span>
+                <div className="otlCard">
+                  <div className="otlHeader">
+                    <div>
+                      <span className="mutedText">Tracking number</span>
+                      <strong>{selectedOrder.tracking_number || "Not assigned yet"}</strong>
                     </div>
-                  ))}
-                </div>
-
-                {selectedOrder.events && selectedOrder.events.length > 0 && (
-                  <div className="customerOrderHistory">
-                    <h3>Order updates</h3>
-                    {selectedOrder.events.map((event) => (
-                      <div className="customerHistoryItem" key={event.id}>
-                        <strong>{statusLabels[event.status] ?? event.status}</strong>
-                        <span>{formatDate(event.created_at)}</span>
-                        {event.note && <p>{event.note}</p>}
-                      </div>
-                    ))}
+                    {selectedOrder.tracking_number && (
+                      <button
+                        type="button"
+                        className="otlCopyBtn"
+                        onClick={() => handleCopyTracking(selectedOrder.id, selectedOrder.tracking_number!)}
+                      >
+                        {copiedTrackingId === selectedOrder.id ? "Copied" : "Copy"}
+                      </button>
+                    )}
                   </div>
-                )}
+
+                  {timelineEvents.length === 0 ? (
+                    <p className="mutedText otlEmpty">No status updates yet.</p>
+                  ) : (
+                    <div className="otlList">
+                      {timelineEvents.map((event, index) => (
+                        <div className={index === 0 ? "otlRow current" : "otlRow"} key={event.id}>
+                          <div className="otlDotCol">
+                            <span className="otlDot" />
+                          </div>
+                          <div className="otlBody">
+                            <strong>{STATUS_LABELS[event.status] ?? event.status}</strong>
+                            {event.note && <p>{event.note}</p>}
+                            <span className="otlDate">{formatTrackingDate(event.created_at)}</span>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
               </>
             )}
           </>
