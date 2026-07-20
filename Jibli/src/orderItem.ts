@@ -9,6 +9,7 @@ export const SHOP_LABELS: Record<QuickOrderShop, string> = {
 export const SHOP_LOGOS: Partial<Record<QuickOrderShop, string>> = {
   aliexpress: "/aliexpress-logo.png",
   shein: "/shein-logo.png",
+  temu: "/temu-logo.png",
 };
 
 export const SHEIN_FRANCE_URL = "https://fr.shein.com";
