@@ -35,6 +35,8 @@ export function OrderItemCard({ id, index, initialLink, onUpdate, onRemove, canR
   const [previewNotice, setPreviewNotice] = useState("");
 
   const [amount, setAmount] = useState("");
+  const [shippingAmount, setShippingAmount] = useState("");
+  const currencyTotal = Number(amount || 0) + Number(shippingAmount || 0);
   const [currency, setCurrency] = useState<PriceCurrency>("usd");
   const [size, setSize] = useState("");
   const [color, setColor] = useState("");
@@ -88,13 +90,13 @@ export function OrderItemCard({ id, index, initialLink, onUpdate, onRemove, canR
     setPriceResult(null);
     setCalcError("");
 
-    if (!shop || !link.trim() || Number(amount) <= 0 || quantity < 1 || isBlocked) {
+    if (!shop || !link.trim() || currencyTotal <= 0 || quantity < 1 || isBlocked) {
       return;
     }
 
     const timeoutId = setTimeout(() => {
       setIsCalculating(true);
-      quickOrderPrice(shop, Number(amount), quantity, currency)
+      quickOrderPrice(shop, currencyTotal, quantity, currency)
         .then((result) => setPriceResult(result))
         .catch((error) => {
           console.error("Could not calculate price", error);
@@ -106,7 +108,7 @@ export function OrderItemCard({ id, index, initialLink, onUpdate, onRemove, canR
     }, 500);
 
     return () => clearTimeout(timeoutId);
-  }, [shop, link, amount, currency, quantity, isBlocked]);
+  }, [shop, link, currencyTotal, currency, quantity, isBlocked]);
 
   const filledExtraOptions = useMemo(
     () => extraOptions.filter((option) => option.label.trim() && option.value.trim()),
@@ -307,12 +309,7 @@ export function OrderItemCard({ id, index, initialLink, onUpdate, onRemove, canR
             + Add another option
           </button>
 
-          <label>Item price *</label>
-          {shop === "aliexpress" && (
-            <p className="mutedText qoShippingHint">
-              Don't forget to add the shipping cost shown on the AliExpress page to this price.
-            </p>
-          )}
+          <label>{shop === "aliexpress" ? "Product price *" : "Item price *"}</label>
           <div className="qoPriceInputRow">
             <input
               type="number"
@@ -340,6 +337,25 @@ export function OrderItemCard({ id, index, initialLink, onUpdate, onRemove, canR
               </button>
             </div>
           </div>
+
+          {shop === "aliexpress" && (
+            <>
+              <label>Shipping price</label>
+              <p className="mutedText">
+                Enter 0 if shipping is free. Same currency ({currency.toUpperCase()}) as the
+                product price above.
+              </p>
+              <input
+                type="number"
+                min={0}
+                step={0.01}
+                inputMode="decimal"
+                value={shippingAmount}
+                onChange={(event) => setShippingAmount(event.target.value)}
+                placeholder="Example: 2.50, or 0 if free"
+              />
+            </>
+          )}
 
           {isCalculating && <p className="mutedText">Calculating price...</p>}
           {calcError && <div className="noticeBox warning">{calcError}</div>}
