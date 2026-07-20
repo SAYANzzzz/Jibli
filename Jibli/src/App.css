@@ -3469,42 +3469,6 @@ td {
   gap: 0 20px;
 }
 
-.qoPriceInputRow {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
-  gap: 10px;
-  align-items: stretch;
-}
-
-.qoCurrencyToggle {
-  display: flex;
-  height: 48px;
-  border: 1px solid #001f5b;
-  overflow: hidden;
-  flex-shrink: 0;
-}
-
-.qoCurrencyToggle button {
-  width: 72px;
-  height: 100%;
-  border: 0;
-  background: #ffffff;
-  color: #001f5b;
-  font-weight: 800;
-  font-size: 14px;
-  letter-spacing: 0.02em;
-  cursor: pointer;
-}
-
-.qoCurrencyToggle button + button {
-  border-left: 1px solid #001f5b;
-}
-
-.qoCurrencyToggle button.active {
-  background: #001f5b;
-  color: #ffffff;
-}
-
 .qoExtraOptionRow {
   display: grid;
   grid-template-columns: 1fr 1fr auto;

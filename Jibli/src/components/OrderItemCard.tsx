@@ -37,7 +37,9 @@ export function OrderItemCard({ id, index, initialLink, onUpdate, onRemove, canR
   const [amount, setAmount] = useState("");
   const [shippingAmount, setShippingAmount] = useState("");
   const currencyTotal = Number(amount || 0) + Number(shippingAmount || 0);
-  const [currency, setCurrency] = useState<PriceCurrency>("usd");
+  // USD and EUR are priced identically (see backend pricing.py), so there's
+  // no need to make the customer pick one — either currency works.
+  const currency: PriceCurrency = "usd";
   const [size, setSize] = useState("");
   const [color, setColor] = useState("");
   const [model, setModel] = useState("");
@@ -309,42 +311,23 @@ export function OrderItemCard({ id, index, initialLink, onUpdate, onRemove, canR
             + Add another option
           </button>
 
-          <label>{shop === "aliexpress" ? "Product price *" : "Item price *"}</label>
-          <div className="qoPriceInputRow">
-            <input
-              type="number"
-              min={0.01}
-              step={0.01}
-              inputMode="decimal"
-              value={amount}
-              onChange={(event) => setAmount(event.target.value)}
-              placeholder="Example: 12.99"
-            />
-            <div className="qoCurrencyToggle">
-              <button
-                type="button"
-                className={currency === "usd" ? "active" : ""}
-                onClick={() => setCurrency("usd")}
-              >
-                USD
-              </button>
-              <button
-                type="button"
-                className={currency === "eur" ? "active" : ""}
-                onClick={() => setCurrency("eur")}
-              >
-                EUR
-              </button>
-            </div>
-          </div>
+          <label>
+            {shop === "aliexpress" ? "Product price in dollar or euro *" : "Item price in dollar or euro *"}
+          </label>
+          <input
+            type="number"
+            min={0.01}
+            step={0.01}
+            inputMode="decimal"
+            value={amount}
+            onChange={(event) => setAmount(event.target.value)}
+            placeholder="Example: 12.99"
+          />
 
           {shop === "aliexpress" && (
             <>
-              <label>Shipping price</label>
-              <p className="mutedText">
-                Enter 0 if shipping is free. Same currency ({currency.toUpperCase()}) as the
-                product price above.
-              </p>
+              <label>Shipping price in dollar or euro</label>
+              <p className="mutedText">Enter 0 if shipping is free.</p>
               <input
                 type="number"
                 min={0}
