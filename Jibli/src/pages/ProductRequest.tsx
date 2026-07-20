@@ -1,10 +1,10 @@
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import type { FormEvent } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 import { saveCartItems, submitOrder } from "../api";
 import type { Shop } from "../api";
 import { OrderItemCard } from "../components/OrderItemCard";
-import { SHOP_LABELS, createId } from "../orderItem";
+import { SHOP_LABELS, clearItemDrafts, createId, loadDraftItemIds, saveDraftItemIds } from "../orderItem";
 import type { ItemSnapshot } from "../orderItem";
 import Navbar from "../components/Navbar";
 import ProfileNavLink from "../components/ProfileNavLink";
@@ -15,13 +15,23 @@ function ProductRequest() {
   const [searchParams] = useSearchParams();
   const initialLink = searchParams.get("link") ?? "";
 
-  const [itemRefs, setItemRefs] = useState<{ id: string; initialLink: string }[]>(() => [
-    { id: createId("item"), initialLink },
-  ]);
+  const [itemRefs, setItemRefs] = useState<{ id: string; initialLink: string }[]>(() => {
+    // If a mobile browser reloaded this page while the customer was away in
+    // another app (e.g. the Shein app), restore the same product cards
+    // instead of starting over with a single blank one.
+    const draftIds = loadDraftItemIds();
+    return draftIds.length > 0
+      ? draftIds.map((id) => ({ id, initialLink: "" }))
+      : [{ id: createId("item"), initialLink }];
+  });
   const [snapshots, setSnapshots] = useState<Record<string, ItemSnapshot>>({});
   const [submitError, setSubmitError] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [successModal, setSuccessModal] = useState<{ autoOpened: boolean } | null>(null);
+
+  useEffect(() => {
+    saveDraftItemIds(itemRefs.map((item) => item.id));
+  }, [itemRefs]);
 
   const handleItemUpdate = useCallback((id: string, snapshot: ItemSnapshot) => {
     setSnapshots((current) => ({ ...current, [id]: snapshot }));
@@ -107,6 +117,7 @@ function ProductRequest() {
       });
 
       await submitOrder();
+      clearItemDrafts(itemRefs.map((item) => item.id));
 
       if (whatsappWindow) {
         whatsappWindow.location.href = whatsappUrl;

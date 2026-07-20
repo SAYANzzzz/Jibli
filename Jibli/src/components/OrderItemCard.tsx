@@ -9,8 +9,10 @@ import {
   detectShop,
   extractUrl,
   isSheinFranceLink,
+  loadItemDraft,
   looksLikeCartShare,
   normalizeLink,
+  saveItemDraft,
 } from "../orderItem";
 import type { ExtraOption, ItemSnapshot } from "../orderItem";
 
@@ -24,7 +26,13 @@ type OrderItemCardProps = {
 };
 
 export function OrderItemCard({ id, index, initialLink, onUpdate, onRemove, canRemove }: OrderItemCardProps) {
-  const [link, setLink] = useState(initialLink);
+  // Loaded once per card id: if a mobile browser (or an in-app browser like
+  // Instagram's) reloaded the page while the customer was away in another
+  // app, this recovers what they'd already filled in instead of starting
+  // the card blank again.
+  const [draft] = useState(() => loadItemDraft(id));
+
+  const [link, setLink] = useState(draft?.link ?? initialLink);
   const [isCartShare, setIsCartShare] = useState(false);
   const shop = useMemo(() => detectShop(link), [link]);
   const isBlockedShein = shop === "shein" && !isSheinFranceLink(link);
@@ -34,17 +42,17 @@ export function OrderItemCard({ id, index, initialLink, onUpdate, onRemove, canR
   const [isPreviewLoading, setIsPreviewLoading] = useState(false);
   const [previewNotice, setPreviewNotice] = useState("");
 
-  const [amount, setAmount] = useState("");
-  const [shippingAmount, setShippingAmount] = useState("");
+  const [amount, setAmount] = useState(draft?.amount ?? "");
+  const [shippingAmount, setShippingAmount] = useState(draft?.shippingAmount ?? "");
   const currencyTotal = Number(amount || 0) + Number(shippingAmount || 0);
   // USD and EUR are priced identically (see backend pricing.py), so there's
   // no need to make the customer pick one — either currency works.
   const currency: PriceCurrency = "usd";
-  const [size, setSize] = useState("");
-  const [color, setColor] = useState("");
-  const [model, setModel] = useState("");
-  const [quantity, setQuantity] = useState(1);
-  const [extraOptions, setExtraOptions] = useState<ExtraOption[]>([]);
+  const [size, setSize] = useState(draft?.size ?? "");
+  const [color, setColor] = useState(draft?.color ?? "");
+  const [model, setModel] = useState(draft?.model ?? "");
+  const [quantity, setQuantity] = useState(draft?.quantity ?? 1);
+  const [extraOptions, setExtraOptions] = useState<ExtraOption[]>(draft?.extraOptions ?? []);
 
   const [priceResult, setPriceResult] = useState<QuickOrderPriceResult | null>(null);
   const [isCalculating, setIsCalculating] = useState(false);
@@ -136,6 +144,10 @@ export function OrderItemCard({ id, index, initialLink, onUpdate, onRemove, canR
     // effect every render.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id, link, shop, preview, size, color, model, quantity, filledExtraOptions, priceResult]);
+
+  useEffect(() => {
+    saveItemDraft(id, { link, size, color, model, quantity, amount, shippingAmount, extraOptions });
+  }, [id, link, size, color, model, quantity, amount, shippingAmount, extraOptions]);
 
   const handleAddOption = () => {
     setExtraOptions((current) => [...current, { id: createId("opt"), label: "", value: "" }]);

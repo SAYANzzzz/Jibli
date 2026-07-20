@@ -82,3 +82,77 @@ export function normalizeLink(link: string) {
 export function createId(prefix: string) {
   return `${prefix}-${Date.now()}-${Math.random().toString(16).slice(2)}`;
 }
+
+// Mobile browsers (and especially in-app browsers like Instagram's) often
+// fully reload the page when a customer switches to another app and comes
+// back, wiping all in-memory React state. Persisting each product card's
+// in-progress fields to localStorage — and the list of card ids so the same
+// cards reappear — lets the form recover instead of starting over.
+
+const ITEM_IDS_DRAFT_KEY = "jibli_draft_item_ids";
+const ITEM_DRAFT_PREFIX = "jibli_item_draft_";
+
+export type ItemDraft = {
+  link: string;
+  size: string;
+  color: string;
+  model: string;
+  quantity: number;
+  amount: string;
+  shippingAmount: string;
+  extraOptions: ExtraOption[];
+};
+
+function safeParseArray<T>(raw: string | null, isValid: (value: unknown) => value is T): T[] {
+  if (!raw) return [];
+
+  try {
+    const parsed = JSON.parse(raw);
+    return Array.isArray(parsed) && parsed.every(isValid) ? parsed : [];
+  } catch {
+    return [];
+  }
+}
+
+export function loadDraftItemIds(): string[] {
+  try {
+    return safeParseArray(window.localStorage.getItem(ITEM_IDS_DRAFT_KEY), (value): value is string => typeof value === "string");
+  } catch {
+    return [];
+  }
+}
+
+export function saveDraftItemIds(ids: string[]) {
+  try {
+    window.localStorage.setItem(ITEM_IDS_DRAFT_KEY, JSON.stringify(ids));
+  } catch {
+    // Storage unavailable (private browsing, quota full) — the form just
+    // won't survive a reload in that case, which is no worse than before.
+  }
+}
+
+export function loadItemDraft(id: string): ItemDraft | null {
+  try {
+    const raw = window.localStorage.getItem(ITEM_DRAFT_PREFIX + id);
+    return raw ? (JSON.parse(raw) as ItemDraft) : null;
+  } catch {
+    return null;
+  }
+}
+
+export function saveItemDraft(id: string, draft: ItemDraft) {
+  try {
+    window.localStorage.setItem(ITEM_DRAFT_PREFIX + id, JSON.stringify(draft));
+  } catch {
+    // ignore
+  }
+}
+
+export function clearItemDrafts(ids: string[]) {
+  try {
+    ids.forEach((id) => window.localStorage.removeItem(ITEM_DRAFT_PREFIX + id));
+    window.localStorage.removeItem(ITEM_IDS_DRAFT_KEY);
+  } catch {
+    // ignore
+  }
+}
