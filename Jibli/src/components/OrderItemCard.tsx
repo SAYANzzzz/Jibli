@@ -7,6 +7,7 @@ import {
   SHOP_LOGOS,
   createId,
   detectShop,
+  extractUrl,
   isSheinFranceLink,
   normalizeLink,
 } from "../orderItem";
@@ -163,7 +164,7 @@ export function OrderItemCard({ id, index, initialLink, onUpdate, onRemove, canR
       <label>Product link *</label>
       <input
         value={link}
-        onChange={(event) => setLink(event.target.value)}
+        onChange={(event) => setLink(extractUrl(event.target.value))}
         placeholder="Paste your AliExpress, Shein, or Temu product link..."
       />
 
