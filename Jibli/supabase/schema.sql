@@ -104,6 +104,7 @@ add constraint orders_status_check check (
     'leaving_origin_country',
     'arrived_transit_country',
     'left_transit_country',
+    'arrived_local_airport',
     'arrived_tunisia',
     'out_for_delivery',
     'delivered',

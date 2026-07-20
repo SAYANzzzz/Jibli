@@ -13,6 +13,7 @@ export type OrderStatus =
   | "leaving_origin_country"
   | "arrived_transit_country"
   | "left_transit_country"
+  | "arrived_local_airport"
   | "arrived_tunisia"
   | "out_for_delivery"
   | "delivered"
@@ -21,18 +22,19 @@ export type OrderStatus =
 export const ORDER_STAGES: { value: OrderStatus; label: string }[] = [
   { value: "new_request", label: "New request" },
   { value: "waiting_confirmation", label: "Waiting confirmation" },
-  { value: "price_confirmed", label: "Price confirmed" },
+  { value: "price_confirmed", label: "Order confirmed by Jibli" },
   { value: "deposit_paid", label: "Deposit paid" },
-  { value: "ordered", label: "Order placed with supplier" },
-  { value: "preparing", label: "Package is being prepared" },
-  { value: "collected_by_carrier", label: "Collected by carrier" },
-  { value: "at_origin_sorting", label: "Received by sorting center of origin" },
-  { value: "left_origin_sorting", label: "Left sorting center of origin" },
-  { value: "at_origin_airport", label: "Arrived at the origin airport, awaiting transit" },
+  { value: "ordered", label: "Order Created by Store" },
+  { value: "preparing", label: "Your package is being prepared" },
+  { value: "collected_by_carrier", label: "Package collected by carrier." },
+  { value: "at_origin_sorting", label: "Package received by sorting center of origin." },
+  { value: "left_origin_sorting", label: "Package left sorting center of origin." },
+  { value: "at_origin_airport", label: "Your package arrived at the origin airport. Awaiting transit." },
   { value: "awaiting_flight", label: "Awaiting flight" },
-  { value: "leaving_origin_country", label: "Leaving origin country/region" },
-  { value: "arrived_transit_country", label: "Arrived at transit country/region" },
-  { value: "left_transit_country", label: "Left transit country/region" },
+  { value: "leaving_origin_country", label: "Package leaving origin country/region." },
+  { value: "arrived_transit_country", label: "Package arrived at transit country/region." },
+  { value: "left_transit_country", label: "Package left transit country/region." },
+  { value: "arrived_local_airport", label: "Your package arrived at local airport" },
   { value: "arrived_tunisia", label: "Arrived in Tunisia" },
   { value: "out_for_delivery", label: "Out for delivery" },
   { value: "delivered", label: "Delivered" },

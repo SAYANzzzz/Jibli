@@ -75,7 +75,7 @@ function buildConfirmNotifyMessage(order: Order) {
   return [
     `Hi ${order.profiles?.full_name || "there"}, this is Jibli.`,
     `Update on your order #${order.id.slice(0, 8).toUpperCase()}:`,
-    `Status: Order confirmed by admin`,
+    `Status: Order confirmed by Jibli`,
   ].join("\n");
 }
 
@@ -172,7 +172,7 @@ function AdminDashboard() {
     setErrorMessage("");
 
     try {
-      const note = orderNotes[order.id]?.trim() || "Order confirmed by admin.";
+      const note = orderNotes[order.id]?.trim() || "Order confirmed by Jibli.";
       await updateAdminOrderStatus(order.id, {
         status: "price_confirmed",
         note,
