@@ -27,7 +27,7 @@ function ProductRequest() {
   const [snapshots, setSnapshots] = useState<Record<string, ItemSnapshot>>({});
   const [submitError, setSubmitError] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [successModal, setSuccessModal] = useState<{ autoOpened: boolean } | null>(null);
+  const [showWhatsappFallback, setShowWhatsappFallback] = useState(false);
 
   useEffect(() => {
     saveDraftItemIds(itemRefs.map((item) => item.id));
@@ -91,13 +91,9 @@ function ProductRequest() {
 
   const handleSubmitRequest = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    setSuccessModal(null);
+    setShowWhatsappFallback(false);
     setSubmitError("");
     setIsSubmitting(true);
-
-    // Open the tab synchronously, while the click is still "trusted", so browsers
-    // don't silently block it once we redirect it after the awaited save below.
-    const whatsappWindow = window.open("", "_blank");
 
     try {
       await saveCartItems({
@@ -119,14 +115,15 @@ function ProductRequest() {
       await submitOrder();
       clearItemDrafts(itemRefs.map((item) => item.id));
 
-      if (whatsappWindow) {
-        whatsappWindow.location.href = whatsappUrl;
-        setSuccessModal({ autoOpened: true });
-      } else {
-        setSuccessModal({ autoOpened: false });
-      }
+      // Navigate the current tab directly instead of pre-opening a blank tab
+      // and redirecting it later: on mobile (especially iOS Safari) that
+      // pattern reliably leaves the new tab stuck on about:blank once real
+      // network time has passed between opening it and setting its
+      // location. A same-tab redirect is a normal top-level navigation, so
+      // it isn't subject to popup-blocking on any platform.
+      setShowWhatsappFallback(true);
+      window.location.href = whatsappUrl;
     } catch (error) {
-      whatsappWindow?.close();
       console.error("Could not save request before WhatsApp handoff", error);
       setSubmitError("Could not save your request yet. Please try again before sending it on WhatsApp.");
     } finally {
@@ -229,25 +226,19 @@ function ProductRequest() {
         </p>
       </main>
 
-      {successModal && (
-        <div className="modalOverlay" role="dialog" aria-modal="true" onClick={() => setSuccessModal(null)}>
+      {showWhatsappFallback && (
+        <div className="modalOverlay" role="dialog" aria-modal="true" onClick={() => setShowWhatsappFallback(false)}>
           <div className="modalCard" onClick={(event) => event.stopPropagation()}>
-            <h2>{successModal.autoOpened ? "Request sent — WhatsApp opened!" : "Request saved!"}</h2>
-            <p>
-              {successModal.autoOpened
-                ? "Your request was saved. WhatsApp opened in a new tab with your order details ready — switch to that tab and hit Send to reach us."
-                : "Your request was saved, but your browser blocked the WhatsApp popup. Tap the button below to open it yourself."}
-            </p>
+            <h2>Request saved!</h2>
+            <p>Redirecting you to WhatsApp now — if nothing happens, tap the button below.</p>
             <a
               href={whatsappUrl}
-              target="_blank"
-              rel="noreferrer"
               className="modalWhatsappBtn"
-              onClick={() => setSuccessModal(null)}
+              onClick={() => setShowWhatsappFallback(false)}
             >
               Open WhatsApp
             </a>
-            <button type="button" className="modalCloseBtn" onClick={() => setSuccessModal(null)}>
+            <button type="button" className="modalCloseBtn" onClick={() => setShowWhatsappFallback(false)}>
               Close
             </button>
           </div>
