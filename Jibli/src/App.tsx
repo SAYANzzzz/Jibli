@@ -8,7 +8,6 @@ import AuthCallback from "./pages/AuthCallback.tsx";
 import ResetPassword from "./pages/ResetPassword.tsx";
 import Account from "./pages/Account.tsx";
 import ProductRequest from "./pages/ProductRequest.tsx";
-import QuickOrder from "./pages/QuickOrder.tsx";
 import OrderTracking from "./pages/OrderTracking.tsx";
 import AdminDashboard from "./pages/AdminDashboard";
 import { isAdminEmail } from "./admin";
@@ -100,6 +99,14 @@ function GuestRoute({ children }: { children: ReactElement }) {
   const nextPath = searchParams.get("next");
 
   return <Navigate to={nextPath || "/account"} replace />;
+}
+
+// /order used to be a separate, login-free page; it's now merged into
+// /request so every request is saved and visible in the admin dashboard.
+// This keeps any already-shared /order links working.
+function OrderRedirect() {
+  const location = useLocation();
+  return <Navigate to={`/request${location.search}`} replace />;
 }
 
 function AdminRoute({ children }: { children: ReactElement }) {
@@ -199,7 +206,7 @@ function App() {
             </ProtectedRoute>
           }
         />
-        <Route path="/order" element={<QuickOrder />} />
+        <Route path="/order" element={<OrderRedirect />} />
         <Route
           path="/tracking"
           element={

@@ -32,7 +32,7 @@ function Home() {
     event.preventDefault();
     const trimmedLink = productLink.trim();
 
-    navigate(trimmedLink ? `/order?link=${encodeURIComponent(trimmedLink)}` : "/order");
+    navigate(trimmedLink ? `/request?link=${encodeURIComponent(trimmedLink)}` : "/request");
   };
 
   return (
