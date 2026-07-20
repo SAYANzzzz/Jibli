@@ -3480,6 +3480,37 @@ td {
   background: #eef2ff;
 }
 
+.qoLinkInputWrap {
+  position: relative;
+}
+
+.qoLinkInputWrap input {
+  padding-right: 40px;
+}
+
+.qoLinkClearBtn {
+  position: absolute;
+  top: 50%;
+  right: 6px;
+  transform: translateY(-50%);
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  background: transparent;
+  color: #6b7280;
+  font-size: 22px;
+  line-height: 1;
+  cursor: pointer;
+  padding: 0;
+}
+
+.qoLinkClearBtn:hover {
+  color: #001f5b;
+}
+
 .qoPreviewCard {
   margin-top: 16px;
   padding: 16px;

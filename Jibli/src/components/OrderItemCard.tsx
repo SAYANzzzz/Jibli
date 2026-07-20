@@ -207,15 +207,30 @@ export function OrderItemCard({ id, index, initialLink, onUpdate, onRemove, canR
       {shop && (
         <>
           <label>2. Product link *</label>
-          <input
-            value={link}
-            onChange={(event) => {
-              const raw = event.target.value;
-              setIsCartShare(looksLikeCartShare(raw));
-              setLink(extractUrl(raw));
-            }}
-            placeholder={`Paste your ${shop === "shein" ? "Shein France" : SHOP_LABELS[shop]} product link...`}
-          />
+          <div className="qoLinkInputWrap">
+            <input
+              value={link}
+              onChange={(event) => {
+                const raw = event.target.value;
+                setIsCartShare(looksLikeCartShare(raw));
+                setLink(extractUrl(raw));
+              }}
+              placeholder={`Paste your ${shop === "shein" ? "Shein France" : SHOP_LABELS[shop]} product link...`}
+            />
+            {link && (
+              <button
+                type="button"
+                className="qoLinkClearBtn"
+                aria-label="Clear link"
+                onClick={() => {
+                  setLink("");
+                  setIsCartShare(false);
+                }}
+              >
+                ×
+              </button>
+            )}
+          </div>
 
           {shopMismatch && !isBlockedShein && detectedShop && (
             <div className="noticeBox warning">
