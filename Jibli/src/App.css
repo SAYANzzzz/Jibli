@@ -3436,6 +3436,50 @@ td {
   letter-spacing: 0.02em;
 }
 
+.qoShopPicker {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+  margin: 10px 0 18px;
+}
+
+.qoShopPickerBtn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  height: 84px;
+  padding: 10px 8px;
+  border: 1px solid #d9d9d9;
+  background: #ffffff;
+  cursor: pointer;
+  font: inherit;
+  color: #001f5b;
+}
+
+.qoShopPickerBtn:hover {
+  border-color: #001f5b;
+}
+
+.qoShopPickerBtn img {
+  max-height: 28px;
+  max-width: 100%;
+  object-fit: contain;
+}
+
+.qoShopPickerBtn span {
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.02em;
+}
+
+.qoShopPickerBtn.active {
+  border-color: #001f5b;
+  box-shadow: 6px 6px 0 rgba(0, 31, 91, 0.14);
+  background: #eef2ff;
+}
+
 .qoPreviewCard {
   margin-top: 16px;
   padding: 16px;

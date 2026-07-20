@@ -94,6 +94,7 @@ const ITEM_DRAFT_PREFIX = "jibli_item_draft_";
 
 export type ItemDraft = {
   link: string;
+  shop: QuickOrderShop | null;
   size: string;
   color: string;
   model: string;
