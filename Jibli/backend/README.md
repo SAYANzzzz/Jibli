@@ -7,7 +7,10 @@ cd backend
 python -m venv .venv
 .\.venv\Scripts\Activate.ps1
 pip install -r requirements.txt
+python -m playwright install chromium
 ```
+
+Product-link price auto-fetch (`/quick-order/preview`, `/products/preview`) uses a real headless Chromium browser to load AliExpress/Shein/Temu pages, since these sites block plain server requests and render price client-side. The `playwright install chromium` step downloads the browser binary — without it, preview falls back to a plain HTTP fetch, which works for the product name/image sometimes but almost never for AliExpress's price.
 
 Create `backend/.env`:
 
@@ -65,3 +68,15 @@ cd backend
 ```
 
 If this says `Invalid API key`, replace `SUPABASE_SERVICE_ROLE_KEY` in `backend/.env` with the full secret key from Supabase. Use the secret key only in `backend/.env`, never in React.
+
+## Deploying To Render
+
+Render's build step only runs `pip install`, which does not download the Chromium browser Playwright needs. Set Render's **Build Command** to:
+
+```bash
+bash build.sh
+```
+
+(`build.sh` in this folder runs `pip install -r requirements.txt` and then `playwright install --with-deps chromium`.) Without this, price auto-fetch silently falls back to a plain HTTP request, which rarely works for AliExpress.
+
+Render's free tier has very little RAM (512 MB), and each headless Chromium instance is heavy. The backend only ever renders one page at a time to protect against this, but if the whole service starts crashing/restarting after this change, that's the free-tier RAM limit being hit — the fix is upgrading the Render plan.

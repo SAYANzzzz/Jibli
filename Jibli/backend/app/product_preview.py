@@ -1,12 +1,27 @@
 import html
 import json
 import re
+import threading
 from typing import Literal
 from urllib.error import URLError
 from urllib.parse import urljoin
 from urllib.request import Request, urlopen
 
 Shop = Literal["aliexpress", "shein", "temu"]
+
+_BROWSER_USER_AGENT = (
+  "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
+  "AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126 Safari/537.36"
+)
+
+# AliExpress/Shein/Temu render their real price client-side and AliExpress
+# actively blocks plain server-to-server requests with an anti-bot page, so a
+# real headless browser is needed to see what a customer's browser sees. Only
+# one page is ever rendered at a time (Render's free tier has very little
+# RAM, and each Chromium instance is heavy) — concurrent preview requests
+# simply queue up rather than spawning multiple browsers and risking an OOM
+# crash of the whole backend.
+_browser_lock = threading.Semaphore(1)
 
 
 DEMO_PRODUCTS = {
@@ -165,32 +180,46 @@ def _extract_price_from_ld_json(content: str) -> str | None:
   return None
 
 
+_NEARBY_CURRENCY_PATTERN = re.compile(r'"currency(?:Code)?"\s*:\s*"([A-Za-z]{3})"')
+
+
 def _extract_price_from_inline_json(content: str) -> str | None:
   """Best-effort fallback for storefronts that embed price data in a
   non-standard inline JSON blob instead of meta tags or JSON-LD."""
   patterns = [
     r'"salePrice"\s*:\s*\{[^{}]*?"value"\s*:\s*"?([0-9]+(?:\.[0-9]+)?)"?',
-    r'"formatedAmount"\s*:\s*"[^0-9]*([0-9]+(?:\.[0-9]+)?)',
+    r'"formatedAmount"\s*:\s*"([^0-9]*[0-9]+(?:\.[0-9]+)?)',
     r'"minPrice"\s*:\s*"?([0-9]+(?:\.[0-9]+)?)"?',
-    r'"price"\s*:\s*"?\$?([0-9]+(?:\.[0-9]+)?)"?',
+    r'"price"\s*:\s*"?(\$?[0-9]+(?:\.[0-9]+)?)"?',
   ]
 
   for pattern in patterns:
     match = re.search(pattern, content)
-    if match:
-      return match.group(1)
+    if not match:
+      continue
+
+    amount = match.group(1)
+
+    # These blobs don't consistently carry a currency next to the price, so
+    # look for a currency code within a small window around the match — if
+    # none is found the amount is returned bare, which _price_currency_is_usable
+    # then correctly treats as unverified rather than assuming USD.
+    window = content[max(0, match.start() - 150) : match.end() + 150]
+    currency_match = _NEARBY_CURRENCY_PATTERN.search(window)
+
+    if currency_match:
+      return f"{amount} {currency_match.group(1)}"
+
+    return amount
 
   return None
 
 
-def _fetch_public_metadata(link: str) -> dict:
+def _fetch_plain_html(link: str) -> str:
   request = Request(
     link,
     headers={
-      "User-Agent": (
-        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
-        "AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126 Safari/537.36"
-      ),
+      "User-Agent": _BROWSER_USER_AGENT,
       "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
       "Accept-Language": "en-US,en;q=0.9",
     },
@@ -198,7 +227,72 @@ def _fetch_public_metadata(link: str) -> dict:
 
   with urlopen(request, timeout=10) as response:
     content_type = response.headers.get_content_charset() or "utf-8"
-    content = response.read(3_000_000).decode(content_type, errors="ignore")
+    return response.read(3_000_000).decode(content_type, errors="ignore")
+
+
+def _fetch_rendered_html(link: str) -> str:
+  """Load the page in a real headless browser so client-side-rendered price
+  data (Shein, Temu) is present in the HTML, and so AliExpress's anti-bot
+  check sees a real browser instead of a bare HTTP client."""
+  from playwright.sync_api import TimeoutError as PlaywrightTimeoutError
+  from playwright.sync_api import sync_playwright
+
+  with _browser_lock:
+    with sync_playwright() as playwright:
+      browser = playwright.chromium.launch(
+        headless=True,
+        args=["--disable-gpu", "--no-sandbox", "--disable-dev-shm-usage"],
+      )
+
+      try:
+        page = browser.new_page(
+          user_agent=_BROWSER_USER_AGENT,
+          viewport={"width": 1280, "height": 900},
+        )
+        page.goto(link, timeout=20_000, wait_until="domcontentloaded")
+
+        try:
+          page.wait_for_load_state("networkidle", timeout=6_000)
+        except PlaywrightTimeoutError:
+          pass
+
+        return page.content()
+      finally:
+        browser.close()
+
+
+def _fetch_html(link: str) -> str:
+  try:
+    return _fetch_rendered_html(link)
+  except Exception:
+    # Playwright missing/failed to launch (e.g. browser binary not installed)
+    # or the render itself failed — fall back to a plain request so a preview
+    # can still surface a name/image even without the JS-rendered price.
+    return _fetch_plain_html(link)
+
+
+# Shop sites localize price to whatever currency they infer from the
+# scraper's IP (e.g. TND, GBP, AED...), but Jibli's price formula expects the
+# amount to be in USD or EUR (see pricing.py). Silently treating "17.66 TND"
+# as if it were "17.66 USD" would badly under- or over-quote a customer, so a
+# price in an unrecognized/non-USD/EUR currency is discarded rather than
+# auto-filled — the customer enters it manually instead.
+_USABLE_CURRENCY_PATTERN = re.compile(r"(usd|us\$|\$|eur|€)", re.IGNORECASE)
+_OTHER_CURRENCY_PATTERN = re.compile(
+  r"\b(tnd|gbp|aed|sar|cny|rmb|jpy|inr|cad|aud|try|mad|dzd|egp|qar|kwd|chf|sek|nok|dkk)\b",
+  re.IGNORECASE,
+)
+
+
+def _price_currency_is_usable(price: str) -> bool:
+  if _OTHER_CURRENCY_PATTERN.search(price):
+    return False
+
+  return bool(_USABLE_CURRENCY_PATTERN.search(price))
+
+
+def _fetch_public_metadata(link: str) -> dict:
+  content = _fetch_html(link)
 
   price_amount = _extract_meta(content, "product:price:amount")
   price_currency = _extract_meta(content, "product:price:currency")
@@ -215,6 +309,9 @@ def _fetch_public_metadata(link: str) -> dict:
 
   if not price:
     price = _extract_price_from_inline_json(content)
+
+  if price and not _price_currency_is_usable(price):
+    price = None
 
   image_url = (
     _extract_meta(content, "og:image")
