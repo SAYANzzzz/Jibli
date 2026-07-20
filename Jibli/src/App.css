@@ -3831,14 +3831,77 @@ td {
 
 /* Gaming store */
 
-.gamingCatalog {
+.gamingGameGrid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-  gap: 20px;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 18px;
   margin-top: 30px;
 }
 
-.gamingProductCard h3 {
+.gamingGameCard {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  padding: 18px;
+  border: 1px solid #d9d9d9;
+  background: #ffffff;
+  cursor: pointer;
+  font: inherit;
+  text-align: center;
+}
+
+.gamingGameCard:hover {
+  border-color: #001f5b;
+  box-shadow: 6px 6px 0 rgba(0, 31, 91, 0.14);
+}
+
+.gamingGameImageWrap {
+  width: 96px;
+  height: 96px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  background: #f7f8fa;
+}
+
+.gamingGameImageWrap img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.gamingGameFallback {
+  font-size: 34px;
+  font-weight: 800;
+  color: #001f5b;
+}
+
+.gamingGameCard strong {
+  font-size: 14px;
+  line-height: 1.3;
+}
+
+.gamingBackBtn {
+  margin-top: 30px;
+  margin-bottom: 6px;
+}
+
+.gamingOffersTitle {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.gamingOffersImage {
+  width: 64px;
+  height: 64px;
+  object-fit: cover;
+  flex-shrink: 0;
+}
+
+.gamingOffersTitle h3 {
   margin-bottom: 6px;
 }
 

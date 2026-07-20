@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { Link } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import ProfileNavLink from "../components/ProfileNavLink";
@@ -7,18 +8,18 @@ const ADMIN_WHATSAPP_NUMBER = "21692001397";
 type GamingTier = {
   label: string;
   priceTnd: number | null;
-  note?: string;
   features?: string[];
 };
 
-type GamingProduct = {
+type GamingGame = {
   id: string;
-  category: string;
   name: string;
+  category: string;
+  image?: string;
   tiers: GamingTier[];
 };
 
-const GAMING_CATALOG: GamingProduct[] = [
+const GAMING_CATALOG: GamingGame[] = [
   {
     id: "riot-points",
     category: "Game top-up",
@@ -35,6 +36,7 @@ const GAMING_CATALOG: GamingProduct[] = [
     id: "free-fire",
     category: "Game top-up",
     name: "Free Fire — Diamonds",
+    image: "/games/freefire.jpg",
     tiers: [
       { label: "110 Diamonds", priceTnd: 5 },
       { label: "231 Diamonds", priceTnd: 10 },
@@ -47,6 +49,7 @@ const GAMING_CATALOG: GamingProduct[] = [
     id: "robux",
     category: "Game top-up",
     name: "Roblox — Robux",
+    image: "/games/roblox.png",
     tiers: [
       { label: "100 Robux", priceTnd: 12 },
       { label: "200 Robux", priceTnd: 18 },
@@ -64,6 +67,7 @@ const GAMING_CATALOG: GamingProduct[] = [
     id: "chess-premium",
     category: "Subscription",
     name: "Chess.com Premium (1 month)",
+    image: "/games/chess.jpg",
     tiers: [
       {
         label: "Gold",
@@ -112,6 +116,7 @@ const GAMING_CATALOG: GamingProduct[] = [
     id: "netflix",
     category: "Subscription",
     name: "Netflix",
+    image: "/games/netflix.png",
     tiers: [{ label: "Message us for current plans & pricing", priceTnd: null }],
   },
   {
@@ -124,23 +129,28 @@ const GAMING_CATALOG: GamingProduct[] = [
     id: "minecraft",
     category: "Game code",
     name: "Minecraft (PC Edition)",
-    tiers: [{ label: "Full game", priceTnd: null }],
+    image: "/games/minecraft.jpg",
+    tiers: [{ label: "Message us for current pricing", priceTnd: null }],
   },
   {
     id: "steam-gift-cards",
     category: "Gift card",
     name: "Steam Gift Cards",
+    image: "/games/steam.jpg",
     tiers: [{ label: "Message us for available amounts", priceTnd: null }],
   },
 ];
 
-function buildWhatsappUrl(productName: string, tierLabel: string, priceTnd: number | null) {
+function buildWhatsappUrl(gameName: string, tierLabel: string, priceTnd: number | null) {
   const priceLine = priceTnd !== null ? ` — ${priceTnd} TND` : "";
-  const message = `Hi! I'd like to order:\n${productName}\n${tierLabel}${priceLine}`;
+  const message = `Hi! I'd like to order:\n${gameName}\n${tierLabel}${priceLine}`;
   return `https://wa.me/${ADMIN_WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`;
 }
 
 function GamingStore() {
+  const [selectedGameId, setSelectedGameId] = useState<string | null>(null);
+  const selectedGame = GAMING_CATALOG.find((game) => game.id === selectedGameId) ?? null;
+
   return (
     <div>
       <Navbar>
@@ -154,24 +164,51 @@ function GamingStore() {
             <h1>Gaming top-ups & subscriptions</h1>
             <p>
               Riot Points, Valorant VP, Free Fire Diamonds, Robux, Chess.com and Spotify
-              Premium, game codes and more — fast, no password needed. Pick what you want and
-              send us the order on WhatsApp.
+              Premium, game codes and more — fast, no password needed.
             </p>
           </div>
         </section>
 
-        <div className="gamingCatalog">
-          {GAMING_CATALOG.map((product) => (
-            <div className="card gamingProductCard" key={product.id}>
+        {!selectedGame ? (
+          <div className="gamingGameGrid">
+            {GAMING_CATALOG.map((game) => (
+              <button
+                type="button"
+                key={game.id}
+                className="gamingGameCard"
+                onClick={() => setSelectedGameId(game.id)}
+              >
+                <div className="gamingGameImageWrap">
+                  {game.image ? (
+                    <img src={game.image} alt="" />
+                  ) : (
+                    <span className="gamingGameFallback">{game.name.slice(0, 1)}</span>
+                  )}
+                </div>
+                <strong>{game.name}</strong>
+                <span className="platformBadge">{game.category}</span>
+              </button>
+            ))}
+          </div>
+        ) : (
+          <div className="gamingOffersView">
+            <button type="button" className="outlineBtn gamingBackBtn" onClick={() => setSelectedGameId(null)}>
+              ← Back to games
+            </button>
+
+            <div className="card gamingOffersCard">
               <div className="cardTitleRow">
-                <div>
-                  <h3>{product.name}</h3>
-                  <span className="platformBadge">{product.category}</span>
+                <div className="gamingOffersTitle">
+                  {selectedGame.image && <img src={selectedGame.image} alt="" className="gamingOffersImage" />}
+                  <div>
+                    <h3>{selectedGame.name}</h3>
+                    <span className="platformBadge">{selectedGame.category}</span>
+                  </div>
                 </div>
               </div>
 
               <div className="gamingTierList">
-                {product.tiers.map((tier) => (
+                {selectedGame.tiers.map((tier) => (
                   <div className="gamingTierRow" key={tier.label}>
                     <div className="gamingTierInfo">
                       <strong>{tier.label}</strong>
@@ -187,7 +224,7 @@ function GamingStore() {
                     <div className="gamingTierAction">
                       {tier.priceTnd !== null && <span className="gamingTierPrice">{tier.priceTnd} TND</span>}
                       <a
-                        href={buildWhatsappUrl(product.name, tier.label, tier.priceTnd)}
+                        href={buildWhatsappUrl(selectedGame.name, tier.label, tier.priceTnd)}
                         target="_blank"
                         rel="noreferrer"
                         className="primaryBtn"
@@ -199,8 +236,8 @@ function GamingStore() {
                 ))}
               </div>
             </div>
-          ))}
-        </div>
+          </div>
+        )}
 
         <p className="secureText">
           Don't see what you're looking for? Message us on WhatsApp and we'll check it for you.
