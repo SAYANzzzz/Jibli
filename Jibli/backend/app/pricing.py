@@ -9,7 +9,13 @@ MULTIPLIERS: dict[Shop, float] = {
   "shein": 5.5,
   "temu": 5.5,
 }
-SERVICE_FEE_TND = 5
+
+# AliExpress adds a flat service fee on top; Shein and Temu don't.
+SERVICE_FEE_TND: dict[Shop, int] = {
+  "aliexpress": 5,
+  "shein": 0,
+  "temu": 0,
+}
 
 
 def arrondi(value: float) -> int:
@@ -29,7 +35,7 @@ def calculate_price(shop: str, amount: float, quantity: int = 1, currency: Curre
 
   # The multiplier is applied to the entered amount as-is, regardless of
   # whether the customer picked USD or EUR — no currency conversion.
-  unit_price_tnd = arrondi(amount * MULTIPLIERS[shop]) + SERVICE_FEE_TND
+  unit_price_tnd = arrondi(amount * MULTIPLIERS[shop]) + SERVICE_FEE_TND[shop]
   total_price_tnd = unit_price_tnd * quantity
 
   return {
