@@ -56,6 +56,20 @@ export function extractUrl(text: string): string {
   return match ? match[0] : text;
 }
 
+const CART_SHARE_PHRASES = ["shopping cart", "my cart", "panier"];
+
+// Shein/Temu cart (panier) shares use the exact same link format as a single
+// product share, so the URL alone can't tell them apart — only the wording
+// customers paste alongside the link does ("these items in my shopping
+// cart...", "share my cart with you"). We can't split a cart link into
+// individual products (the item list only ever renders inside the
+// Shein/Temu app, never in the shared page itself), so we detect this from
+// the pasted text and ask the customer to paste each product separately.
+export function looksLikeCartShare(text: string): boolean {
+  const normalized = text.toLowerCase();
+  return CART_SHARE_PHRASES.some((phrase) => normalized.includes(phrase));
+}
+
 export function normalizeLink(link: string) {
   const trimmed = link.trim();
 

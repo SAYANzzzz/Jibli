@@ -9,6 +9,7 @@ import {
   detectShop,
   extractUrl,
   isSheinFranceLink,
+  looksLikeCartShare,
   normalizeLink,
 } from "../orderItem";
 import type { ExtraOption, ItemSnapshot } from "../orderItem";
@@ -24,8 +25,10 @@ type OrderItemCardProps = {
 
 export function OrderItemCard({ id, index, initialLink, onUpdate, onRemove, canRemove }: OrderItemCardProps) {
   const [link, setLink] = useState(initialLink);
+  const [isCartShare, setIsCartShare] = useState(false);
   const shop = useMemo(() => detectShop(link), [link]);
   const isBlockedShein = shop === "shein" && !isSheinFranceLink(link);
+  const isBlocked = isBlockedShein || isCartShare;
 
   const [preview, setPreview] = useState<QuickOrderPreview | null>(null);
   const [isPreviewLoading, setIsPreviewLoading] = useState(false);
@@ -85,7 +88,7 @@ export function OrderItemCard({ id, index, initialLink, onUpdate, onRemove, canR
     setPriceResult(null);
     setCalcError("");
 
-    if (!shop || !link.trim() || Number(amount) <= 0 || quantity < 1 || isBlockedShein) {
+    if (!shop || !link.trim() || Number(amount) <= 0 || quantity < 1 || isBlocked) {
       return;
     }
 
@@ -103,7 +106,7 @@ export function OrderItemCard({ id, index, initialLink, onUpdate, onRemove, canR
     }, 500);
 
     return () => clearTimeout(timeoutId);
-  }, [shop, link, amount, currency, quantity, isBlockedShein]);
+  }, [shop, link, amount, currency, quantity, isBlocked]);
 
   const filledExtraOptions = useMemo(
     () => extraOptions.filter((option) => option.label.trim() && option.value.trim()),
@@ -164,7 +167,11 @@ export function OrderItemCard({ id, index, initialLink, onUpdate, onRemove, canR
       <label>Product link *</label>
       <input
         value={link}
-        onChange={(event) => setLink(extractUrl(event.target.value))}
+        onChange={(event) => {
+          const raw = event.target.value;
+          setIsCartShare(looksLikeCartShare(raw));
+          setLink(extractUrl(raw));
+        }}
         placeholder="Paste your AliExpress, Shein, or Temu product link..."
       />
 
@@ -199,7 +206,16 @@ export function OrderItemCard({ id, index, initialLink, onUpdate, onRemove, canR
         </div>
       )}
 
-      {shop && !isBlockedShein && (
+      {isCartShare && (
+        <div className="noticeBox warning">
+          This looks like a shared cart (panier) with multiple items, not a single product — we
+          can't price a whole cart as one item. Please paste each product's own link separately:
+          remove this link, open your cart, share or copy each item's individual product link,
+          and add one per card using "+ Add another product".
+        </div>
+      )}
+
+      {shop && !isBlocked && (
         <div className="qoPreviewCard">
           {isPreviewLoading ? (
             <p className="mutedText">Checking the product link...</p>
@@ -221,7 +237,7 @@ export function OrderItemCard({ id, index, initialLink, onUpdate, onRemove, canR
         </div>
       )}
 
-      {!isBlockedShein && (
+      {!isBlocked && (
         <>
           <div className="qoOptionsGrid">
             <div>
