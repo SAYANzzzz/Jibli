@@ -209,6 +209,7 @@ function Account() {
   return (
     <div>
       <Navbar>
+        <Link to="/gaming">Gaming</Link>
         <Link to="/request">New order</Link>
         <Link to="/tracking">Track orders</Link>
         {canAccessAdmin && <Link to="/admin">Admin</Link>}

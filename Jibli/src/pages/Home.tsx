@@ -38,6 +38,7 @@ function Home() {
   return (
     <div>
       <Navbar>
+        <Link to="/gaming" className="outlineBtn">Gaming</Link>
         {isAuthenticated ? (
           <>
             <Link to="/tracking#panier" className="outlineBtn">Panier</Link>

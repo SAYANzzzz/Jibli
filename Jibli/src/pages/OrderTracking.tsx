@@ -89,6 +89,7 @@ function OrderTracking() {
   return (
     <div>
       <Navbar>
+        <Link to="/gaming">Gaming</Link>
         <Link to="/request">Request order</Link>
         <ProfileNavLink />
       </Navbar>

@@ -134,6 +134,7 @@ function ProductRequest() {
   return (
     <div>
       <Navbar>
+        <Link to="/gaming" className="outlineBtn">Gaming</Link>
         <Link to="/tracking#panier" className="outlineBtn">Panier</Link>
         <ProfileNavLink />
       </Navbar>

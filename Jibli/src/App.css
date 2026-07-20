@@ -3828,3 +3828,101 @@ td {
   cursor: pointer;
   font-weight: 700;
 }
+
+/* Gaming store */
+
+.gamingCatalog {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 20px;
+  margin-top: 30px;
+}
+
+.gamingProductCard h3 {
+  margin-bottom: 6px;
+}
+
+.gamingTierList {
+  margin-top: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.gamingTierRow {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 14px;
+  padding-top: 16px;
+  border-top: 1px solid #eef0f3;
+}
+
+.gamingTierList .gamingTierRow:first-child {
+  padding-top: 0;
+  border-top: none;
+}
+
+.gamingTierInfo strong {
+  display: block;
+  font-size: 15px;
+}
+
+.gamingTierFeatures {
+  margin: 8px 0 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.gamingTierFeatures li {
+  font-size: 13px;
+  color: #666666;
+}
+
+.gamingTierFeatures li::before {
+  content: "✓ ";
+  color: #001f5b;
+  font-weight: 800;
+}
+
+.gamingTierAction {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.gamingTierPrice {
+  font-weight: 800;
+  font-size: 16px;
+  color: #001f5b;
+  white-space: nowrap;
+}
+
+.gamingTierAction .primaryBtn {
+  min-width: unset;
+  height: 40px;
+  padding: 0 16px;
+  font-size: 13px;
+  white-space: nowrap;
+  text-decoration: none;
+}
+
+@media (max-width: 640px) {
+  .gamingTierRow {
+    flex-direction: column;
+  }
+
+  .gamingTierAction {
+    align-items: flex-start;
+    width: 100%;
+  }
+
+  .gamingTierAction .primaryBtn {
+    width: 100%;
+  }
+}

@@ -9,6 +9,7 @@ import ResetPassword from "./pages/ResetPassword.tsx";
 import Account from "./pages/Account.tsx";
 import ProductRequest from "./pages/ProductRequest.tsx";
 import OrderTracking from "./pages/OrderTracking.tsx";
+import GamingStore from "./pages/GamingStore.tsx";
 import AdminDashboard from "./pages/AdminDashboard";
 import { isAdminEmail } from "./admin";
 import { getCurrentSession } from "./auth";
@@ -207,6 +208,7 @@ function App() {
           }
         />
         <Route path="/order" element={<OrderRedirect />} />
+        <Route path="/gaming" element={<GamingStore />} />
         <Route
           path="/tracking"
           element={
