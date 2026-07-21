@@ -34,7 +34,7 @@ function LanguageSwitcher() {
         aria-expanded={isOpen}
         onClick={() => setIsOpen((current) => !current)}
       >
-        <span className="langFlag">{current.flag}</span>
+        <img src={current.flag} alt="" className="langFlag" />
         <span>{current.label}</span>
         <ChevronDown size={14} />
       </button>
@@ -53,7 +53,7 @@ function LanguageSwitcher() {
                   setIsOpen(false);
                 }}
               >
-                <span className="langFlag">{option.flag}</span>
+                <img src={option.flag} alt="" className="langFlag" />
                 <span>{option.name}</span>
               </button>
             </li>

@@ -130,8 +130,11 @@ textarea {
 }
 
 .langFlag {
-  font-size: 15px;
-  line-height: 1;
+  width: 20px;
+  height: 15px;
+  object-fit: cover;
+  border-radius: 2px;
+  flex-shrink: 0;
 }
 
 .langSwitcherMenu {
