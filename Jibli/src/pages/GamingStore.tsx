@@ -129,12 +129,6 @@ const GAMING_CATALOG: GamingGame[] = [
     tiers: [{ label: "Message us for current plans & pricing", priceTnd: null }],
   },
   {
-    id: "human-fall-flat",
-    category: "Game code",
-    name: "Human: Fall Flat (Steam code)",
-    tiers: [{ label: "Full game", priceTnd: 6 }],
-  },
-  {
     id: "minecraft",
     category: "Game code",
     name: "Minecraft — Java & Bedrock Edition (PC)",
