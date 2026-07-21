@@ -3554,7 +3554,7 @@ td {
 }
 
 .qoLinkInputWrap input {
-  padding-right: 40px;
+  padding-right: 46px;
 }
 
 .qoLinkClearBtn {
@@ -3562,21 +3562,22 @@ td {
   top: 50%;
   right: 6px;
   transform: translateY(-50%);
-  width: 28px;
-  height: 28px;
+  width: 34px;
+  height: 34px;
   display: flex;
   align-items: center;
   justify-content: center;
   border: none;
-  background: transparent;
-  color: #6b7280;
-  font-size: 22px;
-  line-height: 1;
+  border-radius: 50%;
+  background: #eef0f3;
+  color: #4b5563;
   cursor: pointer;
   padding: 0;
 }
 
-.qoLinkClearBtn:hover {
+.qoLinkClearBtn:hover,
+.qoLinkClearBtn:active {
+  background: #dfe3e9;
   color: #001f5b;
 }
 

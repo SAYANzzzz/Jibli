@@ -44,8 +44,14 @@ export function isSheinFranceLink(link: string): boolean {
   // fr.shein.com is the desktop France site. onelink.shein.com is Shein's
   // mobile-app share link (used for both single products and panier/cart
   // shares) — it never reveals a region in the URL, so we accept it rather
-  // than block every customer sharing from their phone.
-  return normalized.includes("fr.shein.com") || normalized.includes("onelink.shein.com");
+  // than block every customer sharing from their phone. m.shein.com puts
+  // the region in the path instead of the subdomain (m.shein.com/fr/...),
+  // which is what Shein's mobile site/app actually generates when sharing.
+  return (
+    normalized.includes("fr.shein.com") ||
+    normalized.includes("onelink.shein.com") ||
+    normalized.includes("shein.com/fr/")
+  );
 }
 
 // Customers often paste the whole share message (product name + promo text +

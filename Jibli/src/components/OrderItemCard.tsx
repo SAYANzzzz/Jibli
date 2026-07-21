@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
+import { X } from "lucide-react";
 import { quickOrderPreview, quickOrderPrice } from "../api";
 import type { PriceCurrency, QuickOrderPreview, QuickOrderPriceResult, QuickOrderShop } from "../api";
 import {
@@ -229,7 +230,7 @@ export function OrderItemCard({ id, index, initialLink, onUpdate, onRemove, canR
                   setIsCartShare(false);
                 }}
               >
-                ×
+                <X size={16} />
               </button>
             )}
           </div>
