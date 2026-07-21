@@ -1,8 +1,8 @@
 export type Language = "en" | "fr";
 
-export const LANGUAGES: { value: Language; label: string }[] = [
-  { value: "en", label: "EN" },
-  { value: "fr", label: "FR" },
+export const LANGUAGES: { value: Language; label: string; flag: string; name: string }[] = [
+  { value: "en", label: "EN", flag: "🇺🇸", name: "English" },
+  { value: "fr", label: "FR", flag: "🇫🇷", name: "Français" },
 ];
 
 const en = {
