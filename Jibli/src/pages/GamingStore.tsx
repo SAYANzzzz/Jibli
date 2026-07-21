@@ -113,6 +113,7 @@ const GAMING_CATALOG: GamingGame[] = [
     id: "spotify-premium",
     category: "Subscription",
     name: "Spotify Premium (1 month)",
+    image: "/games/spotify.png",
     tiers: [
       { label: "Personnel", priceTnd: 15 },
       { label: "Étudiants", priceTnd: 10 },
