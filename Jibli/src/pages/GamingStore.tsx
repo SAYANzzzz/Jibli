@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import ProfileNavLink from "../components/ProfileNavLink";
+import { useTranslation } from "../i18n/LanguageContext";
 
 const ADMIN_WHATSAPP_NUMBER = "21692001397";
 
@@ -155,11 +156,24 @@ function buildWhatsappUrl(gameName: string, tierLabel: string, priceTnd: number 
   return `https://wa.me/${ADMIN_WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`;
 }
 
+const CATEGORY_KEYS: Record<string, "categoryTopup" | "categorySubscription" | "categoryGameCode" | "categoryGiftCard"> = {
+  "Game top-up": "categoryTopup",
+  Subscription: "categorySubscription",
+  "Game code": "categoryGameCode",
+  "Gift card": "categoryGiftCard",
+};
+
 function GamingStore() {
+  const { t } = useTranslation();
   const [selectedGameId, setSelectedGameId] = useState<string | null>(null);
   const [selectedTierIndex, setSelectedTierIndex] = useState(0);
   const selectedGame = GAMING_CATALOG.find((game) => game.id === selectedGameId) ?? null;
   const selectedTier = selectedGame?.tiers[selectedTierIndex] ?? null;
+
+  const categoryLabel = (category: string) => {
+    const key = CATEGORY_KEYS[category];
+    return key ? t(`gaming.${key}`) : category;
+  };
 
   const openGame = (gameId: string) => {
     setSelectedGameId(gameId);
@@ -169,18 +183,15 @@ function GamingStore() {
   return (
     <div>
       <Navbar>
-        <Link to="/request" className="outlineBtn">Order a product</Link>
+        <Link to="/request" className="outlineBtn">{t("nav.orderAProduct")}</Link>
         <ProfileNavLink />
       </Navbar>
 
       <main className="requestPage gamingStorePage">
         <section className="requestHero">
           <div className="requestHeroText">
-            <h1>Gaming top-ups & subscriptions</h1>
-            <p>
-              Riot Points, Valorant VP, Free Fire Diamonds, Robux, Chess.com and Spotify
-              Premium, game codes and more — fast, no password needed.
-            </p>
+            <h1>{t("gaming.title")}</h1>
+            <p>{t("gaming.subtitle")}</p>
           </div>
         </section>
 
@@ -201,14 +212,14 @@ function GamingStore() {
                   )}
                 </div>
                 <strong>{game.name}</strong>
-                <span className="platformBadge">{game.category}</span>
+                <span className="platformBadge">{categoryLabel(game.category)}</span>
               </button>
             ))}
           </div>
         ) : (
           <div className="gamingOffersView">
             <button type="button" className="outlineBtn gamingBackBtn" onClick={() => setSelectedGameId(null)}>
-              ← Back to games
+              {t("gaming.backToGames")}
             </button>
 
             <div className="card gamingOffersCard">
@@ -221,14 +232,14 @@ function GamingStore() {
                   )}
                 </div>
                 <div>
-                  <span className="platformBadge">{selectedGame.category}</span>
+                  <span className="platformBadge">{categoryLabel(selectedGame.category)}</span>
                   <h3>{selectedGame.name}</h3>
                 </div>
               </div>
 
               {selectedGame.tiers.length > 1 && (
                 <>
-                  <label>Choose an option</label>
+                  <label>{t("gaming.chooseOption")}</label>
                   <div className="gamingTierTiles">
                     {selectedGame.tiers.map((tier, index) => (
                       <button
@@ -264,7 +275,7 @@ function GamingStore() {
                     rel="noreferrer"
                     className="primaryBtn wideBtn"
                   >
-                    Order on WhatsApp
+                    {t("gaming.orderOnWhatsapp")}
                   </a>
                 </div>
               )}
@@ -272,9 +283,7 @@ function GamingStore() {
           </div>
         )}
 
-        <p className="secureText">
-          Don't see what you're looking for? Message us on WhatsApp and we'll check it for you.
-        </p>
+        <p className="secureText">{t("gaming.notFound")}</p>
       </main>
     </div>
   );

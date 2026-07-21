@@ -9,10 +9,12 @@ import { SHOP_LABELS, clearItemDrafts, createId, loadDraftItemIds, saveDraftItem
 import type { ItemSnapshot } from "../orderItem";
 import Navbar from "../components/Navbar";
 import ProfileNavLink from "../components/ProfileNavLink";
+import { useTranslation } from "../i18n/LanguageContext";
 
 const ADMIN_WHATSAPP_NUMBER = "21692001397";
 
 function ProductRequest() {
+  const { t } = useTranslation();
   const [searchParams] = useSearchParams();
   const initialLink = searchParams.get("link") ?? "";
 
@@ -126,7 +128,7 @@ function ProductRequest() {
       window.location.href = whatsappUrl;
     } catch (error) {
       console.error("Could not save request before WhatsApp handoff", error);
-      setSubmitError("Could not save your request yet. Please try again before sending it on WhatsApp.");
+      setSubmitError(t("request.submitError"));
     } finally {
       setIsSubmitting(false);
     }
@@ -135,19 +137,16 @@ function ProductRequest() {
   return (
     <div>
       <Navbar>
-        <Link to="/gaming" className="outlineBtn"><Gamepad2 size={16} /> Gaming</Link>
-        <Link to="/tracking#panier" className="outlineBtn"><ShoppingCart size={16} /> Panier</Link>
+        <Link to="/gaming" className="outlineBtn"><Gamepad2 size={16} /> {t("nav.gaming")}</Link>
+        <Link to="/tracking#panier" className="outlineBtn"><ShoppingCart size={16} /> {t("nav.panier")}</Link>
         <ProfileNavLink />
       </Navbar>
 
       <main className="requestPage quickOrderPage">
         <section className="requestHero">
           <div className="requestHeroText">
-            <h1>Request an order</h1>
-            <p>
-              Paste a product link from AliExpress, Shein, or Temu, pick the exact options you
-              want, and we calculate the final price before you confirm on WhatsApp.
-            </p>
+            <h1>{t("request.title")}</h1>
+            <p>{t("request.subtitle")}</p>
           </div>
 
           <div className="requestHeroVisual">
@@ -179,37 +178,37 @@ function ProductRequest() {
           ))}
 
           <button className="addProductLinkBtn qoAddProductBtn" type="button" onClick={handleAddItem}>
-            + Add another product
+            {t("request.addAnotherProduct")}
           </button>
 
           {activeItems.length > 0 && (
             <div className="card qoPriceResult">
               <div className="cardTitleRow">
                 <div>
-                  <h3>Order summary</h3>
+                  <h3>{t("request.orderSummary")}</h3>
                   <p className="mutedText">
-                    {allReady
-                      ? "All products are priced. Review, then send your request."
-                      : "Finish entering the price for every product to send your request."}
+                    {allReady ? t("request.allPriced") : t("request.finishPricing")}
                   </p>
                 </div>
-                <span className="platformBadge">{activeItems.length} item(s)</span>
+                <span className="platformBadge">{activeItems.length} {t("request.items")}</span>
               </div>
 
               <div className="qoSummaryList">
                 {activeItems.map((item, index) => (
                   <div className="qoSummaryRow" key={`${item.link}-${index}`}>
                     <span>
-                      {index + 1}. {item.productName || (item.shop ? SHOP_LABELS[item.shop] : "Product")}
+                      {index + 1}. {item.productName || (item.shop ? SHOP_LABELS[item.shop] : t("request.product"))}
                     </span>
-                    <strong>{item.priceResult ? `${item.priceResult.total_price_tnd} TND` : "Pending price"}</strong>
+                    <strong>
+                      {item.priceResult ? `${item.priceResult.total_price_tnd} TND` : t("request.pendingPrice")}
+                    </strong>
                   </div>
                 ))}
               </div>
 
               <div className="qoPriceBox">
                 <div className="qoPriceRow qoPriceTotal">
-                  <span>Grand total</span>
+                  <span>{t("request.grandTotal")}</span>
                   <span>{grandTotal} TND</span>
                 </div>
               </div>
@@ -219,29 +218,27 @@ function ProductRequest() {
           {submitError && <div className="noticeBox warning">{submitError}</div>}
 
           <button className="wideBtn" disabled={!canSubmit} type="submit">
-            {isSubmitting ? "Saving request..." : "Send request on WhatsApp"}
+            {isSubmitting ? t("request.sending") : t("request.sendRequest")}
           </button>
         </form>
 
-        <p className="secureText">
-          Your request is free. You only pay after we confirm the final price.
-        </p>
+        <p className="secureText">{t("request.freeNotice")}</p>
       </main>
 
       {showWhatsappFallback && (
         <div className="modalOverlay" role="dialog" aria-modal="true" onClick={() => setShowWhatsappFallback(false)}>
           <div className="modalCard" onClick={(event) => event.stopPropagation()}>
-            <h2>Request saved!</h2>
-            <p>Redirecting you to WhatsApp now — if nothing happens, tap the button below.</p>
+            <h2>{t("request.modalTitle")}</h2>
+            <p>{t("request.modalText")}</p>
             <a
               href={whatsappUrl}
               className="modalWhatsappBtn"
               onClick={() => setShowWhatsappFallback(false)}
             >
-              Open WhatsApp
+              {t("request.openWhatsapp")}
             </a>
             <button type="button" className="modalCloseBtn" onClick={() => setShowWhatsappFallback(false)}>
-              Close
+              {t("request.close")}
             </button>
           </div>
         </div>

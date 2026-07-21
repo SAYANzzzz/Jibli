@@ -6,8 +6,10 @@ import { getCurrentSession } from "../auth";
 import Navbar from "../components/Navbar";
 import ProfileNavLink from "../components/ProfileNavLink";
 import { supabase } from "../supabase";
+import { useTranslation } from "../i18n/LanguageContext";
 
 function Home() {
+  const { t } = useTranslation();
   const [productLink, setProductLink] = useState("");
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const navigate = useNavigate();
@@ -38,16 +40,16 @@ function Home() {
   return (
     <div>
       <Navbar>
-        <Link to="/gaming" className="outlineBtn"><Gamepad2 size={16} /> Gaming</Link>
+        <Link to="/gaming" className="outlineBtn"><Gamepad2 size={16} /> {t("nav.gaming")}</Link>
         {isAuthenticated ? (
           <>
-            <Link to="/tracking#panier" className="outlineBtn"><ShoppingCart size={16} /> Panier</Link>
+            <Link to="/tracking#panier" className="outlineBtn"><ShoppingCart size={16} /> {t("nav.panier")}</Link>
             <ProfileNavLink />
           </>
         ) : (
           <>
-            <Link to="/login" className="outlineBtn"><LogIn size={16} /> Login</Link>
-            <Link to="/register" className="primaryBtn"><UserPlus size={16} /> Register</Link>
+            <Link to="/login" className="outlineBtn"><LogIn size={16} /> {t("nav.login")}</Link>
+            <Link to="/register" className="primaryBtn"><UserPlus size={16} /> {t("nav.register")}</Link>
           </>
         )}
       </Navbar>
@@ -55,29 +57,26 @@ function Home() {
       <section className="hero">
         <div className="heroText">
           <h1>
-            Paste the link. <br />
-            We bring it to Tunisia.
+            {t("home.heroTitle1")} <br />
+            {t("home.heroTitle2")}
           </h1>
 
-          <p>
-            Order from AliExpress, Amazon, Shein and more without international
-            payment problems.
-          </p>
+          <p>{t("home.heroSubtitle")}</p>
 
           <form className="linkBox" onSubmit={handlePriceRequest}>
             <LinkIcon size={18} />
             <input
               value={productLink}
               onChange={(event) => setProductLink(event.target.value)}
-              placeholder="Paste AliExpress or Shein link here..."
+              placeholder={t("home.linkPlaceholder")}
             />
-            <button type="submit">Get my price</button>
+            <button type="submit">{t("home.getMyPrice")}</button>
           </form>
 
           <div className="trustRow">
-            <span>No international card needed</span>
-            <span>Clear price before ordering</span>
-            <span>Track your order</span>
+            <span>{t("home.trust1")}</span>
+            <span>{t("home.trust2")}</span>
+            <span>{t("home.trust3")}</span>
           </div>
         </div>
 
@@ -91,41 +90,38 @@ function Home() {
       </section>
 
       <section className="section">
-        <h2>How it works</h2>
+        <h2>{t("home.howItWorks")}</h2>
 
         <div className="steps">
           <div className="step">
             <div className="stepIcon"><LinkIcon /></div>
-            <h3>Paste link</h3>
-            <p>Send us the product link from any supported online shop.</p>
+            <h3>{t("home.step1Title")}</h3>
+            <p>{t("home.step1Text")}</p>
           </div>
 
           <div className="step">
             <div className="stepIcon"><CreditCard /></div>
-            <h3>Get price</h3>
-            <p>We calculate product price, shipping, customs estimate and fee.</p>
+            <h3>{t("home.step2Title")}</h3>
+            <p>{t("home.step2Text")}</p>
           </div>
 
           <div className="step">
             <div className="stepIcon"><ShieldCheck /></div>
-            <h3>Confirm order</h3>
-            <p>You confirm the price and pay a small deposit.</p>
+            <h3>{t("home.step3Title")}</h3>
+            <p>{t("home.step3Text")}</p>
           </div>
 
           <div className="step">
             <div className="stepIcon"><Truck /></div>
-            <h3>Receive product</h3>
-            <p>We order it and you track the package until delivery.</p>
+            <h3>{t("home.step4Title")}</h3>
+            <p>{t("home.step4Text")}</p>
           </div>
         </div>
       </section>
 
       <section className="section gamingTeaserSection">
-        <h2>Gaming top-ups & subscriptions</h2>
-        <p className="gamingTeaserText">
-          Riot Points, Valorant VP, Free Fire Diamonds, Robux, Chess.com and Spotify Premium,
-          Steam gift cards and more — no password needed, fast delivery on WhatsApp.
-        </p>
+        <h2>{t("home.gamingSectionTitle")}</h2>
+        <p className="gamingTeaserText">{t("home.gamingSectionText")}</p>
 
         <div className="gamingTeaserLogos">
           <img src="/games/league-of-legends.jpg" alt="League of Legends" />
@@ -136,7 +132,7 @@ function Home() {
           <img src="/games/spotify.png" alt="Spotify" />
         </div>
 
-        <Link to="/gaming" className="primaryBtn gamingTeaserBtn"><Gamepad2 size={16} /> Explore gaming top-ups</Link>
+        <Link to="/gaming" className="primaryBtn gamingTeaserBtn"><Gamepad2 size={16} /> {t("home.exploreGaming")}</Link>
       </section>
     </div>
   );

@@ -15,6 +15,7 @@ import {
   saveItemDraft,
 } from "../orderItem";
 import type { ExtraOption, ItemSnapshot } from "../orderItem";
+import { useTranslation } from "../i18n/LanguageContext";
 
 type OrderItemCardProps = {
   id: string;
@@ -26,6 +27,7 @@ type OrderItemCardProps = {
 };
 
 export function OrderItemCard({ id, index, initialLink, onUpdate, onRemove, canRemove }: OrderItemCardProps) {
+  const { t } = useTranslation();
   // Loaded once per card id: if a mobile browser (or an in-app browser like
   // Instagram's) reloaded the page while the customer was away in another
   // app, this recovers what they'd already filled in instead of starting
@@ -85,15 +87,15 @@ export function OrderItemCard({ id, index, initialLink, onUpdate, onRemove, canR
             if (!Number.isNaN(numeric) && numeric > 0) {
               setAmount((current) => current || String(numeric));
             } else {
-              setPreviewNotice("Could not read the exact price automatically. Enter it below.");
+              setPreviewNotice(t("orderItem.couldNotReadPrice"));
             }
           } else {
-            setPreviewNotice("Could not read the exact price automatically. Enter it below.");
+            setPreviewNotice(t("orderItem.couldNotReadPrice"));
           }
         })
         .catch((error) => {
           console.error("Could not preview product link", error);
-          setPreviewNotice("Could not auto-fetch this product. Enter the price manually below.");
+          setPreviewNotice(t("orderItem.couldNotAutoFetch"));
         })
         .finally(() => setIsPreviewLoading(false));
     }, 700);
@@ -115,9 +117,7 @@ export function OrderItemCard({ id, index, initialLink, onUpdate, onRemove, canR
         .then((result) => setPriceResult(result))
         .catch((error) => {
           console.error("Could not calculate price", error);
-          setCalcError(
-            error instanceof Error ? error.message : "Could not calculate the price. Please try again.",
-          );
+          setCalcError(error instanceof Error ? error.message : t("common.calcErrorFallback"));
         })
         .finally(() => setIsCalculating(false));
     }, 500);
@@ -172,22 +172,22 @@ export function OrderItemCard({ id, index, initialLink, onUpdate, onRemove, canR
     <div className="card qoItemCard">
       <div className="cardTitleRow">
         <div>
-          <h3>Product {index + 1}</h3>
+          <h3>{t("orderItem.productN", { n: index + 1 })}</h3>
           <p className="mutedText">
-            {shop ? "Paste the link, then match the exact options shown on the page." : "Start by choosing which shop this product is from."}
+            {shop ? t("orderItem.pasteThenMatch") : t("orderItem.startByChoosing")}
           </p>
         </div>
         <div className="qoItemHeaderActions">
           {shop && <span className="platformBadge">{shop === "shein" ? "Shein France" : SHOP_LABELS[shop]}</span>}
           {canRemove && (
             <button type="button" className="qoRemoveItemBtn" onClick={() => onRemove(id)}>
-              Remove
+              {t("orderItem.remove")}
             </button>
           )}
         </div>
       </div>
 
-      <label>1. Which shop is this from? *</label>
+      <label>{t("orderItem.step1Label")}</label>
       <div className="qoShopPicker">
         {(Object.keys(SHOP_LABELS) as QuickOrderShop[]).map((shopKey) => (
           <button
@@ -202,11 +202,11 @@ export function OrderItemCard({ id, index, initialLink, onUpdate, onRemove, canR
         ))}
       </div>
 
-      {!shop && <p className="mutedText">Choose a shop above to continue.</p>}
+      {!shop && <p className="mutedText">{t("orderItem.chooseShopAbove")}</p>}
 
       {shop && (
         <>
-          <label>2. Product link *</label>
+          <label>{t("orderItem.step2Label")}</label>
           <div className="qoLinkInputWrap">
             <input
               value={link}
@@ -215,13 +215,15 @@ export function OrderItemCard({ id, index, initialLink, onUpdate, onRemove, canR
                 setIsCartShare(looksLikeCartShare(raw));
                 setLink(extractUrl(raw));
               }}
-              placeholder={`Paste your ${shop === "shein" ? "Shein France" : SHOP_LABELS[shop]} product link...`}
+              placeholder={t("orderItem.pastePlaceholder", {
+                shop: shop === "shein" ? "Shein France" : SHOP_LABELS[shop],
+              })}
             />
             {link && (
               <button
                 type="button"
                 className="qoLinkClearBtn"
-                aria-label="Clear link"
+                aria-label={t("orderItem.clearLink")}
                 onClick={() => {
                   setLink("");
                   setIsCartShare(false);
@@ -234,47 +236,40 @@ export function OrderItemCard({ id, index, initialLink, onUpdate, onRemove, canR
 
           {shopMismatch && !isBlockedShein && detectedShop && (
             <div className="noticeBox warning">
-              This link looks like it's from {SHOP_LABELS[detectedShop]}, not{" "}
-              {shop === "shein" ? "Shein France" : SHOP_LABELS[shop]}. Double check you copied the
-              right link, or choose {SHOP_LABELS[detectedShop]} above instead.
+              {t("orderItem.mismatchWarning", {
+                detected: SHOP_LABELS[detectedShop],
+                chosen: shop === "shein" ? "Shein France" : SHOP_LABELS[shop],
+              })}
             </div>
           )}
 
           {isBlockedShein && (
             <div className="noticeBox warning">
-              We only accept Shein orders from Shein France. This link doesn't look like it's from
-              Shein France — find the item on Shein France and paste that link instead.
+              {t("orderItem.sheinBlockWarning")}
               <a href={SHEIN_FRANCE_URL} target="_blank" rel="noreferrer" className="qoSheinFranceLink">
-                Open Shein France
+                {t("orderItem.openSheinFrance")}
               </a>
             </div>
           )}
 
-          {isCartShare && (
-            <div className="noticeBox warning">
-              This looks like a shared cart (panier) with multiple items, not a single product —
-              we can't price a whole cart as one item. Please paste each product's own link
-              separately: remove this link, open your cart, share or copy each item's individual
-              product link, and add one per card using "+ Add another product".
-            </div>
-          )}
+          {isCartShare && <div className="noticeBox warning">{t("orderItem.cartShareWarning")}</div>}
 
           {!isBlocked && link.trim() && (
             <div className="qoPreviewCard">
               {isPreviewLoading ? (
-                <p className="mutedText">Checking the product link...</p>
+                <p className="mutedText">{t("orderItem.checkingLink")}</p>
               ) : preview?.supported ? (
                 <div className="qoPreviewRow">
                   {preview.image_url && <img src={preview.image_url} alt="" className="qoPreviewImage" />}
                   <div>
                     <strong>{preview.name || `${SHOP_LABELS[shop]} product`}</strong>
-                    {preview.price && <span className="mutedText">Detected price: {preview.price}</span>}
+                    {preview.price && (
+                      <span className="mutedText">{t("orderItem.detectedPrice", { price: preview.price })}</span>
+                    )}
                   </div>
                 </div>
               ) : (
-                <p className="mutedText">
-                  Open the link on {SHOP_LABELS[shop]} to check the exact price and options.
-                </p>
+                <p className="mutedText">{t("orderItem.openLinkToCheck", { shop: SHOP_LABELS[shop] })}</p>
               )}
 
               {previewNotice && <div className="noticeBox warning">{previewNotice}</div>}
@@ -283,37 +278,37 @@ export function OrderItemCard({ id, index, initialLink, onUpdate, onRemove, canR
 
           {!isBlocked && (
             <>
-              <label>3. Options</label>
+              <label>{t("orderItem.step3Label")}</label>
               <div className="qoOptionsGrid">
                 <div>
-                  <label>Size</label>
+                  <label>{t("orderItem.size")}</label>
                   <input
                     value={size}
                     onChange={(event) => setSize(event.target.value)}
-                    placeholder="Example: M, EU 40, 8 inch..."
+                    placeholder={t("orderItem.sizePlaceholder")}
                   />
                 </div>
 
                 <div>
-                  <label>Color</label>
+                  <label>{t("orderItem.color")}</label>
                   <input
                     value={color}
                     onChange={(event) => setColor(event.target.value)}
-                    placeholder="Example: Black, Sky blue..."
+                    placeholder={t("orderItem.colorPlaceholder")}
                   />
                 </div>
 
                 <div>
-                  <label>Model / Variation</label>
+                  <label>{t("orderItem.model")}</label>
                   <input
                     value={model}
                     onChange={(event) => setModel(event.target.value)}
-                    placeholder="Example: Version A, 128GB, 3 pieces set..."
+                    placeholder={t("orderItem.modelPlaceholder")}
                   />
                 </div>
 
                 <div>
-                  <label>Quantity *</label>
+                  <label>{t("orderItem.quantity")}</label>
                   <input
                     type="number"
                     min={1}
@@ -325,7 +320,7 @@ export function OrderItemCard({ id, index, initialLink, onUpdate, onRemove, canR
 
               {extraOptions.length === 0 ? (
                 <button className="addProductLinkBtn" type="button" onClick={handleAddOption}>
-                  + Add another option (material, pattern, bundle...)
+                  {t("orderItem.addOptionFirst")}
                 </button>
               ) : (
                 <>
@@ -334,28 +329,26 @@ export function OrderItemCard({ id, index, initialLink, onUpdate, onRemove, canR
                       <input
                         value={option.label}
                         onChange={(event) => handleOptionChange(option.id, "label", event.target.value)}
-                        placeholder="Option name (example: Material)"
+                        placeholder={t("orderItem.optionNamePlaceholder")}
                       />
                       <input
                         value={option.value}
                         onChange={(event) => handleOptionChange(option.id, "value", event.target.value)}
-                        placeholder="Your choice (example: Cotton)"
+                        placeholder={t("orderItem.optionValuePlaceholder")}
                       />
                       <button type="button" onClick={() => handleRemoveOption(option.id)}>
-                        Remove
+                        {t("orderItem.remove")}
                       </button>
                     </div>
                   ))}
 
                   <button className="addProductLinkBtn" type="button" onClick={handleAddOption}>
-                    + Add another option
+                    {t("orderItem.addOption")}
                   </button>
                 </>
               )}
 
-              <label>
-                4. {shop === "aliexpress" ? "Product price in dollar or euro *" : "Item price in dollar or euro *"}
-              </label>
+              <label>{shop === "aliexpress" ? t("orderItem.productPriceLabel") : t("orderItem.itemPriceLabel")}</label>
               <input
                 type="number"
                 min={0.01}
@@ -363,13 +356,13 @@ export function OrderItemCard({ id, index, initialLink, onUpdate, onRemove, canR
                 inputMode="decimal"
                 value={amount}
                 onChange={(event) => setAmount(event.target.value)}
-                placeholder="Example: 12.99"
+                placeholder={t("orderItem.pricePlaceholder")}
               />
 
               {shop === "aliexpress" && (
                 <>
-                  <label>Shipping price in dollar or euro</label>
-                  <p className="mutedText">Enter 0 if shipping is free.</p>
+                  <label>{t("orderItem.shippingPriceLabel")}</label>
+                  <p className="mutedText">{t("orderItem.shippingFreeNote")}</p>
                   <input
                     type="number"
                     min={0}
@@ -377,24 +370,24 @@ export function OrderItemCard({ id, index, initialLink, onUpdate, onRemove, canR
                     inputMode="decimal"
                     value={shippingAmount}
                     onChange={(event) => setShippingAmount(event.target.value)}
-                    placeholder="Example: 2.50, or 0 if free"
+                    placeholder={t("orderItem.shippingPlaceholder")}
                   />
                 </>
               )}
 
-              {isCalculating && <p className="mutedText">Calculating price...</p>}
+              {isCalculating && <p className="mutedText">{t("orderItem.calculating")}</p>}
               {calcError && <div className="noticeBox warning">{calcError}</div>}
 
               {priceResult && (
                 <div className="qoPriceBox">
                   {quantity > 1 && (
                     <div className="qoPriceRow">
-                      <span>Unit price</span>
+                      <span>{t("orderItem.unitPrice")}</span>
                       <span>{priceResult.unit_price_tnd} TND</span>
                     </div>
                   )}
                   <div className="qoPriceRow qoPriceTotal">
-                    <span>Item total</span>
+                    <span>{t("orderItem.itemTotal")}</span>
                     <span>{priceResult.total_price_tnd} TND</span>
                   </div>
                 </div>

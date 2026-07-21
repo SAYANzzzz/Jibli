@@ -3,9 +3,12 @@ import type { ReactNode } from "react";
 import { Link } from "react-router-dom";
 import { Menu, X } from "lucide-react";
 import logo from "../assets/Fast-Logo.gif";
+import { useTranslation } from "../i18n/LanguageContext";
+import { LANGUAGES } from "../i18n/translations";
 
 function Navbar({ children }: { children: ReactNode }) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const { language, setLanguage } = useTranslation();
 
   return (
     <nav className="navbar">
@@ -26,6 +29,18 @@ function Navbar({ children }: { children: ReactNode }) {
 
       <div className={isMenuOpen ? "navLinks open" : "navLinks"} onClick={() => setIsMenuOpen(false)}>
         {children}
+        <div className="langSwitcher" role="group" aria-label="Language" onClick={(event) => event.stopPropagation()}>
+          {LANGUAGES.map((option) => (
+            <button
+              type="button"
+              key={option.value}
+              className={option.value === language ? "langSwitcherBtn active" : "langSwitcherBtn"}
+              onClick={() => setLanguage(option.value)}
+            >
+              {option.label}
+            </button>
+          ))}
+        </div>
       </div>
     </nav>
   );

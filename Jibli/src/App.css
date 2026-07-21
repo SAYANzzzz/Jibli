@@ -109,6 +109,32 @@ textarea {
   gap: 22px;
 }
 
+.langSwitcher {
+  display: inline-flex;
+  border: 1px solid #d9d9d9;
+}
+
+.langSwitcherBtn {
+  height: 32px;
+  padding: 0 12px;
+  border: 0;
+  background: #ffffff;
+  color: #666666;
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  cursor: pointer;
+}
+
+.langSwitcherBtn + .langSwitcherBtn {
+  border-left: 1px solid #d9d9d9;
+}
+
+.langSwitcherBtn.active {
+  background: #001f5b;
+  color: #ffffff;
+}
+
 .profileNavLink {
   min-width: 76px;
   display: inline-flex;

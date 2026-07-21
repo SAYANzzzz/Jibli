@@ -3,9 +3,10 @@ import { Link } from "react-router-dom";
 import { Gamepad2, MessageCircle, Package, PlusCircle } from "lucide-react";
 import { getOrders } from "../api";
 import type { Order } from "../api";
-import { STATUS_LABELS } from "../orderStatus";
 import Navbar from "../components/Navbar";
 import ProfileNavLink from "../components/ProfileNavLink";
+import { useTranslation } from "../i18n/LanguageContext";
+import type { TranslationKey } from "../i18n/translations";
 
 function formatDate(value: string) {
   return new Intl.DateTimeFormat("en-GB", {
@@ -28,18 +29,24 @@ function formatTrackingDate(value: string) {
   return `${weekday} | ${month}. ${date.getDate()} ${time}`;
 }
 
-function getOrderTitle(order: Order) {
+function getOrderTitle(order: Order, t: ReturnType<typeof useTranslation>["t"]) {
   const firstItem = order.items[0];
 
   if (!firstItem) {
-    return "Confirmed order";
+    return t("tracking.confirmedOrder");
   }
+
+  const itemLabel = firstItem.product_name || t("tracking.shopOrder", { shop: firstItem.shop });
 
   if (order.items.length === 1) {
-    return firstItem.product_name || `${firstItem.shop} order`;
+    return itemLabel;
   }
 
-  return `${firstItem.product_name || `${firstItem.shop} order`} + ${order.items.length - 1} more`;
+  return `${itemLabel} ${t("tracking.moreCount", { n: order.items.length - 1 })}`;
+}
+
+function statusLabel(status: string, t: ReturnType<typeof useTranslation>["t"]) {
+  return t(`orderStatus.${status}` as TranslationKey);
 }
 
 function getOrderPhoto(order: Order) {
@@ -47,6 +54,7 @@ function getOrderPhoto(order: Order) {
 }
 
 function OrderTracking() {
+  const { t } = useTranslation();
   const [orders, setOrders] = useState<Order[]>([]);
   const [selectedOrderId, setSelectedOrderId] = useState("");
   const [isLoading, setIsLoading] = useState(true);
@@ -89,8 +97,8 @@ function OrderTracking() {
   return (
     <div>
       <Navbar>
-        <Link to="/gaming" className="outlineBtn"><Gamepad2 size={16} /> Gaming</Link>
-        <Link to="/request" className="outlineBtn"><PlusCircle size={16} /> Request order</Link>
+        <Link to="/gaming" className="outlineBtn"><Gamepad2 size={16} /> {t("nav.gaming")}</Link>
+        <Link to="/request" className="outlineBtn"><PlusCircle size={16} /> {t("nav.requestOrder")}</Link>
         <ProfileNavLink />
       </Navbar>
 
@@ -98,28 +106,26 @@ function OrderTracking() {
         <section className="tableCard panierTrackingSection" id="panier">
           <div className="tableTop">
             <div>
-              <h2>My panier</h2>
-              <p className="mutedText">
-                Confirmed items appear here after you send the WhatsApp request and the admin approves it.
-              </p>
+              <h2>{t("tracking.myPanier")}</h2>
+              <p className="mutedText">{t("tracking.panierText")}</p>
             </div>
-            <Link to="/request" className="primaryBtn">Add links</Link>
+            <Link to="/request" className="primaryBtn">{t("tracking.addLinks")}</Link>
           </div>
         </section>
 
         <div className="center trackingIntro">
-          <h1>Track your orders</h1>
-          <p>Confirmed orders and their latest status will appear here.</p>
+          <h1>{t("tracking.title")}</h1>
+          <p>{t("tracking.subtitle")}</p>
         </div>
 
         {isLoading ? (
-          <div className="emptyOrdersState">Loading your orders...</div>
+          <div className="emptyOrdersState">{t("tracking.loading")}</div>
         ) : orders.length === 0 ? (
           <div className="emptyOrdersState">
             <Package size={46} />
-            <h2>There are no orders for you yet</h2>
-            <p>When an admin confirms your WhatsApp request, your order will appear here.</p>
-            <Link to="/request" className="primaryBtn">Request an order</Link>
+            <h2>{t("tracking.noOrdersTitle")}</h2>
+            <p>{t("tracking.noOrdersText")}</p>
+            <Link to="/request" className="primaryBtn">{t("tracking.requestAnOrder")}</Link>
           </div>
         ) : (
           <>
@@ -139,10 +145,10 @@ function OrderTracking() {
                     )}
                   </span>
                   <div>
-                    <strong>{getOrderTitle(order)}</strong>
-                    <small>{order.items.length} item(s) • {formatDate(order.created_at)}</small>
+                    <strong>{getOrderTitle(order, t)}</strong>
+                    <small>{order.items.length} {t("tracking.items")} • {formatDate(order.created_at)}</small>
                   </div>
-                  <span className="badge">{STATUS_LABELS[order.status] ?? order.status}</span>
+                  <span className="badge">{statusLabel(order.status, t)}</span>
                 </button>
               ))}
             </div>
@@ -160,27 +166,25 @@ function OrderTracking() {
 
                   <div className="trackingContent">
                     <div className="trackingHeader">
-                      <h2>{getOrderTitle(selectedOrder)}</h2>
-                      <span className="badge green">
-                        {STATUS_LABELS[selectedOrder.status] ?? selectedOrder.status}
-                      </span>
+                      <h2>{getOrderTitle(selectedOrder, t)}</h2>
+                      <span className="badge green">{statusLabel(selectedOrder.status, t)}</span>
                     </div>
 
                     <div className="orderInfo">
                       <div>
-                        <small>Items</small>
+                        <small>{t("tracking.itemsLabel")}</small>
                         <strong>{selectedOrder.items.length}</strong>
                       </div>
 
                       <div>
-                        <small>Final price</small>
+                        <small>{t("tracking.finalPrice")}</small>
                         <strong>
-                          {selectedOrder.final_price ? `${selectedOrder.final_price} TND` : "Pending"}
+                          {selectedOrder.final_price ? `${selectedOrder.final_price} TND` : t("tracking.pending")}
                         </strong>
                       </div>
 
                       <div>
-                        <small>Order date</small>
+                        <small>{t("tracking.orderDate")}</small>
                         <strong>{formatDate(selectedOrder.created_at)}</strong>
                       </div>
                     </div>
@@ -195,7 +199,7 @@ function OrderTracking() {
                           className={item.image_url ? "trackedItemLink withPhoto" : "trackedItemLink"}
                         >
                           {item.image_url && <img src={item.image_url} alt="" />}
-                          {item.product_name || `${item.shop} item`}
+                          {item.product_name || t("tracking.shopOrder", { shop: item.shop })}
                         </a>
                       ))}
                     </div>
@@ -205,8 +209,8 @@ function OrderTracking() {
                 <div className="otlCard">
                   <div className="otlHeader">
                     <div>
-                      <span className="mutedText">Tracking number</span>
-                      <strong>{selectedOrder.tracking_number || "Not assigned yet"}</strong>
+                      <span className="mutedText">{t("tracking.trackingNumber")}</span>
+                      <strong>{selectedOrder.tracking_number || t("tracking.notAssigned")}</strong>
                     </div>
                     {selectedOrder.tracking_number && (
                       <button
@@ -214,13 +218,13 @@ function OrderTracking() {
                         className="otlCopyBtn"
                         onClick={() => handleCopyTracking(selectedOrder.id, selectedOrder.tracking_number!)}
                       >
-                        {copiedTrackingId === selectedOrder.id ? "Copied" : "Copy"}
+                        {copiedTrackingId === selectedOrder.id ? t("tracking.copied") : t("tracking.copy")}
                       </button>
                     )}
                   </div>
 
                   {timelineEvents.length === 0 ? (
-                    <p className="mutedText otlEmpty">No status updates yet.</p>
+                    <p className="mutedText otlEmpty">{t("tracking.noUpdates")}</p>
                   ) : (
                     <div className="otlList">
                       {timelineEvents.map((event, index) => (
@@ -229,7 +233,7 @@ function OrderTracking() {
                             <span className="otlDot" />
                           </div>
                           <div className="otlBody">
-                            <strong>{STATUS_LABELS[event.status] ?? event.status}</strong>
+                            <strong>{statusLabel(event.status, t)}</strong>
                             {event.note && <p>{event.note}</p>}
                             <span className="otlDate">{formatTrackingDate(event.created_at)}</span>
                           </div>
@@ -244,10 +248,10 @@ function OrderTracking() {
         )}
 
         <div className="whatsappBox">
-          <span>Need help with an order?</span>
+          <span>{t("tracking.needHelp")}</span>
           <a href="https://wa.me/21692001397" target="_blank" rel="noreferrer">
             <MessageCircle size={18} />
-            Contact WhatsApp
+            {t("tracking.contactWhatsapp")}
           </a>
         </div>
       </main>

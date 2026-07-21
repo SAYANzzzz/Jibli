@@ -4,11 +4,13 @@ import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { KeyRound, User } from "lucide-react";
 import { ensureUserProfile, sendPasswordReset, signIn, signInWithProvider } from "../auth";
 import logo from "../assets/Fast-Logo.gif";
+import { useTranslation } from "../i18n/LanguageContext";
 
 const googleLoginEnabled = import.meta.env.VITE_ENABLE_GOOGLE_LOGIN === "true";
 const facebookLoginEnabled = import.meta.env.VITE_ENABLE_FACEBOOK_LOGIN === "true";
 
 function Login() {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const nextPath = searchParams.get("next") ?? "/request";
@@ -41,11 +43,7 @@ function Login() {
       await ensureUserProfile();
     } catch (profileError) {
       setIsSubmitting(false);
-      setErrorMessage(
-        profileError instanceof Error
-          ? profileError.message
-          : "Login worked, but profile creation failed.",
-      );
+      setErrorMessage(profileError instanceof Error ? profileError.message : t("login.profileFailedLogin"));
       return;
     }
 
@@ -58,11 +56,10 @@ function Login() {
     setSuccessMessage("");
 
     const isEnabled = provider === "google" ? googleLoginEnabled : facebookLoginEnabled;
+    const providerName = provider === "google" ? "Google" : "Facebook";
 
     if (!isEnabled) {
-      setErrorMessage(
-        `${provider === "google" ? "Google" : "Facebook"} login is not enabled yet. Use email/password login for now.`,
-      );
+      setErrorMessage(t("login.providerNotEnabled", { provider: providerName }));
       return;
     }
 
@@ -76,7 +73,7 @@ function Login() {
     }
 
     if (!data.url) {
-      setErrorMessage(`${provider} login is not configured in Supabase.`);
+      setErrorMessage(t("login.providerNotConfigured", { provider: providerName }));
       setProviderLoading("");
       return;
     }
@@ -90,7 +87,7 @@ function Login() {
     setSuccessMessage("");
 
     if (!trimmedEmail) {
-      setErrorMessage("Enter your email first, then click reset password.");
+      setErrorMessage(t("login.enterEmailFirst"));
       return;
     }
 
@@ -103,7 +100,7 @@ function Login() {
       return;
     }
 
-    setSuccessMessage("Password reset email sent. Open it and choose a new password.");
+    setSuccessMessage(t("login.resetSent"));
   };
 
   return (
@@ -116,10 +113,10 @@ function Login() {
 
         <div className="authNavActions">
           <Link to="/" className="authOutlineBtn">
-            Back to Home
+            {t("login.backToHome")}
           </Link>
           <Link to={registerPath} className="authPrimaryBtn">
-            Register
+            {t("nav.register")}
           </Link>
         </div>
       </header>
@@ -127,9 +124,9 @@ function Login() {
       <div className="authCard">
         <img src={logo} alt="Jibli logo" className="authCardLogo" />
 
-        <h1>Login</h1>
-        <p>Sign in to your account</p>
-        <div className="authNotice">Login is required to access your panier and track orders.</div>
+        <h1>{t("login.title")}</h1>
+        <p>{t("login.subtitle")}</p>
+        <div className="authNotice">{t("login.notice")}</div>
         {errorMessage && <div className="authError">{errorMessage}</div>}
         {successMessage && <div className="authNotice success">{successMessage}</div>}
 
@@ -139,8 +136,8 @@ function Login() {
             <input
               name="email"
               type="email"
-              placeholder="Email"
-              aria-label="Email"
+              placeholder={t("login.email")}
+              aria-label={t("login.email")}
               value={email}
               onChange={(event) => setEmail(event.target.value)}
               required
@@ -152,27 +149,27 @@ function Login() {
             <input
               name="password"
               type="password"
-              placeholder="Password"
-              aria-label="Password"
+              placeholder={t("login.password")}
+              aria-label={t("login.password")}
               required
             />
           </div>
 
           <button type="submit" className="authButton" disabled={isSubmitting}>
-            {isSubmitting ? "Logging in..." : "Login"}
+            {isSubmitting ? t("login.loggingIn") : t("login.submit")}
           </button>
         </form>
 
         <p className="forgotText">
-          I forgot my password.{" "}
+          {t("login.forgotText")}{" "}
           <button type="button" onClick={handlePasswordReset} disabled={isResetting}>
-            {isResetting ? "Sending..." : "Click here to reset"}
+            {isResetting ? t("login.sendingReset") : t("login.resetLink")}
           </button>
         </p>
 
         <div className="divider">
           <span></span>
-          <p>or continue with</p>
+          <p>{t("login.orContinueWith")}</p>
           <span></span>
         </div>
 
@@ -181,14 +178,14 @@ function Login() {
           className="socialButton"
           onClick={() => handleProviderLogin("google")}
           disabled={Boolean(providerLoading)}
-          title={googleLoginEnabled ? "Continue with Google" : "Google login is not enabled yet"}
+          title={googleLoginEnabled ? t("login.continueWithGoogle") : t("login.googleComingSoon")}
         >
           <strong className="socialIcon">G</strong>
           {providerLoading === "google"
-            ? "Opening Google..."
+            ? t("login.openingGoogle")
             : googleLoginEnabled
-              ? "Continue with Google"
-              : "Google login coming soon"}
+              ? t("login.continueWithGoogle")
+              : t("login.googleComingSoon")}
         </button>
 
         <button
@@ -196,18 +193,18 @@ function Login() {
           className="socialButton"
           onClick={() => handleProviderLogin("facebook")}
           disabled={Boolean(providerLoading)}
-          title={facebookLoginEnabled ? "Continue with Facebook" : "Facebook login is not enabled yet"}
+          title={facebookLoginEnabled ? t("login.continueWithFacebook") : t("login.facebookComingSoon")}
         >
           <strong className="socialIcon">f</strong>
           {providerLoading === "facebook"
-            ? "Opening Facebook..."
+            ? t("login.openingFacebook")
             : facebookLoginEnabled
-              ? "Continue with Facebook"
-              : "Facebook login coming soon"}
+              ? t("login.continueWithFacebook")
+              : t("login.facebookComingSoon")}
         </button>
 
         <Link to={registerPath} className="registerAccountBtn">
-          Register New Account
+          {t("login.registerNewAccount")}
         </Link>
       </div>
     </div>

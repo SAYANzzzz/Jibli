@@ -5,6 +5,7 @@ import { Gamepad2, LogOut, PackageSearch, PlusCircle, Shield } from "lucide-reac
 import { isAdminEmail } from "../admin";
 import { supabase } from "../supabase";
 import Navbar from "../components/Navbar";
+import { useTranslation } from "../i18n/LanguageContext";
 
 const tunisianGovernorates = [
   "Ariana",
@@ -46,6 +47,7 @@ const getErrorMessage = (error: unknown, fallback: string) => {
 };
 
 function Account() {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const [fullName, setFullName] = useState("");
   const [phone, setPhone] = useState("");
@@ -98,7 +100,7 @@ function Account() {
     loadProfile();
   }, []);
 
-  const displayName = fullName.trim() || "Jibli customer";
+  const displayName = fullName.trim() || t("account.defaultName");
   const canAccessAdmin = isAdminEmail(originalEmail);
   const initials = displayName
     .split(" ")
@@ -146,7 +148,7 @@ function Account() {
       const { data: userData, error: userError } = await supabase.auth.getUser();
 
       if (userError || !userData.user) {
-        throw userError ?? new Error("You must be logged in.");
+        throw userError ?? new Error(t("account.mustBeLoggedIn"));
       }
 
       const profilePayload = {
@@ -189,14 +191,10 @@ function Account() {
         }
       }
 
-      setMessage(
-        nextEmail !== originalEmail
-          ? "Profile updated. Check your email if Supabase asks you to confirm the new address."
-          : "Profile updated successfully.",
-      );
+      setMessage(nextEmail !== originalEmail ? t("account.updatedEmailNotice") : t("account.updatedNotice"));
     } catch (error) {
       console.error("Could not update profile", error);
-      setErrorMessage(getErrorMessage(error, "Could not save your profile."));
+      setErrorMessage(getErrorMessage(error, t("account.saveFailed")));
     } finally {
       setIsSaving(false);
     }
@@ -210,32 +208,32 @@ function Account() {
   return (
     <div>
       <Navbar>
-        <Link to="/gaming" className="outlineBtn"><Gamepad2 size={16} /> Gaming</Link>
-        <Link to="/request" className="outlineBtn"><PlusCircle size={16} /> New order</Link>
-        <Link to="/tracking" className="outlineBtn"><PackageSearch size={16} /> Track orders</Link>
+        <Link to="/gaming" className="outlineBtn"><Gamepad2 size={16} /> {t("nav.gaming")}</Link>
+        <Link to="/request" className="outlineBtn"><PlusCircle size={16} /> {t("nav.newOrder")}</Link>
+        <Link to="/tracking" className="outlineBtn"><PackageSearch size={16} /> {t("nav.trackOrders")}</Link>
         {canAccessAdmin && (
-          <Link to="/admin" className="outlineBtn"><Shield size={16} /> Admin</Link>
+          <Link to="/admin" className="outlineBtn"><Shield size={16} /> {t("nav.admin")}</Link>
         )}
         <button className="outlineBtn accountLogoutBtn" type="button" onClick={handleLogout}>
-          <LogOut size={16} /> Logout
+          <LogOut size={16} /> {t("nav.logout")}
         </button>
       </Navbar>
 
       <main className="accountPage profileExperience">
         <section className="profileIntro">
-          <span className="eyebrow">My account</span>
-          <h1>Profile management</h1>
-          <p>Keep your delivery details ready so every panier and order request is faster to confirm.</p>
+          <span className="eyebrow">{t("account.eyebrow")}</span>
+          <h1>{t("account.title")}</h1>
+          <p>{t("account.subtitle")}</p>
         </section>
 
         <section className="profilePhones">
           <form className="profilePhone editProfilePhone" onSubmit={handleSaveProfile}>
             <div className="accountPanelHeader">
               <div>
-                <span>Edit profile</span>
+                <span>{t("account.editProfile")}</span>
                 <h2>{displayName}</h2>
               </div>
-              <Link to="/request">Back to orders</Link>
+              <Link to="/request">{t("nav.backToOrders")}</Link>
             </div>
 
             <div className="editAvatarWrap">
@@ -244,58 +242,58 @@ function Account() {
                 <span className="profileAvatar large">
                   {avatarUrl ? <img src={avatarUrl} alt="Profile preview" /> : <span>{initials || "J"}</span>}
                 </span>
-                <strong>Change photo</strong>
+                <strong>{t("account.changePhoto")}</strong>
               </label>
             </div>
 
             {isLoading ? (
-              <div className="profileLoading">Loading your profile...</div>
+              <div className="profileLoading">{t("account.loadingProfile")}</div>
             ) : (
               <>
                 {message && <div className="noticeBox success">{message}</div>}
                 {errorMessage && <div className="noticeBox warning">{errorMessage}</div>}
                 {needsRequiredDetails && (
                   <div className="profileRequiredNote">
-                    <strong>Complete the necessary details</strong>
-                    <span>Full name, phone number, and city are required before you request orders.</span>
+                    <strong>{t("account.requiredTitle")}</strong>
+                    <span>{t("account.requiredText")}</span>
                   </div>
                 )}
 
                 <div className="accountFormGrid">
                   <div>
-                    <label>Full name *</label>
+                    <label>{t("account.fullName")}</label>
                     <input
                       value={fullName}
                       onChange={(event) => setFullName(event.target.value)}
-                      placeholder="Your full name"
+                      placeholder={t("account.fullNamePlaceholder")}
                       required
                     />
                   </div>
 
                   <div>
-                    <label>Email address</label>
+                    <label>{t("account.email")}</label>
                     <input
                       value={email}
                       onChange={(event) => setEmail(event.target.value)}
-                      placeholder="Your email"
+                      placeholder={t("account.emailPlaceholder")}
                       type="email"
                     />
                   </div>
 
                   <div>
-                    <label>Phone number *</label>
+                    <label>{t("account.phone")}</label>
                     <input
                       value={phone}
                       onChange={(event) => setPhone(event.target.value)}
-                      placeholder="+216 XX XXX XXX"
+                      placeholder={t("account.phonePlaceholder")}
                       required
                     />
                   </div>
 
                   <div>
-                    <label>City *</label>
+                    <label>{t("account.city")}</label>
                     <select value={city} onChange={(event) => setCity(event.target.value)} required>
-                      <option value="">Select city</option>
+                      <option value="">{t("account.selectCity")}</option>
                       {tunisianGovernorates.map((governorate) => (
                         <option key={governorate}>{governorate}</option>
                       ))}
@@ -303,18 +301,18 @@ function Account() {
                   </div>
 
                   <div>
-                    <label>Postal code</label>
+                    <label>{t("account.postalCode")}</label>
                     <input
                       value={postalCode}
                       onChange={(event) => setPostalCode(event.target.value)}
                       inputMode="numeric"
-                      placeholder="Example: 1000"
+                      placeholder={t("account.postalCodePlaceholder")}
                     />
                   </div>
                 </div>
 
                 <button className="saveProfileBtn" type="submit" disabled={isSaving}>
-                  {isSaving ? "Saving..." : "Save profile"}
+                  {isSaving ? t("account.saving") : t("account.saveProfile")}
                 </button>
               </>
             )}

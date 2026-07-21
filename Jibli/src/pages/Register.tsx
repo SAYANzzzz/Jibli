@@ -4,8 +4,10 @@ import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { KeyRound, Mail, Phone, ShieldCheck, User } from "lucide-react";
 import { ensureUserProfile, resendSignupOtp, signUp, verifySignupOtp } from "../auth";
 import logo from "../assets/Fast-Logo.gif";
+import { useTranslation } from "../i18n/LanguageContext";
 
 function Register() {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const nextPath = searchParams.get("next") ?? "/request";
@@ -38,7 +40,7 @@ function Register() {
     const confirmPassword = String(formData.get("confirmPassword") ?? "");
 
     if (password !== confirmPassword) {
-      setErrorMessage("Passwords do not match.");
+      setErrorMessage(t("register.passwordMismatch"));
       return;
     }
 
@@ -65,11 +67,7 @@ function Register() {
         });
       } catch (profileError) {
         setIsSubmitting(false);
-        setErrorMessage(
-          profileError instanceof Error
-            ? profileError.message
-            : "Account created, but profile creation failed.",
-        );
+        setErrorMessage(profileError instanceof Error ? profileError.message : t("register.profileFailedRegister"));
         return;
       }
 
@@ -107,11 +105,7 @@ function Register() {
       });
     } catch (profileError) {
       setIsVerifying(false);
-      setErrorMessage(
-        profileError instanceof Error
-          ? profileError.message
-          : "Email verified, but profile creation failed.",
-      );
+      setErrorMessage(profileError instanceof Error ? profileError.message : t("register.profileFailedVerify"));
       return;
     }
 
@@ -137,7 +131,7 @@ function Register() {
       return;
     }
 
-    setResendNotice("A new code was sent to your email.");
+    setResendNotice(t("register.resendSuccess"));
   };
 
   return (
@@ -150,10 +144,10 @@ function Register() {
 
         <div className="authNavActions">
           <Link to="/" className="authOutlineBtn">
-            Back to Home
+            {t("login.backToHome")}
           </Link>
           <Link to={loginPath} className="authPrimaryBtn">
-            Login
+            {t("nav.login")}
           </Link>
         </div>
       </header>
@@ -163,9 +157,9 @@ function Register() {
 
         {!pendingAccount ? (
           <>
-            <h1>Register</h1>
-            <p>Create your account</p>
-            <div className="authNotice">Your account keeps your panier and order tracking in one place.</div>
+            <h1>{t("register.title")}</h1>
+            <p>{t("register.subtitle")}</p>
+            <div className="authNotice">{t("register.notice")}</div>
             {errorMessage && <div className="authError">{errorMessage}</div>}
 
             <form className="loginForm" onSubmit={handleRegister}>
@@ -174,15 +168,15 @@ function Register() {
                 <input
                   name="fullName"
                   type="text"
-                  placeholder="Full name"
-                  aria-label="Full name"
+                  placeholder={t("register.fullName")}
+                  aria-label={t("register.fullName")}
                   required
                 />
               </div>
 
               <div className="loginInput">
                 <Mail size={24} />
-                <input name="email" type="email" placeholder="Email" aria-label="Email" required />
+                <input name="email" type="email" placeholder={t("register.email")} aria-label={t("register.email")} required />
               </div>
 
               <div className="loginInput">
@@ -190,8 +184,8 @@ function Register() {
                 <input
                   name="phone"
                   type="tel"
-                  placeholder="Phone number"
-                  aria-label="Phone number"
+                  placeholder={t("register.phone")}
+                  aria-label={t("register.phone")}
                   required
                 />
               </div>
@@ -201,8 +195,8 @@ function Register() {
                 <input
                   name="password"
                   type="password"
-                  placeholder="Password"
-                  aria-label="Password"
+                  placeholder={t("register.password")}
+                  aria-label={t("register.password")}
                   required
                   minLength={6}
                 />
@@ -213,29 +207,27 @@ function Register() {
                 <input
                   name="confirmPassword"
                   type="password"
-                  placeholder="Confirm password"
-                  aria-label="Confirm password"
+                  placeholder={t("register.confirmPassword")}
+                  aria-label={t("register.confirmPassword")}
                   required
                   minLength={6}
                 />
               </div>
 
               <button type="submit" className="authButton" disabled={isSubmitting}>
-                {isSubmitting ? "Creating account..." : "Register"}
+                {isSubmitting ? t("register.creating") : t("register.submit")}
               </button>
             </form>
 
             <p className="forgotText">
-              Already have an account? <Link to={loginPath}>Login here</Link>
+              {t("register.alreadyHaveAccount")} <Link to={loginPath}>{t("register.loginHere")}</Link>
             </p>
           </>
         ) : (
           <>
-            <h1>Verify your email</h1>
-            <p>Enter the 6-digit code we sent to {pendingAccount.email}</p>
-            <div className="authNotice">
-              The code comes from jiblitunisia@gmail.com — check your spam folder if you don't see it.
-            </div>
+            <h1>{t("register.verifyTitle")}</h1>
+            <p>{t("register.verifySubtitle", { email: pendingAccount.email })}</p>
+            <div className="authNotice">{t("register.verifyNotice")}</div>
             {errorMessage && <div className="authError">{errorMessage}</div>}
             {resendNotice && <div className="authNotice success">{resendNotice}</div>}
 
@@ -247,22 +239,22 @@ function Register() {
                   onChange={(event) => setCode(event.target.value)}
                   type="text"
                   inputMode="numeric"
-                  placeholder="6-digit code"
-                  aria-label="Verification code"
+                  placeholder={t("register.codePlaceholder")}
+                  aria-label={t("register.codePlaceholder")}
                   maxLength={6}
                   required
                 />
               </div>
 
               <button type="submit" className="authButton" disabled={isVerifying || code.trim().length === 0}>
-                {isVerifying ? "Verifying..." : "Verify & create account"}
+                {isVerifying ? t("register.verifying") : t("register.verifySubmit")}
               </button>
             </form>
 
             <p className="forgotText">
-              Didn't get a code?{" "}
+              {t("register.noCode")}{" "}
               <button type="button" onClick={handleResend} disabled={isResending}>
-                {isResending ? "Sending..." : "Resend code"}
+                {isResending ? t("register.resending") : t("register.resendCode")}
               </button>
             </p>
           </>
