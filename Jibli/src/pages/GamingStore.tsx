@@ -68,6 +68,7 @@ const GAMING_CATALOG: GamingGame[] = [
     id: "efootball",
     category: "Game top-up",
     name: "eFootball — Coins",
+    image: "/games/efootball.png",
     tiers: [{ label: "Message us for current packages & pricing", priceTnd: null }],
   },
   {
