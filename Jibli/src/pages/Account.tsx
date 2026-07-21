@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import type { ChangeEvent, FormEvent } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { Gamepad2, LogOut, PackageSearch, PlusCircle, Shield } from "lucide-react";
 import { isAdminEmail } from "../admin";
 import { supabase } from "../supabase";
 import Navbar from "../components/Navbar";
@@ -209,12 +210,14 @@ function Account() {
   return (
     <div>
       <Navbar>
-        <Link to="/gaming">Gaming</Link>
-        <Link to="/request">New order</Link>
-        <Link to="/tracking">Track orders</Link>
-        {canAccessAdmin && <Link to="/admin">Admin</Link>}
+        <Link to="/gaming" className="outlineBtn"><Gamepad2 size={16} /> Gaming</Link>
+        <Link to="/request" className="outlineBtn"><PlusCircle size={16} /> New order</Link>
+        <Link to="/tracking" className="outlineBtn"><PackageSearch size={16} /> Track orders</Link>
+        {canAccessAdmin && (
+          <Link to="/admin" className="outlineBtn"><Shield size={16} /> Admin</Link>
+        )}
         <button className="outlineBtn accountLogoutBtn" type="button" onClick={handleLogout}>
-          Logout
+          <LogOut size={16} /> Logout
         </button>
       </Navbar>
 

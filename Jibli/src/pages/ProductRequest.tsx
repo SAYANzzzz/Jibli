@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import type { FormEvent } from "react";
 import { Link, useSearchParams } from "react-router-dom";
+import { Gamepad2, ShoppingCart } from "lucide-react";
 import { saveCartItems, submitOrder } from "../api";
 import type { Shop } from "../api";
 import { OrderItemCard } from "../components/OrderItemCard";
@@ -134,8 +135,8 @@ function ProductRequest() {
   return (
     <div>
       <Navbar>
-        <Link to="/gaming" className="outlineBtn">Gaming</Link>
-        <Link to="/tracking#panier" className="outlineBtn">Panier</Link>
+        <Link to="/gaming" className="outlineBtn"><Gamepad2 size={16} /> Gaming</Link>
+        <Link to="/tracking#panier" className="outlineBtn"><ShoppingCart size={16} /> Panier</Link>
         <ProfileNavLink />
       </Navbar>
 

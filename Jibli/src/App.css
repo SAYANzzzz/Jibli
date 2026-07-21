@@ -162,6 +162,7 @@ textarea {
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  gap: 8px;
   border: 1px solid #111111;
   cursor: pointer;
   font-size: 14px;
@@ -4026,4 +4027,35 @@ td {
   .gamingOffersFooter .wideBtn {
     width: 100%;
   }
+}
+
+.gamingTeaserSection {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.gamingTeaserText {
+  max-width: 560px;
+  margin: 0 auto;
+  color: #666666;
+}
+
+.gamingTeaserLogos {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 16px;
+  margin: 30px 0;
+}
+
+.gamingTeaserLogos img {
+  width: 64px;
+  height: 64px;
+  object-fit: cover;
+  border: 1px solid #d9d9d9;
+}
+
+.gamingTeaserBtn {
+  text-decoration: none;
 }

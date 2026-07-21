@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import type { FormEvent } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { Link as LinkIcon, CreditCard, ShieldCheck, Truck } from "lucide-react";
+import { Link as LinkIcon, CreditCard, Gamepad2, LogIn, ShieldCheck, ShoppingCart, Truck, UserPlus } from "lucide-react";
 import { getCurrentSession } from "../auth";
 import Navbar from "../components/Navbar";
 import ProfileNavLink from "../components/ProfileNavLink";
@@ -38,16 +38,16 @@ function Home() {
   return (
     <div>
       <Navbar>
-        <Link to="/gaming" className="outlineBtn">Gaming</Link>
+        <Link to="/gaming" className="outlineBtn"><Gamepad2 size={16} /> Gaming</Link>
         {isAuthenticated ? (
           <>
-            <Link to="/tracking#panier" className="outlineBtn">Panier</Link>
+            <Link to="/tracking#panier" className="outlineBtn"><ShoppingCart size={16} /> Panier</Link>
             <ProfileNavLink />
           </>
         ) : (
           <>
-            <Link to="/login" className="outlineBtn">Login</Link>
-            <Link to="/register" className="primaryBtn">Register</Link>
+            <Link to="/login" className="outlineBtn"><LogIn size={16} /> Login</Link>
+            <Link to="/register" className="primaryBtn"><UserPlus size={16} /> Register</Link>
           </>
         )}
       </Navbar>
@@ -118,6 +118,25 @@ function Home() {
             <p>We order it and you track the package until delivery.</p>
           </div>
         </div>
+      </section>
+
+      <section className="section gamingTeaserSection">
+        <h2>Gaming top-ups & subscriptions</h2>
+        <p className="gamingTeaserText">
+          Riot Points, Valorant VP, Free Fire Diamonds, Robux, Chess.com and Spotify Premium,
+          Steam gift cards and more — no password needed, fast delivery on WhatsApp.
+        </p>
+
+        <div className="gamingTeaserLogos">
+          <img src="/games/league-of-legends.jpg" alt="League of Legends" />
+          <img src="/games/valorant.jpg" alt="Valorant" />
+          <img src="/games/freefire.jpg" alt="Free Fire" />
+          <img src="/games/roblox.png" alt="Roblox" />
+          <img src="/games/chess.jpg" alt="Chess.com" />
+          <img src="/games/spotify.png" alt="Spotify" />
+        </div>
+
+        <Link to="/gaming" className="primaryBtn gamingTeaserBtn"><Gamepad2 size={16} /> Explore gaming top-ups</Link>
       </section>
     </div>
   );
