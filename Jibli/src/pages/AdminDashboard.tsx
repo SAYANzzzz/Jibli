@@ -71,11 +71,18 @@ function buildStatusNotifyMessage(order: Order, params: { status: string; tracki
   return lines.join("\n");
 }
 
+function buildPaymentRequestMessage(order: Order, amount: number) {
+  return [
+    `Hi ${order.profiles?.full_name || "there"}, this is Jibli.`,
+    `Your order #${order.id.slice(0, 8).toUpperCase()} total is ${amount} TND.`,
+    `Please send the payment to confirm your order, then reply here once it's done.`,
+  ].join("\n");
+}
+
 function buildConfirmNotifyMessage(order: Order) {
   return [
     `Hi ${order.profiles?.full_name || "there"}, this is Jibli.`,
-    `Update on your order #${order.id.slice(0, 8).toUpperCase()}:`,
-    `Status: Order confirmed by Jibli`,
+    `Payment received — your order #${order.id.slice(0, 8).toUpperCase()} is now confirmed!`,
   ].join("\n");
 }
 
@@ -147,8 +154,13 @@ function AdminDashboard() {
     [orders],
   );
 
+  const waitingPaymentOrders = useMemo(
+    () => orders.filter((order) => order.status === "waiting_confirmation"),
+    [orders],
+  );
+
   const confirmedOrders = useMemo(
-    () => orders.filter((order) => order.status !== "new_request"),
+    () => orders.filter((order) => order.status !== "new_request" && order.status !== "waiting_confirmation"),
     [orders],
   );
 
@@ -167,12 +179,42 @@ function AdminDashboard() {
     });
   };
 
+  const handleRequestPayment = async (order: Order) => {
+    const amountText = orderDrafts[order.id]?.final_price ?? "";
+    const amount = amountText ? Number(amountText) : NaN;
+
+    if (!amount || amount <= 0) {
+      setErrorMessage("Enter the amount to charge before requesting payment.");
+      return;
+    }
+
+    setUpdatingOrderId(order.id);
+    setErrorMessage("");
+
+    try {
+      const note = orderNotes[order.id]?.trim() || `Payment requested: ${amount} TND.`;
+      await updateAdminOrderStatus(order.id, {
+        status: "waiting_confirmation",
+        final_price: amount,
+        note,
+      });
+      setOrderNotes((currentNotes) => ({ ...currentNotes, [order.id]: "" }));
+      notifyCustomer(order, buildPaymentRequestMessage(order, amount));
+      await loadOrders();
+    } catch (error) {
+      console.error("Could not request payment", error);
+      setErrorMessage(error instanceof Error ? error.message : "Could not request payment.");
+    } finally {
+      setUpdatingOrderId("");
+    }
+  };
+
   const handleConfirm = async (order: Order) => {
     setUpdatingOrderId(order.id);
     setErrorMessage("");
 
     try {
-      const note = orderNotes[order.id]?.trim() || "Order confirmed by Jibli.";
+      const note = orderNotes[order.id]?.trim() || "Payment received, order confirmed.";
       await updateAdminOrderStatus(order.id, {
         status: "price_confirmed",
         note,
@@ -316,8 +358,12 @@ function AdminDashboard() {
 
         <section className="simpleAdminStats">
           <div>
-            <span>Waiting</span>
+            <span>New requests</span>
             <strong>{newRequests.length}</strong>
+          </div>
+          <div>
+            <span>Waiting payment</span>
+            <strong>{waitingPaymentOrders.length}</strong>
           </div>
           <div>
             <span>Confirmed</span>
@@ -402,6 +448,19 @@ function AdminDashboard() {
                   </div>
 
                   <div className="adminNotesBox">
+                    <label htmlFor={`price-${order.id}`}>Amount to charge (TND)</label>
+                    <input
+                      id={`price-${order.id}`}
+                      type="number"
+                      min="0"
+                      step="0.001"
+                      value={orderDrafts[order.id]?.final_price ?? ""}
+                      onChange={(event) => updateOrderDraft(order.id, "final_price", event.target.value)}
+                      placeholder="Example: 85"
+                    />
+                  </div>
+
+                  <div className="adminNotesBox">
                     <label htmlFor={`note-${order.id}`}>Admin note</label>
                     <textarea
                       id={`note-${order.id}`}
@@ -433,10 +492,95 @@ function AdminDashboard() {
                       className="confirmOrderBtn"
                       type="button"
                       disabled={updatingOrderId === order.id || removingOrderId === order.id}
+                      onClick={() => handleRequestPayment(order)}
+                    >
+                      <CheckCircle2 size={18} />
+                      {updatingOrderId === order.id ? "Sending..." : "Request payment"}
+                    </button>
+                    <button
+                      className="removeOrderBtn"
+                      type="button"
+                      disabled={updatingOrderId === order.id || removingOrderId === order.id}
+                      onClick={() => handleRemove(order)}
+                    >
+                      <Trash2 size={18} />
+                      {removingOrderId === order.id ? "Removing..." : "Remove"}
+                    </button>
+                  </div>
+                </article>
+              ))}
+            </div>
+          )}
+        </section>
+
+        <section className="simpleAdminPanel">
+          <div className="tableTop">
+            <div>
+              <h2>Waiting for payment</h2>
+              <p className="mutedText">Payment was requested — confirm once the customer has paid.</p>
+            </div>
+          </div>
+
+          {waitingPaymentOrders.length === 0 ? (
+            <div className="compactEmpty">No orders waiting for payment.</div>
+          ) : (
+            <div className="simpleOrderList">
+              {waitingPaymentOrders.map((order) => (
+                <article className="simpleOrderCard" key={order.id}>
+                  <div className="simpleOrderTop">
+                    <div>
+                      <span className="badge">Waiting payment</span>
+                      <h3>{getCustomerName(order)}</h3>
+                      <p>{getCustomerDetails(order) || "No contact details"} - {formatDate(order.created_at)}</p>
+                    </div>
+                    <strong>#{order.id.slice(0, 8).toUpperCase()}</strong>
+                  </div>
+
+                  <div className="simpleItems">
+                    <div className="simpleItemRow">
+                      <div>
+                        <strong>Amount requested</strong>
+                        <small>{order.final_price ?? "—"} TND</small>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="adminNotesBox">
+                    <label htmlFor={`waiting-note-${order.id}`}>Admin note</label>
+                    <textarea
+                      id={`waiting-note-${order.id}`}
+                      value={orderNotes[order.id] ?? ""}
+                      onChange={(event) =>
+                        setOrderNotes((currentNotes) => ({
+                          ...currentNotes,
+                          [order.id]: event.target.value,
+                        }))
+                      }
+                      placeholder="Example: paid via D17, confirmed by customer..."
+                    />
+                  </div>
+
+                  {order.events && order.events.length > 0 && (
+                    <div className="orderNotesHistory">
+                      <strong>Notes history</strong>
+                      {order.events.map((event) => (
+                        <p key={event.id}>
+                          <span>{STATUS_LABELS[event.status] ?? event.status}</span>
+                          {event.note || "No note"}
+                        </p>
+                      ))}
+                    </div>
+                  )}
+
+                  <div className="adminOrderActions">
+                    <button
+                      className="confirmOrderBtn"
+                      type="button"
+                      disabled={updatingOrderId === order.id || removingOrderId === order.id}
                       onClick={() => handleConfirm(order)}
                     >
                       <CheckCircle2 size={18} />
-                      {updatingOrderId === order.id ? "Confirming..." : "Confirm order"}
+                      {updatingOrderId === order.id ? "Confirming..." : "Confirm order (payment received)"}
                     </button>
                     <button
                       className="removeOrderBtn"
