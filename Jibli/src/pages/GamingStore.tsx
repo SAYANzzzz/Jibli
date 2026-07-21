@@ -128,16 +128,21 @@ const GAMING_CATALOG: GamingGame[] = [
   {
     id: "minecraft",
     category: "Game code",
-    name: "Minecraft (PC Edition)",
+    name: "Minecraft — Java & Bedrock Edition (PC)",
     image: "/games/minecraft.jpg",
-    tiers: [{ label: "Message us for current pricing", priceTnd: null }],
+    tiers: [{ label: "Full game", priceTnd: 90 }],
   },
   {
     id: "steam-gift-cards",
     category: "Gift card",
-    name: "Steam Gift Cards",
+    name: "Steam Wallet Gift Card",
     image: "/games/steam.jpg",
-    tiers: [{ label: "Message us for available amounts", priceTnd: null }],
+    tiers: [
+      { label: "15 USD Steam Key", priceTnd: 65 },
+      { label: "20 USD Steam Key", priceTnd: 85 },
+      { label: "30 USD Steam Key", priceTnd: 130 },
+      { label: "50 USD Steam Key", priceTnd: 220 },
+    ],
   },
 ];
 
