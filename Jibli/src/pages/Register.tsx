@@ -15,9 +15,11 @@ function Register() {
   const [errorMessage, setErrorMessage] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  // Once the account is created, Supabase emails a 6-digit code (sent from
-  // jiblitunisia@gmail.com) instead of a click-through link. The account
-  // can't sign in until that code is verified here.
+  // Once the account is created, Supabase emails a verification code (sent
+  // from jiblitunisia@gmail.com) instead of a click-through link. The
+  // account can't sign in until that code is verified here. Don't assume a
+  // fixed digit count for the code — it's been observed as 8 digits, not
+  // Supabase's usual 6.
   const [pendingAccount, setPendingAccount] = useState<{
     email: string;
     fullName: string;
@@ -241,7 +243,7 @@ function Register() {
                   inputMode="numeric"
                   placeholder={t("register.codePlaceholder")}
                   aria-label={t("register.codePlaceholder")}
-                  maxLength={6}
+                  maxLength={12}
                   required
                 />
               </div>
