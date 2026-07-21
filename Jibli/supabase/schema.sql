@@ -154,13 +154,27 @@ create trigger set_orders_updated_at
 before update on public.orders
 for each row execute function public.set_updated_at();
 
-create or replace function public.handle_new_user()
+drop trigger if exists on_auth_user_created on auth.users;
+drop function if exists public.handle_new_user() cascade;
+
+-- Only creates the profile row once Supabase has actually marked the email
+-- confirmed (new.email_confirmed_at is set). This fires on both insert (OAuth
+-- / admin-created / auto-confirm-enabled signups, where the email is already
+-- confirmed at insert time) and on the later update that happens when a
+-- customer verifies their code — so an unverified email/password signup
+-- never gets a profiles row, and therefore never appears as a real account
+-- anywhere in the app.
+create or replace function public.handle_confirmed_user()
 returns trigger
 language plpgsql
 security definer
 set search_path = public
 as $$
 begin
+  if new.email_confirmed_at is null then
+    return new;
+  end if;
+
   insert into public.profiles (id, email, full_name, phone, role)
   values (
     new.id,
@@ -189,7 +203,12 @@ $$;
 drop trigger if exists on_auth_user_created on auth.users;
 create trigger on_auth_user_created
 after insert on auth.users
-for each row execute function public.handle_new_user();
+for each row execute function public.handle_confirmed_user();
+
+drop trigger if exists on_auth_user_confirmed on auth.users;
+create trigger on_auth_user_confirmed
+after update of email_confirmed_at on auth.users
+for each row execute function public.handle_confirmed_user();
 
 create or replace function public.sync_profile_email()
 returns trigger
