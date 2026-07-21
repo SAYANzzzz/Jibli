@@ -22,9 +22,15 @@ type GamingGame = {
 const GAMING_CATALOG: GamingGame[] = [
   {
     id: "riot-points",
-    category: "Game top-up",
-    name: "League of Legends — Riot Points",
-    tiers: [{ label: "575 RP", priceTnd: 24 }],
+    category: "Gift card",
+    name: "League of Legends — Riot Gift Card",
+    image: "/games/league-of-legends.jpg",
+    tiers: [
+      { label: "5 USD Riot Key", priceTnd: 22 },
+      { label: "10 USD Riot Key", priceTnd: 40 },
+      { label: "25 USD Riot Key", priceTnd: 90 },
+      { label: "80 USD Riot Key", priceTnd: 280 },
+    ],
   },
   {
     id: "valorant-vp",
