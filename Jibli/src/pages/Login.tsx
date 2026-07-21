@@ -12,7 +12,6 @@ function Login() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const nextPath = searchParams.get("next") ?? "/request";
-  const registered = searchParams.get("registered") === "1";
   const registerPath = `/register?next=${encodeURIComponent(nextPath)}`;
   const [errorMessage, setErrorMessage] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
@@ -131,12 +130,6 @@ function Login() {
         <h1>Login</h1>
         <p>Sign in to your account</p>
         <div className="authNotice">Login is required to access your panier and track orders.</div>
-        {registered && (
-          <div className="authNotice">
-            Account created. If email confirmation is enabled in Supabase, confirm your email
-            first.
-          </div>
-        )}
         {errorMessage && <div className="authError">{errorMessage}</div>}
         {successMessage && <div className="authNotice success">{successMessage}</div>}
 

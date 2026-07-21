@@ -62,6 +62,14 @@ export async function signUp(
   });
 }
 
+export async function verifySignupOtp(email: string, token: string) {
+  return supabase.auth.verifyOtp({ email, token, type: "signup" });
+}
+
+export async function resendSignupOtp(email: string) {
+  return supabase.auth.resend({ type: "signup", email });
+}
+
 export async function signInWithProvider(provider: "google" | "facebook", nextPath: string) {
   const callbackUrl = new URL("/auth/callback", window.location.origin);
   callbackUrl.searchParams.set("next", nextPath);
