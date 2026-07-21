@@ -157,7 +157,14 @@ function buildWhatsappUrl(gameName: string, tierLabel: string, priceTnd: number 
 
 function GamingStore() {
   const [selectedGameId, setSelectedGameId] = useState<string | null>(null);
+  const [selectedTierIndex, setSelectedTierIndex] = useState(0);
   const selectedGame = GAMING_CATALOG.find((game) => game.id === selectedGameId) ?? null;
+  const selectedTier = selectedGame?.tiers[selectedTierIndex] ?? null;
+
+  const openGame = (gameId: string) => {
+    setSelectedGameId(gameId);
+    setSelectedTierIndex(0);
+  };
 
   return (
     <div>
@@ -184,7 +191,7 @@ function GamingStore() {
                 type="button"
                 key={game.id}
                 className="gamingGameCard"
-                onClick={() => setSelectedGameId(game.id)}
+                onClick={() => openGame(game.id)}
               >
                 <div className="gamingGameImageWrap">
                   {game.image ? (
@@ -205,44 +212,62 @@ function GamingStore() {
             </button>
 
             <div className="card gamingOffersCard">
-              <div className="cardTitleRow">
-                <div className="gamingOffersTitle">
-                  {selectedGame.image && <img src={selectedGame.image} alt="" className="gamingOffersImage" />}
-                  <div>
-                    <h3>{selectedGame.name}</h3>
-                    <span className="platformBadge">{selectedGame.category}</span>
-                  </div>
+              <div className="gamingOffersHero">
+                <div className="gamingOffersHeroImageWrap">
+                  {selectedGame.image ? (
+                    <img src={selectedGame.image} alt="" className="gamingOffersHeroImage" />
+                  ) : (
+                    <span className="gamingGameFallback">{selectedGame.name.slice(0, 1)}</span>
+                  )}
+                </div>
+                <div>
+                  <span className="platformBadge">{selectedGame.category}</span>
+                  <h3>{selectedGame.name}</h3>
                 </div>
               </div>
 
-              <div className="gamingTierList">
-                {selectedGame.tiers.map((tier) => (
-                  <div className="gamingTierRow" key={tier.label}>
-                    <div className="gamingTierInfo">
-                      <strong>{tier.label}</strong>
-                      {tier.features && (
-                        <ul className="gamingTierFeatures">
-                          {tier.features.map((feature) => (
-                            <li key={feature}>{feature}</li>
-                          ))}
-                        </ul>
-                      )}
-                    </div>
-
-                    <div className="gamingTierAction">
-                      {tier.priceTnd !== null && <span className="gamingTierPrice">{tier.priceTnd} TND</span>}
-                      <a
-                        href={buildWhatsappUrl(selectedGame.name, tier.label, tier.priceTnd)}
-                        target="_blank"
-                        rel="noreferrer"
-                        className="primaryBtn"
+              {selectedGame.tiers.length > 1 && (
+                <>
+                  <label>Choose an option</label>
+                  <div className="gamingTierTiles">
+                    {selectedGame.tiers.map((tier, index) => (
+                      <button
+                        type="button"
+                        key={tier.label}
+                        className={index === selectedTierIndex ? "gamingTierTile active" : "gamingTierTile"}
+                        onClick={() => setSelectedTierIndex(index)}
                       >
-                        Order on WhatsApp
-                      </a>
-                    </div>
+                        <strong>{tier.label}</strong>
+                        {tier.priceTnd !== null && <span>{tier.priceTnd} TND</span>}
+                      </button>
+                    ))}
                   </div>
-                ))}
-              </div>
+                </>
+              )}
+
+              {selectedTier?.features && (
+                <ul className="gamingTierFeatures gamingSelectedFeatures">
+                  {selectedTier.features.map((feature) => (
+                    <li key={feature}>{feature}</li>
+                  ))}
+                </ul>
+              )}
+
+              {selectedTier && (
+                <div className="gamingOffersFooter">
+                  {selectedTier.priceTnd !== null && (
+                    <span className="gamingTierPrice">{selectedTier.priceTnd} TND</span>
+                  )}
+                  <a
+                    href={buildWhatsappUrl(selectedGame.name, selectedTier.label, selectedTier.priceTnd)}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="primaryBtn wideBtn"
+                  >
+                    Order on WhatsApp
+                  </a>
+                </div>
+              )}
             </div>
           </div>
         )}
