@@ -2,7 +2,7 @@ import { useState } from "react";
 import type { FormEvent } from "react";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { KeyRound, Mail, Phone, ShieldCheck, User } from "lucide-react";
-import { ensureUserProfile, resendSignupOtp, signUp, verifySignupOtp } from "../auth";
+import { ensureUserProfile, getAuthErrorMessage, resendSignupOtp, signUp, verifySignupOtp } from "../auth";
 import logo from "../assets/Fast-Logo.gif";
 import { useTranslation } from "../i18n/LanguageContext";
 
@@ -55,7 +55,7 @@ function Register() {
 
     if (error) {
       setIsSubmitting(false);
-      setErrorMessage(error.message);
+      setErrorMessage(getAuthErrorMessage(error, t("register.signupFailed")));
       return;
     }
 
@@ -96,7 +96,7 @@ function Register() {
 
     if (error) {
       setIsVerifying(false);
-      setErrorMessage(error.message);
+      setErrorMessage(getAuthErrorMessage(error, t("register.verifyFailed")));
       return;
     }
 
@@ -129,7 +129,7 @@ function Register() {
     setIsResending(false);
 
     if (error) {
-      setErrorMessage(error.message);
+      setErrorMessage(getAuthErrorMessage(error, t("register.resendFailed")));
       return;
     }
 

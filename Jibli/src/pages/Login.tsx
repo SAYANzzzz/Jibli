@@ -2,7 +2,7 @@ import { useState } from "react";
 import type { FormEvent } from "react";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { KeyRound, User } from "lucide-react";
-import { ensureUserProfile, sendPasswordReset, signIn, signInWithProvider } from "../auth";
+import { ensureUserProfile, getAuthErrorMessage, sendPasswordReset, signIn, signInWithProvider } from "../auth";
 import logo from "../assets/Fast-Logo.gif";
 import { useTranslation } from "../i18n/LanguageContext";
 
@@ -35,7 +35,7 @@ function Login() {
 
     if (error) {
       setIsSubmitting(false);
-      setErrorMessage(error.message);
+      setErrorMessage(getAuthErrorMessage(error, t("login.loginFailed")));
       return;
     }
 
@@ -67,7 +67,7 @@ function Login() {
     const { data, error } = await signInWithProvider(provider, nextPath);
 
     if (error) {
-      setErrorMessage(error.message);
+      setErrorMessage(getAuthErrorMessage(error, t("login.providerFailed", { provider: providerName })));
       setProviderLoading("");
       return;
     }
@@ -96,7 +96,7 @@ function Login() {
     setIsResetting(false);
 
     if (error) {
-      setErrorMessage(error.message);
+      setErrorMessage(getAuthErrorMessage(error, t("login.resetFailed")));
       return;
     }
 

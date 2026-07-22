@@ -1,6 +1,22 @@
 import { supabase } from "./supabase";
 import { isAdminEmail } from "./admin";
 
+// Supabase's error shape isn't always what supabase-js expects (e.g. a
+// backend/SMTP failure can come back with a body it doesn't parse into a
+// proper .message), which can otherwise surface as a blank or "{}" error to
+// the customer. Fall back to a readable message whenever that happens.
+export function getAuthErrorMessage(error: unknown, fallback: string): string {
+  if (error instanceof Error) {
+    const message = error.message?.trim();
+
+    if (message && message !== "{}" && message !== "[object Object]") {
+      return message;
+    }
+  }
+
+  return fallback;
+}
+
 export async function getCurrentSession() {
   const { data, error } = await supabase.auth.getSession();
 
