@@ -2446,12 +2446,16 @@ textarea {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 46px;
-  height: 46px;
-  border-radius: 50%;
-  background: #eaf0ff;
-  color: #001f5b;
+  width: 48px;
+  height: 48px;
   margin-bottom: 6px;
+}
+
+.contactCardIcon img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  border-radius: 50%;
 }
 
 .contactCard h3 {

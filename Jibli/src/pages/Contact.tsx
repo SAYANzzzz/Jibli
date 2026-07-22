@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { LogIn, MessageCircle, Mail, Camera, UserPlus } from "lucide-react";
+import { LogIn, UserPlus } from "lucide-react";
 import { getCurrentSession } from "../auth";
 import Navbar from "../components/Navbar";
 import ProfileNavLink from "../components/ProfileNavLink";
@@ -58,7 +58,7 @@ function Contact() {
             rel="noreferrer"
           >
             <span className="contactCardIcon">
-              <MessageCircle size={26} />
+              <img src="/whatsapp-logo.jpg" alt="" />
             </span>
             <h3>{t("contact.whatsappTitle")}</h3>
             <p>{t("contact.whatsappText")}</p>
@@ -67,7 +67,7 @@ function Contact() {
 
           <a className="card contactCard" href={`mailto:${CONTACT_EMAIL}`}>
             <span className="contactCardIcon">
-              <Mail size={26} />
+              <img src="/email-logo.png" alt="" />
             </span>
             <h3>{t("contact.emailTitle")}</h3>
             <p>{t("contact.emailText")}</p>
@@ -76,7 +76,7 @@ function Contact() {
 
           <a className="card contactCard" href={INSTAGRAM_URL} target="_blank" rel="noreferrer">
             <span className="contactCardIcon">
-              <Camera size={26} />
+              <img src="/instagram-logo.jpg" alt="" />
             </span>
             <h3>{t("contact.instagramTitle")}</h3>
             <p>{t("contact.instagramText")}</p>
