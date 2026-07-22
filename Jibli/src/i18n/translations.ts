@@ -235,7 +235,17 @@ const en = {
   },
   about: {
     title: "About Us",
-    comingSoonNotice: "This page is being written — check back soon.",
+    intro: "Welcome to Jibli — your gateway to shopping and digital services in Tunisia. 🇹🇳",
+    paragraph1:
+      "Jibli is a Tunisian online shopping and digital services platform based in Deguach, Tunisia. Our goal is to make it easier for customers to access the products and digital services they love.",
+    paragraph2:
+      "From international products such as fashion, accessories, home decoration, and everyday essentials to gaming services and digital products, Jibli brings everything closer to you.",
+    gamingCallout:
+      "Looking for Free Fire Diamonds, Valorant Points, or other gaming products? Jibli is here to help you get the digital services you need simply and conveniently.",
+    mission: "Our mission is simple: you find what you want, we help you get it.",
+    paragraph3:
+      "Serving customers in Deguach and across Tunisia, Jibli is committed to providing a simple, convenient, and reliable experience for both online shopping and digital gaming services.",
+    tagline: "Jibli — Shop it. Play it. Get it.",
   },
   contact: {
     title: "Contact Us",
@@ -501,7 +511,17 @@ const fr: typeof en = {
   },
   about: {
     title: "À propos de nous",
-    comingSoonNotice: "Cette page est en cours de rédaction — revenez bientôt.",
+    intro: "Bienvenue chez Jibli — votre passerelle vers le shopping et les services numériques en Tunisie. 🇹🇳",
+    paragraph1:
+      "Jibli est une plateforme tunisienne de shopping en ligne et de services numériques basée à Deguach, en Tunisie. Notre objectif est de faciliter l'accès des clients aux produits et services numériques qu'ils aiment.",
+    paragraph2:
+      "Des produits internationaux comme la mode, les accessoires, la décoration intérieure et les essentiels du quotidien, jusqu'aux services de gaming et produits numériques, Jibli rapproche tout de vous.",
+    gamingCallout:
+      "Vous cherchez des Diamants Free Fire, des Valorant Points, ou d'autres produits gaming ? Jibli est là pour vous aider à obtenir les services numériques dont vous avez besoin, simplement et facilement.",
+    mission: "Notre mission est simple : vous trouvez ce que vous voulez, nous vous aidons à l'obtenir.",
+    paragraph3:
+      "Au service des clients à Deguach et dans toute la Tunisie, Jibli s'engage à offrir une expérience simple, pratique et fiable, aussi bien pour le shopping en ligne que pour les services de gaming numériques.",
+    tagline: "Jibli — Achetez-le. Jouez-y. Obtenez-le.",
   },
   contact: {
     title: "Contactez-nous",

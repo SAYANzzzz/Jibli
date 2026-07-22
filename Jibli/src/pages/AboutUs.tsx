@@ -43,7 +43,21 @@ function AboutUs() {
       <main className="page">
         <div className="center trackingIntro">
           <h1>{t("about.title")}</h1>
-          <p>{t("about.comingSoonNotice")}</p>
+          <p>{t("about.intro")}</p>
+        </div>
+
+        <div className="aboutContent">
+          <p>{t("about.paragraph1")}</p>
+          <p>{t("about.paragraph2")}</p>
+
+          <div className="card aboutCallout">
+            <p>{t("about.gamingCallout")}</p>
+          </div>
+
+          <p className="aboutMission">{t("about.mission")}</p>
+          <p>{t("about.paragraph3")}</p>
+
+          <p className="aboutTagline">{t("about.tagline")}</p>
         </div>
       </main>
     </div>
