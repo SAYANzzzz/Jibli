@@ -16,15 +16,17 @@ async function getAccessToken() {
   return data.session.access_token;
 }
 
-// The backend (Render free tier) sleeps after being idle and can take a
-// while to wake up, which sometimes drops the very first request while
-// it's still booting. In production, wait for it to finish waking up and
-// retry once before giving up. In dev, fall back to the alternate localhost
-// port instead, since that's the actual likely cause there.
+// The backend (Render free tier) sleeps after being idle, and waking it
+// back up can take 30-60+ seconds - not a few seconds. A single short retry
+// isn't enough to ride that out, so keep retrying with backoff for close to
+// a minute before actually giving up. In dev, fall back to the alternate
+// localhost port instead, since that's the actual likely cause there.
+const WAKEUP_RETRY_DELAYS_MS = [3000, 5000, 8000, 10000, 10000, 10000];
+
 async function fetchWithWakeupRetry(path: string, requestOptions: RequestInit): Promise<Response> {
   try {
     return await fetch(`${API_URL}${path}`, requestOptions);
-  } catch {
+  } catch (firstError) {
     if (import.meta.env.DEV) {
       try {
         return await fetch(`${API_FALLBACK_URL}${path}`, requestOptions);
@@ -33,13 +35,20 @@ async function fetchWithWakeupRetry(path: string, requestOptions: RequestInit): 
       }
     }
 
-    await new Promise((resolve) => setTimeout(resolve, 4000));
+    let lastError: unknown = firstError;
 
-    try {
-      return await fetch(`${API_URL}${path}`, requestOptions);
-    } catch {
-      throw new Error("We couldn't reach the server. Please check your connection and try again in a moment.");
+    for (const delay of WAKEUP_RETRY_DELAYS_MS) {
+      await new Promise((resolve) => setTimeout(resolve, delay));
+
+      try {
+        return await fetch(`${API_URL}${path}`, requestOptions);
+      } catch (retryError) {
+        lastError = retryError;
+      }
     }
+
+    console.error("Backend unreachable after wakeup retries", lastError);
+    throw new Error("We couldn't reach the server. Please check your connection and try again in a moment.");
   }
 }
 
