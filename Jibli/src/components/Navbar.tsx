@@ -2,7 +2,6 @@ import { useEffect, useRef, useState } from "react";
 import type { ReactNode } from "react";
 import { Link } from "react-router-dom";
 import { ChevronDown, Menu, X } from "lucide-react";
-import logo from "../assets/Fast-Logo.gif";
 import { useTranslation } from "../i18n/LanguageContext";
 import { LANGUAGES } from "../i18n/translations";
 
@@ -71,8 +70,7 @@ function Navbar({ children, hidePrimaryNav }: { children: ReactNode; hidePrimary
   return (
     <nav className="navbar">
       <Link to="/" className="brand" onClick={() => setIsMenuOpen(false)}>
-        <img src={logo} alt="Jibli logo" className="logoImg" />
-        <span>Jibli</span>
+        <img src="/Logo.png" alt="Jibli" className="logoImg" />
       </Link>
 
       <button
