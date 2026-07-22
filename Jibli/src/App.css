@@ -109,6 +109,30 @@ textarea {
   gap: 22px;
 }
 
+/* Centered on desktop regardless of where it sits in the DOM, since it's
+   positioned relative to .navbar (the nearest positioned ancestor), not to
+   .navLinks itself — keeps the left brand and right-side actions exactly
+   where they were before this was added. */
+.navPrimary {
+  display: flex;
+  align-items: center;
+  gap: 32px;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  font-weight: 700;
+  color: #111111;
+}
+
+.navPrimary a {
+  color: inherit;
+}
+
+.navPrimary a:hover {
+  color: #001f5b;
+}
+
 .langSwitcher {
   position: relative;
 }
@@ -2363,6 +2387,57 @@ textarea {
   padding: 24px;
 }
 
+.contactGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 20px;
+  margin-top: 30px;
+}
+
+.contactCard {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+  text-decoration: none;
+  color: inherit;
+  border: 1px solid #d9d9d9;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.contactCard:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.08);
+}
+
+.contactCardIcon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  background: #eaf0ff;
+  color: #001f5b;
+  margin-bottom: 6px;
+}
+
+.contactCard h3 {
+  margin: 0;
+}
+
+.contactCard p {
+  margin: 0;
+  color: #666666;
+}
+
+.contactCardBtn {
+  margin-top: auto;
+  padding-top: 10px;
+  font-weight: 700;
+  color: #001f5b;
+}
+
 .emptyOrdersState {
   min-height: 260px;
   display: grid;
@@ -3262,6 +3337,22 @@ td {
 
   .navLinks.open {
     display: flex;
+  }
+
+  .navPrimary {
+    position: static;
+    transform: none;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 4px;
+    width: 100%;
+    padding-bottom: 12px;
+    margin-bottom: 8px;
+    border-bottom: 1px solid #e5e7eb;
+  }
+
+  .navPrimary a {
+    padding: 8px 0;
   }
 
   .navLinks .outlineBtn,

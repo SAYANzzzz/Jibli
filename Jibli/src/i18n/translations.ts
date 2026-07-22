@@ -7,7 +7,10 @@ export const LANGUAGES: { value: Language; label: string; flag: string; name: st
 
 const en = {
   nav: {
+    home: "Home",
     gaming: "Gaming",
+    aboutUs: "About Us",
+    contact: "Contact",
     panier: "Panier",
     login: "Login",
     register: "Register",
@@ -230,6 +233,21 @@ const en = {
   common: {
     calcErrorFallback: "Could not calculate the price. Please try again.",
   },
+  about: {
+    title: "About Us",
+    comingSoonNotice: "This page is being written — check back soon.",
+  },
+  contact: {
+    title: "Contact Us",
+    subtitle: "Questions about an order, a price, or anything else? Reach us here.",
+    whatsappTitle: "WhatsApp",
+    whatsappText: "Fastest way to reach us — order questions, price confirmations, support.",
+    whatsappBtn: "Message us on WhatsApp",
+    emailTitle: "Email",
+    emailText: "For anything that isn't urgent.",
+    instagramTitle: "Instagram",
+    instagramText: "Follow for deals and updates.",
+  },
   orderStatus: {
     new_request: "New request",
     waiting_confirmation: "Waiting confirmation",
@@ -255,7 +273,10 @@ const en = {
 
 const fr: typeof en = {
   nav: {
+    home: "Accueil",
     gaming: "Gaming",
+    aboutUs: "À propos",
+    contact: "Contact",
     panier: "Panier",
     login: "Connexion",
     register: "Inscription",
@@ -477,6 +498,21 @@ const fr: typeof en = {
   },
   common: {
     calcErrorFallback: "Impossible de calculer le prix. Veuillez réessayer.",
+  },
+  about: {
+    title: "À propos de nous",
+    comingSoonNotice: "Cette page est en cours de rédaction — revenez bientôt.",
+  },
+  contact: {
+    title: "Contactez-nous",
+    subtitle: "Une question sur une commande, un prix, ou autre chose ? Contactez-nous ici.",
+    whatsappTitle: "WhatsApp",
+    whatsappText: "Le moyen le plus rapide de nous joindre — questions de commande, confirmation de prix, support.",
+    whatsappBtn: "Nous contacter sur WhatsApp",
+    emailTitle: "Email",
+    emailText: "Pour tout ce qui n'est pas urgent.",
+    instagramTitle: "Instagram",
+    instagramText: "Suivez-nous pour les offres et actualités.",
   },
   orderStatus: {
     new_request: "Nouvelle demande",

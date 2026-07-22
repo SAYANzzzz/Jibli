@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
-import { Gamepad2, MessageCircle, Package, PlusCircle } from "lucide-react";
+import { MessageCircle, Package, PlusCircle } from "lucide-react";
 import { getOrders } from "../api";
 import type { Order } from "../api";
 import Navbar from "../components/Navbar";
@@ -97,7 +97,6 @@ function OrderTracking() {
   return (
     <div>
       <Navbar>
-        <Link to="/gaming" className="outlineBtn"><Gamepad2 size={16} /> {t("nav.gaming")}</Link>
         <Link to="/request" className="outlineBtn"><PlusCircle size={16} /> {t("nav.requestOrder")}</Link>
         <ProfileNavLink />
       </Navbar>

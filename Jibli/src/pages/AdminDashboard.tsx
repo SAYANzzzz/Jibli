@@ -341,7 +341,7 @@ function AdminDashboard() {
 
   return (
     <div className="simpleAdminPage">
-      <Navbar>
+      <Navbar hidePrimaryNav>
         <button className="outlineBtn" type="button" onClick={loadOrders}>
           <RefreshCw size={16} />
           Refresh

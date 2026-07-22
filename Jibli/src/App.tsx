@@ -10,6 +10,8 @@ import Account from "./pages/Account.tsx";
 import ProductRequest from "./pages/ProductRequest.tsx";
 import OrderTracking from "./pages/OrderTracking.tsx";
 import GamingStore from "./pages/GamingStore.tsx";
+import AboutUs from "./pages/AboutUs.tsx";
+import Contact from "./pages/Contact.tsx";
 import AdminDashboard from "./pages/AdminDashboard";
 import { isAdminEmail } from "./admin";
 import { getCurrentSession } from "./auth";
@@ -209,6 +211,8 @@ function App() {
         />
         <Route path="/order" element={<OrderRedirect />} />
         <Route path="/gaming" element={<GamingStore />} />
+        <Route path="/about" element={<AboutUs />} />
+        <Route path="/contact" element={<Contact />} />
         <Route
           path="/tracking"
           element={

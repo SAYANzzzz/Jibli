@@ -64,7 +64,8 @@ function LanguageSwitcher() {
   );
 }
 
-function Navbar({ children }: { children: ReactNode }) {
+function Navbar({ children, hidePrimaryNav }: { children: ReactNode; hidePrimaryNav?: boolean }) {
+  const { t } = useTranslation();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   return (
@@ -85,6 +86,14 @@ function Navbar({ children }: { children: ReactNode }) {
       </button>
 
       <div className={isMenuOpen ? "navLinks open" : "navLinks"} onClick={() => setIsMenuOpen(false)}>
+        {!hidePrimaryNav && (
+          <div className="navPrimary">
+            <Link to="/">{t("nav.home")}</Link>
+            <Link to="/gaming">{t("nav.gaming")}</Link>
+            <Link to="/about">{t("nav.aboutUs")}</Link>
+            <Link to="/contact">{t("nav.contact")}</Link>
+          </div>
+        )}
         {children}
         <LanguageSwitcher />
       </div>

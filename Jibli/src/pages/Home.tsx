@@ -40,7 +40,6 @@ function Home() {
   return (
     <div>
       <Navbar>
-        <Link to="/gaming" className="outlineBtn"><Gamepad2 size={16} /> {t("nav.gaming")}</Link>
         {isAuthenticated ? (
           <>
             <Link to="/tracking#panier" className="outlineBtn"><ShoppingCart size={16} /> {t("nav.panier")}</Link>

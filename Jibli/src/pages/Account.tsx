@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import type { ChangeEvent, FormEvent } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { Gamepad2, LogOut, PackageSearch, PlusCircle, Shield } from "lucide-react";
+import { LogOut, PackageSearch, PlusCircle, Shield } from "lucide-react";
 import { isAdminEmail } from "../admin";
 import { supabase } from "../supabase";
 import Navbar from "../components/Navbar";
@@ -208,7 +208,6 @@ function Account() {
   return (
     <div>
       <Navbar>
-        <Link to="/gaming" className="outlineBtn"><Gamepad2 size={16} /> {t("nav.gaming")}</Link>
         <Link to="/request" className="outlineBtn"><PlusCircle size={16} /> {t("nav.newOrder")}</Link>
         <Link to="/tracking" className="outlineBtn"><PackageSearch size={16} /> {t("nav.trackOrders")}</Link>
         {canAccessAdmin && (
