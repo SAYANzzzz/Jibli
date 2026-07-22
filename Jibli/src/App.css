@@ -436,20 +436,10 @@ textarea {
 }
 
 .heroVisual {
-  position: relative;
   display: flex;
   align-items: center;
   justify-content: center;
   min-height: 420px;
-}
-
-.heroVisual::before {
-  content: "";
-  position: absolute;
-  inset: -12%;
-  background: radial-gradient(ellipse 55% 55% at center, rgba(45, 60, 120, 0.55), rgba(20, 30, 66, 0.25) 55%, transparent 78%);
-  filter: blur(30px);
-  z-index: -1;
 }
 
 .heroImage {
@@ -460,8 +450,6 @@ textarea {
   border: 0;
   box-shadow: none;
   object-fit: contain;
-  -webkit-mask-image: radial-gradient(ellipse 68% 68% at 50% 48%, black 45%, transparent 88%);
-  mask-image: radial-gradient(ellipse 68% 68% at 50% 48%, black 45%, transparent 88%);
 }
 
 .section {
