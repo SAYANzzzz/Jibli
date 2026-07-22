@@ -92,8 +92,10 @@ function Navbar({ children, hidePrimaryNav }: { children: ReactNode; hidePrimary
             <Link to="/contact">{t("nav.contact")}</Link>
           </div>
         )}
-        {children}
-        <LanguageSwitcher />
+        <div className="navActions">
+          {children}
+          <LanguageSwitcher />
+        </div>
       </div>
     </nav>
   );

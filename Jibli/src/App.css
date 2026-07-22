@@ -123,26 +123,31 @@ textarea {
   height: 28px;
 }
 
+/* Grid instead of absolute-positioned centering so the primary nav gets its
+   own reserved column and can never overlap the right-side action buttons,
+   no matter how many a given page renders (e.g. Account's 4 buttons). */
 .navLinks {
-  display: flex;
+  display: grid;
+  grid-template-columns: 1fr auto;
   align-items: center;
   gap: 22px;
 }
 
-/* Centered on desktop regardless of where it sits in the DOM, since it's
-   positioned relative to .navbar (the nearest positioned ancestor), not to
-   .navLinks itself — keeps the left brand and right-side actions exactly
-   where they were before this was added. */
 .navPrimary {
+  grid-column: 1;
+  justify-self: center;
   display: flex;
   align-items: center;
   gap: 32px;
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  transform: translate(-50%, -50%);
   font-weight: 700;
   color: var(--text);
+}
+
+.navActions {
+  grid-column: 2;
+  display: flex;
+  align-items: center;
+  gap: 22px;
 }
 
 .navPrimary a {
@@ -3486,8 +3491,6 @@ td {
   }
 
   .navPrimary {
-    position: static;
-    transform: none;
     flex-direction: column;
     align-items: stretch;
     gap: 4px;
@@ -3499,6 +3502,13 @@ td {
 
   .navPrimary a {
     padding: 8px 0;
+  }
+
+  .navActions {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+    width: 100%;
   }
 
   .navLinks .outlineBtn,
