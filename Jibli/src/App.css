@@ -48,13 +48,20 @@ textarea {
   background: rgba(16, 26, 56, 0.7);
   backdrop-filter: blur(14px);
   border-bottom: 1px solid var(--border);
-  display: flex;
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
   align-items: center;
-  justify-content: space-between;
   padding: 0 clamp(24px, 6vw, 90px);
 }
 
+.brand {
+  grid-column: 1;
+  justify-self: start;
+}
+
 .navMenuToggle {
+  grid-column: 3;
+  justify-self: end;
   display: none;
   align-items: center;
   justify-content: center;
@@ -123,18 +130,18 @@ textarea {
   height: 28px;
 }
 
-/* Grid instead of absolute-positioned centering so the primary nav gets its
-   own reserved column and can never overlap the right-side action buttons,
-   no matter how many a given page renders (e.g. Account's 4 buttons). */
+/* display:contents on desktop so navPrimary/navActions become direct grid
+   items of .navbar's 3-column grid (auto centered nav auto) - keeps the nav
+   links truly centered on the whole navbar while guaranteeing they can never
+   overlap the right-side action buttons, no matter how many a page renders
+   (e.g. Account's 4 buttons). On mobile this is overridden back into a real
+   toggleable dropdown box (see media query below). */
 .navLinks {
-  display: grid;
-  grid-template-columns: 1fr auto;
-  align-items: center;
-  gap: 22px;
+  display: contents;
 }
 
 .navPrimary {
-  grid-column: 1;
+  grid-column: 2;
   justify-self: center;
   display: flex;
   align-items: center;
@@ -144,7 +151,8 @@ textarea {
 }
 
 .navActions {
-  grid-column: 2;
+  grid-column: 3;
+  justify-self: end;
   display: flex;
   align-items: center;
   gap: 22px;

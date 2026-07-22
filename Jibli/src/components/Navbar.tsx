@@ -83,6 +83,10 @@ function Navbar({ children, hidePrimaryNav }: { children: ReactNode; hidePrimary
         {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
       </button>
 
+      {/* display:contents on desktop so navPrimary/navActions become direct
+          grid items of .navbar (for true full-width centering); on mobile
+          this becomes a real box that the two stack inside as one dropdown,
+          toggled together by isMenuOpen. */}
       <div className={isMenuOpen ? "navLinks open" : "navLinks"} onClick={() => setIsMenuOpen(false)}>
         {!hidePrimaryNav && (
           <div className="navPrimary">
