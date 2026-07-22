@@ -57,7 +57,7 @@ function Home() {
         <div className="heroText">
           <h1>
             {t("home.heroTitle1")} <br />
-            {t("home.heroTitle2")}
+            <span className="heroAccent">{t("home.heroTitle2")}</span>
           </h1>
 
           <p>{t("home.heroSubtitle")}</p>
