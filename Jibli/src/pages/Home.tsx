@@ -87,7 +87,7 @@ function Home() {
 
         <div className="heroVisual">
           <img
-            src="/hero-tunisia-graphic.png"
+            src="/hero-tunisia-v2.png"
             alt="Jibli — based in Deguach, Tunisia, bringing gaming top-ups and shopping from AliExpress, Shein, Temu and more"
             className="heroImage"
           />
