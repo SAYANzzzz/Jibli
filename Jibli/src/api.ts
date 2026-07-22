@@ -16,9 +16,35 @@ async function getAccessToken() {
   return data.session.access_token;
 }
 
+// The backend (Render free tier) sleeps after being idle and can take a
+// while to wake up, which sometimes drops the very first request while
+// it's still booting. In production, wait for it to finish waking up and
+// retry once before giving up. In dev, fall back to the alternate localhost
+// port instead, since that's the actual likely cause there.
+async function fetchWithWakeupRetry(path: string, requestOptions: RequestInit): Promise<Response> {
+  try {
+    return await fetch(`${API_URL}${path}`, requestOptions);
+  } catch {
+    if (import.meta.env.DEV) {
+      try {
+        return await fetch(`${API_FALLBACK_URL}${path}`, requestOptions);
+      } catch {
+        throw new Error("Cannot reach the backend. Start FastAPI, then refresh this page.");
+      }
+    }
+
+    await new Promise((resolve) => setTimeout(resolve, 4000));
+
+    try {
+      return await fetch(`${API_URL}${path}`, requestOptions);
+    } catch {
+      throw new Error("We couldn't reach the server. Please check your connection and try again in a moment.");
+    }
+  }
+}
+
 async function apiFetch(path: string, options: RequestInit = {}) {
   const token = await getAccessToken();
-  let response: Response;
   const isFormData = typeof FormData !== "undefined" && options.body instanceof FormData;
   const requestOptions: RequestInit = {
     ...options,
@@ -29,23 +55,7 @@ async function apiFetch(path: string, options: RequestInit = {}) {
     },
   };
 
-  try {
-    response = await fetch(`${API_URL}${path}`, requestOptions);
-  } catch {
-    // The localhost fallback only makes sense while developing locally,
-    // where the dev server and API port can differ. In production there's
-    // nothing at localhost, so trying it would only add a pointless delay.
-    if (import.meta.env.DEV) {
-      try {
-        response = await fetch(`${API_FALLBACK_URL}${path}`, requestOptions);
-      } catch {
-        throw new Error("Cannot reach the backend. Start FastAPI, then refresh this page.");
-      }
-    } else {
-      throw new Error("We couldn't reach the server. Please check your connection and try again in a moment.");
-    }
-  }
-
+  const response = await fetchWithWakeupRetry(path, requestOptions);
   const data = await response.json().catch(() => ({}));
 
   if (!response.ok) {
@@ -249,7 +259,6 @@ export async function updateProfile(payload: {
 }
 
 async function publicApiFetch(path: string, options: RequestInit = {}) {
-  let response: Response;
   const requestOptions: RequestInit = {
     ...options,
     headers: {
@@ -258,23 +267,7 @@ async function publicApiFetch(path: string, options: RequestInit = {}) {
     },
   };
 
-  try {
-    response = await fetch(`${API_URL}${path}`, requestOptions);
-  } catch {
-    // The localhost fallback only makes sense while developing locally,
-    // where the dev server and API port can differ. In production there's
-    // nothing at localhost, so trying it would only add a pointless delay.
-    if (import.meta.env.DEV) {
-      try {
-        response = await fetch(`${API_FALLBACK_URL}${path}`, requestOptions);
-      } catch {
-        throw new Error("Cannot reach the backend. Start FastAPI, then refresh this page.");
-      }
-    } else {
-      throw new Error("We couldn't reach the server. Please check your connection and try again in a moment.");
-    }
-  }
-
+  const response = await fetchWithWakeupRetry(path, requestOptions);
   const data = await response.json().catch(() => ({}));
 
   if (!response.ok) {
