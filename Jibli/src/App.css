@@ -306,9 +306,8 @@ textarea {
   width: 100%;
   min-height: calc(100vh - 90px);
   padding: clamp(56px, 7vw, 90px) clamp(24px, 6vw, 90px);
-  display: grid;
-  grid-template-columns: minmax(0, 0.95fr) minmax(360px, 1.05fr);
-  gap: clamp(32px, 5vw, 72px);
+  display: flex;
+  justify-content: center;
   align-items: center;
   overflow: hidden;
 }
@@ -433,23 +432,6 @@ textarea {
 .shopNowBtn:hover {
   transform: translateY(-2px);
   box-shadow: 0 0 32px rgba(59, 123, 255, 0.65), inset 0 0 16px rgba(59, 123, 255, 0.3);
-}
-
-.heroVisual {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  min-height: 420px;
-}
-
-.heroImage {
-  width: min(100%, 560px);
-  max-height: min(72vh, 620px);
-  height: auto;
-  display: block;
-  border: 0;
-  box-shadow: none;
-  object-fit: contain;
 }
 
 .section {
@@ -3524,15 +3506,6 @@ td {
 
   .hero h1 {
     font-size: clamp(38px, 12vw, 48px);
-  }
-
-  .heroVisual {
-    min-height: auto;
-    justify-content: flex-start;
-  }
-
-  .heroImage {
-    width: min(100%, 460px);
   }
 
   .requestHero {
