@@ -235,12 +235,6 @@ export function OrderItemCard({ id, index, initialLink, onUpdate, onRemove, canR
             )}
           </div>
 
-          <img
-            src={link.trim() ? "/stonks.png" : "/not-stonks.png"}
-            alt=""
-            className="qoStonksImage"
-          />
-
           {shopMismatch && !isBlockedShein && detectedShop && (
             <div className="noticeBox warning">
               {t("orderItem.mismatchWarning", {

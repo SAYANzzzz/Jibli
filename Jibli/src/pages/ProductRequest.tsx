@@ -150,8 +150,8 @@ function ProductRequest() {
 
           <div className="requestHeroVisual">
             <img
-              src="/shopping-panier.jfif"
-              alt="Online shopping panier with packages"
+              src={activeItems.length > 0 ? "/stonks.png" : "/not-stonks.png"}
+              alt=""
               className="requestHeroImage"
             />
             <div className="floatingShopCard top logoFloat">
