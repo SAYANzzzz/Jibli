@@ -352,6 +352,8 @@ textarea {
   outline: 0;
   padding: 0 18px;
   font-size: 15px;
+  background: transparent;
+  color: var(--text);
 }
 
 .linkBox a,
@@ -368,13 +370,69 @@ textarea {
   cursor: pointer;
 }
 
-.trustRow {
-  margin-top: 24px;
+.trustBar {
+  width: 100%;
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 18px clamp(20px, 4vw, 44px);
   display: flex;
-  gap: 22px;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(12px, 3vw, 32px);
   flex-wrap: wrap;
-  color: var(--text-muted);
+  background: rgba(16, 26, 56, 0.6);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+}
+
+.trustBarItem {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--text);
+  font-size: 13px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.trustBarItem svg {
+  color: var(--accent);
+  flex-shrink: 0;
+}
+
+.trustBarDivider {
+  width: 1px;
+  height: 24px;
+  background: var(--border);
+}
+
+.shopNowWrap {
+  display: flex;
+  justify-content: center;
+  margin: 26px 0 10px;
+}
+
+.shopNowBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  height: 52px;
+  padding: 0 34px;
+  border-radius: 999px;
+  border: 1px solid var(--accent);
+  background: rgba(59, 123, 255, 0.12);
+  color: var(--text);
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
   font-size: 14px;
+  box-shadow: 0 0 24px rgba(59, 123, 255, 0.45), inset 0 0 12px rgba(59, 123, 255, 0.2);
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.shopNowBtn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 0 32px rgba(59, 123, 255, 0.65), inset 0 0 16px rgba(59, 123, 255, 0.3);
 }
 
 .heroVisual {
@@ -613,6 +671,7 @@ textarea {
   width: 100%;
   border: 1px solid var(--border);
   background: var(--surface);
+  color: var(--text);
   outline: none;
   padding: 0 14px;
 }

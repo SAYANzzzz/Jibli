@@ -44,6 +44,7 @@ const en = {
     gamingSectionText:
       "Riot Points, Valorant VP, Free Fire Diamonds, Robux, Chess.com and Spotify Premium, Steam gift cards and more — no password needed, fast delivery on WhatsApp.",
     exploreGaming: "Explore gaming top-ups",
+    shopNow: "Shop Now",
   },
   gaming: {
     title: "Gaming top-ups & subscriptions",
@@ -320,6 +321,7 @@ const fr: typeof en = {
     gamingSectionText:
       "Riot Points, Valorant VP, Diamants Free Fire, Robux, Chess.com et Spotify Premium, cartes cadeaux Steam et plus — sans mot de passe, livraison rapide sur WhatsApp.",
     exploreGaming: "Découvrir les recharges gaming",
+    shopNow: "Acheter maintenant",
   },
   gaming: {
     title: "Recharges gaming & abonnements",

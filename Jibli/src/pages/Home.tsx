@@ -1,7 +1,18 @@
 import { useEffect, useState } from "react";
 import type { FormEvent } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { Link as LinkIcon, CreditCard, Gamepad2, LogIn, ShieldCheck, ShoppingCart, Truck, UserPlus } from "lucide-react";
+import {
+  Link as LinkIcon,
+  CreditCard,
+  Gamepad2,
+  LogIn,
+  PackageSearch,
+  ShieldCheck,
+  ShoppingCart,
+  Truck,
+  UserPlus,
+  Zap,
+} from "lucide-react";
 import { getCurrentSession } from "../auth";
 import Navbar from "../components/Navbar";
 import ProfileNavLink from "../components/ProfileNavLink";
@@ -72,21 +83,39 @@ function Home() {
             <button type="submit">{t("home.getMyPrice")}</button>
           </form>
 
-          <div className="trustRow">
-            <span>{t("home.trust1")}</span>
-            <span>{t("home.trust2")}</span>
-            <span>{t("home.trust3")}</span>
-          </div>
         </div>
 
         <div className="heroVisual">
           <img
-            src="/hero-delivery.png"
-            alt="Worldwide delivery route to Tunisia"
+            src="/hero-tunisia-graphic.png"
+            alt="Jibli — based in Deguach, Tunisia, bringing gaming top-ups and shopping from AliExpress, Shein, Temu and more"
             className="heroImage"
           />
         </div>
       </section>
+
+      <section className="trustBar">
+        <div className="trustBarItem">
+          <Zap size={18} />
+          <span>{t("home.trust1")}</span>
+        </div>
+        <span className="trustBarDivider" />
+        <div className="trustBarItem">
+          <ShieldCheck size={18} />
+          <span>{t("home.trust2")}</span>
+        </div>
+        <span className="trustBarDivider" />
+        <div className="trustBarItem">
+          <PackageSearch size={18} />
+          <span>{t("home.trust3")}</span>
+        </div>
+      </section>
+
+      <div className="shopNowWrap">
+        <Link to="/request" className="shopNowBtn">
+          <ShoppingCart size={16} /> {t("home.shopNow")}
+        </Link>
+      </div>
 
       <section className="section">
         <h2>{t("home.howItWorks")}</h2>
