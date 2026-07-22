@@ -984,12 +984,10 @@ textarea {
 
 .requestHeroImage {
   width: min(100%, 460px);
-  aspect-ratio: 1;
-  object-fit: cover;
+  height: auto;
+  object-fit: contain;
   display: block;
-  border: 18px solid var(--surface);
-  filter: grayscale(1) sepia(1) hue-rotate(180deg) saturate(4) brightness(0.86) contrast(1.2);
-  mix-blend-mode: multiply;
+  border-radius: 12px;
 }
 
 .floatingShopCard {
