@@ -10,11 +10,11 @@ MULTIPLIERS: dict[Shop, float] = {
   "temu": 5.5,
 }
 
-# AliExpress adds a flat service fee on top; Shein and Temu don't.
+# Every shop adds the same flat service fee on top.
 SERVICE_FEE_TND: dict[Shop, int] = {
   "aliexpress": 5,
-  "shein": 0,
-  "temu": 0,
+  "shein": 5,
+  "temu": 5,
 }
 
 
