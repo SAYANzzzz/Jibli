@@ -234,6 +234,9 @@ function GamingStore() {
                 <div>
                   <span className="platformBadge">{categoryLabel(selectedGame.category)}</span>
                   <h3>{selectedGame.name}</h3>
+                  {selectedGame.tiers.length === 1 && (
+                    <p className="mutedText">{selectedGame.tiers[0].label}</p>
+                  )}
                 </div>
               </div>
 
