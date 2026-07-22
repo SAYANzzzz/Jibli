@@ -6,7 +6,7 @@
   --text: #f3f5ff;
   --text-muted: #97a1c9;
   --text-muted-2: #6b7599;
-  --accent: #3b7bff;
+  --accent: #5b9bff;
   --accent-2: #7c5cff;
 }
 
@@ -436,10 +436,20 @@ textarea {
 }
 
 .heroVisual {
+  position: relative;
   display: flex;
   align-items: center;
   justify-content: center;
   min-height: 420px;
+}
+
+.heroVisual::before {
+  content: "";
+  position: absolute;
+  inset: -12%;
+  background: radial-gradient(ellipse 55% 55% at center, rgba(45, 60, 120, 0.55), rgba(20, 30, 66, 0.25) 55%, transparent 78%);
+  filter: blur(30px);
+  z-index: -1;
 }
 
 .heroImage {
@@ -450,6 +460,8 @@ textarea {
   border: 0;
   box-shadow: none;
   object-fit: contain;
+  -webkit-mask-image: radial-gradient(ellipse 68% 68% at 50% 48%, black 45%, transparent 88%);
+  mask-image: radial-gradient(ellipse 68% 68% at 50% 48%, black 45%, transparent 88%);
 }
 
 .section {
@@ -2496,14 +2508,14 @@ textarea {
 .aboutCallout {
   background: var(--surface-alt);
   border: 1px solid rgba(59, 123, 255, 0.35);
-  color: var(--accent);
+  color: var(--text);
   font-weight: 600;
 }
 
 .aboutMission {
   font-weight: 700;
   font-size: 19px;
-  color: var(--accent);
+  color: var(--text);
 }
 
 .aboutTagline {
