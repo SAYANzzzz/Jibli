@@ -58,7 +58,7 @@ function Contact() {
             rel="noreferrer"
           >
             <span className="contactCardIcon">
-              <img src="/whatsapp-logo.jpg" alt="" />
+              <img src="/whatsapp-logo.png" alt="" />
             </span>
             <h3>{t("contact.whatsappTitle")}</h3>
             <p>{t("contact.whatsappText")}</p>
@@ -76,7 +76,7 @@ function Contact() {
 
           <a className="card contactCard" href={INSTAGRAM_URL} target="_blank" rel="noreferrer">
             <span className="contactCardIcon">
-              <img src="/instagram-logo.jpg" alt="" />
+              <img src="/instagram-logo.png" alt="" />
             </span>
             <h3>{t("contact.instagramTitle")}</h3>
             <p>{t("contact.instagramText")}</p>
