@@ -12,6 +12,7 @@ import ProfileNavLink from "../components/ProfileNavLink";
 import { useTranslation } from "../i18n/LanguageContext";
 
 const ADMIN_WHATSAPP_NUMBER = "21692001397";
+const SHIPPING_FEE_TND = 5;
 
 function ProductRequest() {
   const { t } = useTranslation();
@@ -59,7 +60,9 @@ function ProductRequest() {
     .filter((snapshot): snapshot is ItemSnapshot => Boolean(snapshot && snapshot.link));
 
   const allReady = activeItems.length > 0 && activeItems.every((item) => item.shop && item.priceResult);
-  const grandTotal = activeItems.reduce((sum, item) => sum + (item.priceResult?.total_price_tnd ?? 0), 0);
+  const itemsTotal = activeItems.reduce((sum, item) => sum + (item.priceResult?.total_price_tnd ?? 0), 0);
+  const shippingFee = activeItems.length > 0 ? SHIPPING_FEE_TND : 0;
+  const grandTotal = itemsTotal + shippingFee;
   const canSubmit = allReady && !isSubmitting;
 
   const whatsappUrl = useMemo(() => {
@@ -87,11 +90,13 @@ function ProductRequest() {
       "",
       itemLines.join("\n\n"),
       "",
+      `Items total: ${itemsTotal} TND`,
+      `Shipping fee: ${shippingFee} TND`,
       `Grand total: ${grandTotal} TND`,
     ].join("\n");
 
     return `https://wa.me/${ADMIN_WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`;
-  }, [allReady, activeItems, grandTotal]);
+  }, [allReady, activeItems, itemsTotal, shippingFee, grandTotal]);
 
   const handleSubmitRequest = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -215,6 +220,14 @@ function ProductRequest() {
               </div>
 
               <div className="qoPriceBox">
+                <div className="qoPriceRow">
+                  <span>{t("request.itemsSubtotal")}</span>
+                  <span>{itemsTotal} TND</span>
+                </div>
+                <div className="qoPriceRow">
+                  <span>{t("request.shippingFee")}</span>
+                  <span>{shippingFee} TND</span>
+                </div>
                 <div className="qoPriceRow qoPriceTotal">
                   <span>{t("request.grandTotal")}</span>
                   <span>{grandTotal} TND</span>

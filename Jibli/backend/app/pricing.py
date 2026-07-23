@@ -10,13 +10,6 @@ MULTIPLIERS: dict[Shop, float] = {
   "temu": 5.5,
 }
 
-# Every shop adds the same flat service fee on top.
-SERVICE_FEE_TND: dict[Shop, int] = {
-  "aliexpress": 5,
-  "shein": 5,
-  "temu": 5,
-}
-
 
 def arrondi(value: float) -> int:
   """Round up to the next whole dinar (3.2 -> 4, 5.01 -> 6)."""
@@ -34,8 +27,10 @@ def calculate_price(shop: str, amount: float, quantity: int = 1, currency: Curre
     raise ValueError("Quantity must be at least 1.")
 
   # The multiplier is applied to the entered amount as-is, regardless of
-  # whether the customer picked USD or EUR — no currency conversion.
-  unit_price_tnd = arrondi(amount * MULTIPLIERS[shop]) + SERVICE_FEE_TND[shop]
+  # whether the customer picked USD or EUR — no currency conversion. The
+  # flat shipping fee is applied once per order, not per item - see
+  # SHIPPING_FEE_TND in the frontend's ProductRequest page.
+  unit_price_tnd = arrondi(amount * MULTIPLIERS[shop])
   total_price_tnd = unit_price_tnd * quantity
 
   return {
