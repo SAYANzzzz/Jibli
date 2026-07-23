@@ -30,6 +30,7 @@ function ProductRequest() {
   const [snapshots, setSnapshots] = useState<Record<string, ItemSnapshot>>({});
   const [submitError, setSubmitError] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isTakingLong, setIsTakingLong] = useState(false);
   const [showWhatsappFallback, setShowWhatsappFallback] = useState(false);
 
   useEffect(() => {
@@ -97,6 +98,12 @@ function ProductRequest() {
     setShowWhatsappFallback(false);
     setSubmitError("");
     setIsSubmitting(true);
+    setIsTakingLong(false);
+
+    // The backend can be asleep and take a while to wake up; let the
+    // customer know what's happening instead of leaving them staring at a
+    // button that looks frozen.
+    const slowNoticeTimer = window.setTimeout(() => setIsTakingLong(true), 6000);
 
     try {
       await saveCartItems({
@@ -130,7 +137,9 @@ function ProductRequest() {
       console.error("Could not save request before WhatsApp handoff", error);
       setSubmitError(t("request.submitError"));
     } finally {
+      window.clearTimeout(slowNoticeTimer);
       setIsSubmitting(false);
+      setIsTakingLong(false);
     }
   };
 
@@ -215,6 +224,7 @@ function ProductRequest() {
           )}
 
           {submitError && <div className="noticeBox warning">{submitError}</div>}
+          {isTakingLong && <div className="noticeBox">{t("request.takingLong")}</div>}
 
           <button className="wideBtn" disabled={!canSubmit} type="submit">
             {isSubmitting ? t("request.sending") : t("request.sendRequest")}
