@@ -16,10 +16,10 @@ function Register() {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   // Once the account is created, Supabase emails a verification code (sent
-  // from jiblitunisia@gmail.com) instead of a click-through link. The
-  // account can't sign in until that code is verified here. Don't assume a
-  // fixed digit count for the code — it's been observed as 8 digits, not
-  // Supabase's usual 6.
+  // from verify@jiblitunisia.com via Resend) instead of a click-through
+  // link. The account can't sign in until that code is verified here.
+  // Don't assume a fixed digit count for the code — it's been observed as
+  // 8 digits, not Supabase's usual 6.
   const [pendingAccount, setPendingAccount] = useState<{
     email: string;
     fullName: string;
@@ -258,6 +258,10 @@ function Register() {
               <button type="button" onClick={handleResend} disabled={isResending}>
                 {isResending ? t("register.resending") : t("register.resendCode")}
               </button>
+            </p>
+
+            <p className="forgotText">
+              {t("register.alreadyHaveAccount")} <Link to={loginPath}>{t("register.loginHere")}</Link>
             </p>
           </>
         )}
