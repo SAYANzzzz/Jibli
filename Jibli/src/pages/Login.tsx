@@ -15,9 +15,10 @@ function Login() {
   const [searchParams] = useSearchParams();
   const nextPath = searchParams.get("next") ?? "/request";
   const registerPath = `/register?next=${encodeURIComponent(nextPath)}`;
+  const accountExists = searchParams.get("reason") === "exists";
   const [errorMessage, setErrorMessage] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
-  const [email, setEmail] = useState("");
+  const [email, setEmail] = useState(() => searchParams.get("email") ?? "");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [providerLoading, setProviderLoading] = useState<"google" | "facebook" | "">("");
   const [isResetting, setIsResetting] = useState(false);
@@ -126,7 +127,11 @@ function Login() {
 
         <h1>{t("login.title")}</h1>
         <p>{t("login.subtitle")}</p>
-        <div className="authNotice">{t("login.notice")}</div>
+        {accountExists ? (
+          <div className="authNotice">{t("login.accountExists")}</div>
+        ) : (
+          <div className="authNotice">{t("login.notice")}</div>
+        )}
         {errorMessage && <div className="authError">{errorMessage}</div>}
         {successMessage && <div className="authNotice success">{successMessage}</div>}
 

@@ -79,6 +79,20 @@ function Register() {
     }
 
     setIsSubmitting(false);
+
+    // Supabase deliberately returns an identical-looking response whether
+    // the email is new or already registered (anti-enumeration), so it
+    // can't be detected from `error`. The one reliable tell: a genuinely
+    // new signup gets a real identity attached to the user; an existing
+    // account gets an empty `identities` array back instead.
+    if (data.user && data.user.identities && data.user.identities.length === 0) {
+      navigate(
+        `/login?next=${encodeURIComponent(nextPath)}&email=${encodeURIComponent(email)}&reason=exists`,
+        { replace: true },
+      );
+      return;
+    }
+
     setPendingAccount({ email, fullName, phone });
   };
 

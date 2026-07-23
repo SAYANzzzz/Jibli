@@ -181,6 +181,7 @@ const en = {
     loginFailed: "We couldn't log you in. Please check your email and password and try again.",
     providerFailed: "Something went wrong signing in with {{provider}}. Please try again.",
     resetFailed: "We couldn't send the reset email right now. Please try again in a moment, or contact us on WhatsApp if this keeps happening.",
+    accountExists: "An account with this email already exists. Log in below instead.",
   },
   register: {
     title: "Register",
@@ -573,6 +574,7 @@ const fr: typeof en = {
     loginFailed: "Impossible de vous connecter. Vérifiez votre email et votre mot de passe et réessayez.",
     providerFailed: "Un problème est survenu lors de la connexion avec {{provider}}. Veuillez réessayer.",
     resetFailed: "Impossible d'envoyer l'email de réinitialisation pour le moment. Réessayez dans un instant, ou contactez-nous sur WhatsApp si le problème persiste.",
+    accountExists: "Un compte avec cet email existe déjà. Connectez-vous ci-dessous.",
   },
   register: {
     title: "Inscription",
