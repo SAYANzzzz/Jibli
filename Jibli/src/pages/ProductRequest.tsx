@@ -141,7 +141,11 @@ function ProductRequest() {
       window.location.href = whatsappUrl;
     } catch (error) {
       console.error("Could not save request before WhatsApp handoff", error);
-      setSubmitError(t("request.submitError"));
+      // Show the actual error when it's a real, readable message (e.g. the
+      // backend-unreachable-after-retries message, which tells the customer
+      // how long to wait) instead of always the generic fallback.
+      const message = error instanceof Error && error.message ? error.message : t("request.submitError");
+      setSubmitError(message);
     } finally {
       window.clearTimeout(slowNoticeTimer);
       setIsSubmitting(false);

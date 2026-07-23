@@ -48,7 +48,7 @@ async function fetchWithWakeupRetry(path: string, requestOptions: RequestInit): 
     }
 
     console.error("Backend unreachable after wakeup retries", lastError);
-    throw new Error("We couldn't reach the server. Please check your connection and try again in a moment.");
+    throw new Error("We couldn't reach the server after several tries. Please wait about a minute and try again.");
   }
 }
 
