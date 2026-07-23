@@ -2522,6 +2522,27 @@ textarea {
   color: var(--text);
 }
 
+.legalContent section {
+  padding-top: 18px;
+  border-top: 1px solid var(--border);
+}
+
+.legalContent section:first-of-type {
+  border-top: 0;
+  padding-top: 0;
+}
+
+.legalContent h2 {
+  margin: 0 0 8px;
+  font-size: 19px;
+  color: var(--accent);
+}
+
+.legalContent section p {
+  margin: 0;
+  color: var(--text-muted);
+}
+
 .aboutCallout {
   background: var(--surface-alt);
   border: 1px solid rgba(59, 123, 255, 0.35);
@@ -4385,4 +4406,86 @@ td {
 
 .gamingTeaserBtn {
   text-decoration: none;
+}
+
+.siteFooter {
+  border-top: 1px solid var(--border);
+  background: rgba(16, 26, 56, 0.5);
+  margin-top: 60px;
+}
+
+.siteFooterTop {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 48px clamp(24px, 6vw, 90px) 32px;
+  display: grid;
+  grid-template-columns: 1.4fr 1fr 1fr 1fr;
+  gap: 32px;
+}
+
+.siteFooterBrand .logoImg {
+  height: 44px;
+  margin-bottom: 12px;
+}
+
+.siteFooterBrand p {
+  margin: 4px 0;
+  color: var(--text-muted);
+  font-size: 14px;
+  max-width: 280px;
+}
+
+.siteFooterCol {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.siteFooterCol strong {
+  color: var(--text);
+  margin-bottom: 4px;
+}
+
+.siteFooterCol a {
+  color: var(--text-muted);
+  font-size: 14px;
+}
+
+.siteFooterCol a:hover {
+  color: var(--accent);
+}
+
+.siteFooterBottom {
+  border-top: 1px solid var(--border);
+  padding: 18px clamp(24px, 6vw, 90px);
+  text-align: center;
+  color: var(--text-muted-2);
+  font-size: 13px;
+}
+
+@media (max-width: 700px) {
+  .siteFooterTop {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.notFoundPage {
+  min-height: calc(100vh - 90px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.notFoundCode {
+  display: block;
+  font-size: clamp(64px, 12vw, 120px);
+  font-weight: 900;
+  color: var(--accent);
+  line-height: 1;
+  margin-bottom: 8px;
+}
+
+.notFoundPage p {
+  color: var(--text-muted);
+  margin: 10px 0 24px;
 }

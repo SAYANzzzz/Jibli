@@ -12,6 +12,10 @@ import OrderTracking from "./pages/OrderTracking.tsx";
 import GamingStore from "./pages/GamingStore.tsx";
 import AboutUs from "./pages/AboutUs.tsx";
 import Contact from "./pages/Contact.tsx";
+import TermsOfService from "./pages/TermsOfService.tsx";
+import PrivacyPolicy from "./pages/PrivacyPolicy.tsx";
+import RefundPolicy from "./pages/RefundPolicy.tsx";
+import NotFound from "./pages/NotFound.tsx";
 import AdminDashboard from "./pages/AdminDashboard";
 import { isAdminEmail } from "./admin";
 import { getCurrentSession } from "./auth";
@@ -213,6 +217,9 @@ function App() {
         <Route path="/gaming" element={<GamingStore />} />
         <Route path="/about" element={<AboutUs />} />
         <Route path="/contact" element={<Contact />} />
+        <Route path="/terms" element={<TermsOfService />} />
+        <Route path="/privacy" element={<PrivacyPolicy />} />
+        <Route path="/refund" element={<RefundPolicy />} />
         <Route
           path="/tracking"
           element={
@@ -229,6 +236,7 @@ function App() {
             </AdminRoute>
           }
         />
+        <Route path="*" element={<NotFound />} />
       </Routes>
     </BrowserRouter>
   );

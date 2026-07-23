@@ -4,6 +4,7 @@ import { LogIn, UserPlus } from "lucide-react";
 import { getCurrentSession } from "../auth";
 import Navbar from "../components/Navbar";
 import ProfileNavLink from "../components/ProfileNavLink";
+import Footer from "../components/Footer";
 import { supabase } from "../supabase";
 import { useTranslation } from "../i18n/LanguageContext";
 
@@ -84,6 +85,8 @@ function Contact() {
           </a>
         </div>
       </main>
+
+      <Footer />
     </div>
   );
 }

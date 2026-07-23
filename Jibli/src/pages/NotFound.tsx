@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { LogIn, UserPlus } from "lucide-react";
+import { Home, LogIn, UserPlus } from "lucide-react";
 import { getCurrentSession } from "../auth";
 import Navbar from "../components/Navbar";
 import ProfileNavLink from "../components/ProfileNavLink";
@@ -8,7 +8,7 @@ import Footer from "../components/Footer";
 import { supabase } from "../supabase";
 import { useTranslation } from "../i18n/LanguageContext";
 
-function AboutUs() {
+function NotFound() {
   const { t } = useTranslation();
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
@@ -41,24 +41,12 @@ function AboutUs() {
         )}
       </Navbar>
 
-      <main className="page">
-        <div className="center trackingIntro">
-          <h1>{t("about.title")}</h1>
-          <p>{t("about.intro")}</p>
-        </div>
-
-        <div className="aboutContent">
-          <p>{t("about.paragraph1")}</p>
-          <p>{t("about.paragraph2")}</p>
-
-          <div className="card aboutCallout">
-            <p>{t("about.gamingCallout")}</p>
-          </div>
-
-          <p className="aboutMission">{t("about.mission")}</p>
-          <p>{t("about.paragraph3")}</p>
-
-          <p className="aboutTagline">{t("about.tagline")}</p>
+      <main className="page notFoundPage">
+        <div className="center">
+          <span className="notFoundCode">404</span>
+          <h1>{t("notFound.title")}</h1>
+          <p>{t("notFound.text")}</p>
+          <Link to="/" className="primaryBtn"><Home size={16} /> {t("notFound.backHome")}</Link>
         </div>
       </main>
 
@@ -67,4 +55,4 @@ function AboutUs() {
   );
 }
 
-export default AboutUs;
+export default NotFound;

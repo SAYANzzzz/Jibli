@@ -7,8 +7,9 @@ import ProfileNavLink from "../components/ProfileNavLink";
 import Footer from "../components/Footer";
 import { supabase } from "../supabase";
 import { useTranslation } from "../i18n/LanguageContext";
+import type { TranslationKey } from "../i18n/translations";
 
-function AboutUs() {
+function LegalPage({ namespace, sectionCount }: { namespace: string; sectionCount: number }) {
   const { t } = useTranslation();
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
@@ -28,6 +29,8 @@ function AboutUs() {
     };
   }, []);
 
+  const sections = Array.from({ length: sectionCount }, (_, index) => index + 1);
+
   return (
     <div>
       <Navbar>
@@ -43,22 +46,19 @@ function AboutUs() {
 
       <main className="page">
         <div className="center trackingIntro">
-          <h1>{t("about.title")}</h1>
-          <p>{t("about.intro")}</p>
+          <h1>{t(`${namespace}.title` as TranslationKey)}</h1>
+          <p className="mutedText">{t(`${namespace}.updated` as TranslationKey)}</p>
         </div>
 
-        <div className="aboutContent">
-          <p>{t("about.paragraph1")}</p>
-          <p>{t("about.paragraph2")}</p>
+        <div className="aboutContent legalContent">
+          <p>{t(`${namespace}.intro` as TranslationKey)}</p>
 
-          <div className="card aboutCallout">
-            <p>{t("about.gamingCallout")}</p>
-          </div>
-
-          <p className="aboutMission">{t("about.mission")}</p>
-          <p>{t("about.paragraph3")}</p>
-
-          <p className="aboutTagline">{t("about.tagline")}</p>
+          {sections.map((n) => (
+            <section key={n}>
+              <h2>{t(`${namespace}.s${n}Title` as TranslationKey)}</h2>
+              <p>{t(`${namespace}.s${n}Body` as TranslationKey)}</p>
+            </section>
+          ))}
         </div>
       </main>
 
@@ -67,4 +67,4 @@ function AboutUs() {
   );
 }
 
-export default AboutUs;
+export default LegalPage;

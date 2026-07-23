@@ -289,6 +289,112 @@ const en = {
     delivered: "Delivered",
     cancelled: "Cancelled",
   },
+  footer: {
+    tagline: "Shop it. Play it. Get it.",
+    linksTitle: "Company",
+    legalTitle: "Legal",
+    contactTitle: "Contact",
+    home: "Home",
+    gaming: "Gaming",
+    aboutUs: "About Us",
+    contact: "Contact",
+    terms: "Terms of Service",
+    privacy: "Privacy Policy",
+    refund: "Refund & Cancellation Policy",
+    rights: "All rights reserved.",
+    basedIn: "Based in Deguach, Tunisia",
+  },
+  notFound: {
+    title: "Page not found",
+    text: "The page you're looking for doesn't exist or may have moved.",
+    backHome: "Back to Home",
+  },
+  terms: {
+    title: "Terms of Service",
+    updated: "Last updated: July 2026",
+    intro:
+      "These Terms of Service govern your use of Jibli (jiblitunisia.com), operated from Deguach, Tunisia. By creating an account or placing a request through our site, you agree to these terms.",
+    s1Title: "1. What Jibli does",
+    s1Body:
+      "Jibli is a shopping proxy and gaming top-up service for customers in Tunisia. For shopping requests, you paste a product link from AliExpress, Shein or Temu, we calculate a price in Tunisian dinars, and once you confirm, we purchase the item on your behalf and arrange delivery to you. For gaming top-ups (Riot Points, Valorant VP, Free Fire Diamonds, Robux, Steam gift cards, subscriptions and similar), we deliver the top-up or code to you after you confirm the order and price on WhatsApp.",
+    s2Title: "2. How ordering works",
+    s2Body:
+      "You submit a request through the site with the product link and your chosen options. We calculate an estimated price and you review it before anything is finalized. Confirmation happens over WhatsApp, where we may ask for a deposit before we place the order with the original store. The price shown on the site is an estimate until we confirm it with you directly - exchange rates, shipping costs and store prices can change between when you submit a request and when we place the order.",
+    s3Title: "3. Your account",
+    s3Body:
+      "You're responsible for providing accurate contact and delivery information, and for keeping your login details private. One account per person - please don't share your login or use Jibli to place orders on behalf of a business without talking to us first.",
+    s4Title: "4. Payment",
+    s4Body:
+      "Payment is arranged directly with us over WhatsApp after you confirm your order and price. We don't store or process card payments on this website.",
+    s5Title: "5. Delivery",
+    s5Body:
+      "Delivery times depend on the original store, the shipping method and international carriers, and are estimates only - we don't guarantee exact delivery dates. You can track confirmed orders from your account. Please make sure your delivery address and phone number are accurate; delays caused by incorrect information provided by you are not our responsibility.",
+    s6Title: "6. Our role and limitations",
+    s6Body:
+      "We act as an intermediary between you and AliExpress, Shein, Temu and gaming top-up providers. We don't manufacture, stock or ship these products ourselves, and we're not responsible for defects, delays or issues that originate with the store or carrier - though we'll always help you pursue a resolution where one is available. See our Refund & Cancellation Policy for how we handle these situations.",
+    s7Title: "7. Changes to these terms",
+    s7Body:
+      "We may update these terms from time to time as the service evolves. Continued use of Jibli after a change means you accept the updated terms.",
+    s8Title: "8. Governing law",
+    s8Body: "These terms are governed by the laws of Tunisia.",
+    s9Title: "9. Contact",
+    s9Body: "Questions about these terms? Reach us on WhatsApp or at jiblitunisia@gmail.com.",
+  },
+  privacy: {
+    title: "Privacy Policy",
+    updated: "Last updated: July 2026",
+    intro:
+      "This Privacy Policy explains what information Jibli collects, how we use it, and your choices - for anyone who creates an account or uses jiblitunisia.com.",
+    s1Title: "1. Information we collect",
+    s1Body:
+      "Account information: your full name, email, phone number, city, postal code and an optional profile photo. Order information: product links, selected options (size, color, model, quantity), and prices. Usage information: your language preference and in-progress order drafts, stored locally on your device so you don't lose your work if you switch apps.",
+    s2Title: "2. How we use it",
+    s2Body:
+      "To create and manage your account, calculate prices, process and fulfill your orders, and contact you about your orders - mainly over WhatsApp, and by email for account verification. We don't sell your information to anyone.",
+    s3Title: "3. Where your data lives",
+    s3Body:
+      "Your account and order data is stored with Supabase, a cloud database provider. Account verification emails are sent through Resend. Order confirmation and support happen over WhatsApp, which is operated by Meta and governed by WhatsApp's own privacy policy for the messages you send us there.",
+    s4Title: "4. Cookies and local storage",
+    s4Body:
+      "We use your browser's local storage to remember your language preference and to save an in-progress order request if you leave the page - not for third-party advertising or tracking.",
+    s5Title: "5. Your rights",
+    s5Body:
+      "You can review and update your account details at any time from your Account page. To request a copy of your data or to have your account and data deleted, contact us on WhatsApp or at jiblitunisia@gmail.com.",
+    s6Title: "6. Data retention",
+    s6Body: "We keep your account and order information for as long as your account is active, or as needed to resolve any open orders.",
+    s7Title: "7. Children's privacy",
+    s7Body: "Jibli isn't intended for children under 16. If you believe a child has created an account, contact us and we'll remove it.",
+    s8Title: "8. Changes to this policy",
+    s8Body: "We may update this policy as the service evolves. Continued use of Jibli after a change means you accept the updated policy.",
+    s9Title: "9. Contact",
+    s9Body: "Questions about your privacy? Reach us on WhatsApp or at jiblitunisia@gmail.com.",
+  },
+  refund: {
+    title: "Refund & Cancellation Policy",
+    updated: "Last updated: July 2026",
+    intro:
+      "Because Jibli buys real products from AliExpress, Shein and Temu on your behalf, and delivers gaming top-ups that are activated instantly, refunds work a bit differently than a typical store. Here's exactly how it works.",
+    s1Title: "1. Before you pay a deposit",
+    s1Body:
+      "You can change or cancel your request at any time, free of charge, up until you pay a deposit and we confirm your order. Nothing is final until then.",
+    s2Title: "2. After a deposit, before we've ordered",
+    s2Body:
+      "If we haven't placed the order with the original store yet, message us on WhatsApp as soon as possible and we'll cancel it and refund your deposit.",
+    s3Title: "3. After we've placed the order",
+    s3Body:
+      "Once we've purchased the item from AliExpress, Shein or Temu on your behalf, we can no longer cancel or refund it - the same as if you'd ordered directly from that store yourself. This is the point of no return, so please make sure your options (size, color, model, quantity) are correct before confirming.",
+    s4Title: "4. Wrong, damaged or defective items",
+    s4Body:
+      "If what arrives doesn't match what you ordered, or arrives damaged, contact us on WhatsApp with photos as soon as you receive it. We'll do everything we can to resolve it through the original store's buyer protection - we can't guarantee an outcome since it ultimately depends on that store's policies, but we'll always advocate for you.",
+    s5Title: "5. Delivery delays",
+    s5Body:
+      "International shipping times vary and are outside our direct control. If your order is taking longer than expected, message us and we'll check the tracking status with you - delays alone aren't grounds for a refund, since the order has already been placed with the store.",
+    s6Title: "6. Gaming top-ups and digital products",
+    s6Body:
+      "Once a gaming top-up, gift card code or subscription has been delivered to you, it can't be refunded or exchanged - this is standard for digital goods, the same as any other top-up provider. The exception is our error: if we deliver the wrong amount or wrong product, tell us right away and we'll fix it at no cost to you.",
+    s7Title: "7. How to request a cancellation or refund",
+    s7Body: "WhatsApp is the fastest way to reach us for any of the above - include your order details so we can help quickly.",
+  },
 };
 
 const fr: typeof en = {
@@ -574,6 +680,112 @@ const fr: typeof en = {
     out_for_delivery: "En cours de livraison",
     delivered: "Livré",
     cancelled: "Annulé",
+  },
+  footer: {
+    tagline: "Achetez-le. Jouez-y. Obtenez-le.",
+    linksTitle: "Entreprise",
+    legalTitle: "Mentions légales",
+    contactTitle: "Contact",
+    home: "Accueil",
+    gaming: "Gaming",
+    aboutUs: "À propos",
+    contact: "Contact",
+    terms: "Conditions d'utilisation",
+    privacy: "Politique de confidentialité",
+    refund: "Politique de remboursement et d'annulation",
+    rights: "Tous droits réservés.",
+    basedIn: "Basé à Deguach, Tunisie",
+  },
+  notFound: {
+    title: "Page introuvable",
+    text: "La page que vous cherchez n'existe pas ou a peut-être été déplacée.",
+    backHome: "Retour à l'accueil",
+  },
+  terms: {
+    title: "Conditions d'utilisation",
+    updated: "Dernière mise à jour : juillet 2026",
+    intro:
+      "Ces Conditions d'utilisation régissent votre utilisation de Jibli (jiblitunisia.com), exploité depuis Deguach, en Tunisie. En créant un compte ou en soumettant une demande sur notre site, vous acceptez ces conditions.",
+    s1Title: "1. Ce que fait Jibli",
+    s1Body:
+      "Jibli est un service d'achat par procuration et de recharge gaming pour les clients en Tunisie. Pour les demandes d'achat, vous collez un lien produit depuis AliExpress, Shein ou Temu, nous calculons un prix en dinars tunisiens, et une fois que vous confirmez, nous achetons l'article en votre nom et organisons la livraison. Pour les recharges gaming (Riot Points, Valorant VP, Diamants Free Fire, Robux, cartes cadeaux Steam, abonnements et similaires), nous vous livrons la recharge ou le code après confirmation de la commande et du prix sur WhatsApp.",
+    s2Title: "2. Comment fonctionne une commande",
+    s2Body:
+      "Vous soumettez une demande sur le site avec le lien du produit et les options choisies. Nous calculons un prix estimé que vous validez avant toute finalisation. La confirmation se fait sur WhatsApp, où nous pouvons demander un acompte avant de passer la commande auprès du magasin d'origine. Le prix affiché sur le site est une estimation jusqu'à confirmation directe avec vous - les taux de change, frais de livraison et prix du magasin peuvent changer entre votre demande et la commande effective.",
+    s3Title: "3. Votre compte",
+    s3Body:
+      "Vous êtes responsable de fournir des informations de contact et de livraison exactes, et de garder vos identifiants privés. Un compte par personne - merci de ne pas partager vos identifiants ni d'utiliser Jibli pour des commandes au nom d'une entreprise sans nous en parler d'abord.",
+    s4Title: "4. Paiement",
+    s4Body:
+      "Le paiement est organisé directement avec nous sur WhatsApp après confirmation de votre commande et du prix. Nous ne stockons ni ne traitons de paiements par carte sur ce site.",
+    s5Title: "5. Livraison",
+    s5Body:
+      "Les délais de livraison dépendent du magasin d'origine, du mode d'expédition et des transporteurs internationaux, et ne sont que des estimations - nous ne garantissons pas de date exacte. Vous pouvez suivre vos commandes confirmées depuis votre compte. Merci de vous assurer que votre adresse de livraison et votre numéro de téléphone sont exacts ; les retards causés par des informations incorrectes fournies par vous ne relèvent pas de notre responsabilité.",
+    s6Title: "6. Notre rôle et ses limites",
+    s6Body:
+      "Nous agissons comme intermédiaire entre vous et AliExpress, Shein, Temu et les fournisseurs de recharges gaming. Nous ne fabriquons, ne stockons ni n'expédions ces produits nous-mêmes, et ne sommes pas responsables des défauts, retards ou problèmes provenant du magasin ou du transporteur - mais nous vous aiderons toujours à obtenir une résolution lorsque cela est possible. Voir notre Politique de remboursement et d'annulation pour savoir comment nous gérons ces situations.",
+    s7Title: "7. Modifications de ces conditions",
+    s7Body:
+      "Nous pouvons mettre à jour ces conditions au fil de l'évolution du service. Continuer à utiliser Jibli après une modification signifie que vous acceptez les conditions mises à jour.",
+    s8Title: "8. Droit applicable",
+    s8Body: "Ces conditions sont régies par les lois de la Tunisie.",
+    s9Title: "9. Contact",
+    s9Body: "Des questions sur ces conditions ? Contactez-nous sur WhatsApp ou à jiblitunisia@gmail.com.",
+  },
+  privacy: {
+    title: "Politique de confidentialité",
+    updated: "Dernière mise à jour : juillet 2026",
+    intro:
+      "Cette Politique de confidentialité explique quelles informations Jibli collecte, comment nous les utilisons, et vos choix - pour toute personne créant un compte ou utilisant jiblitunisia.com.",
+    s1Title: "1. Informations que nous collectons",
+    s1Body:
+      "Informations de compte : nom complet, email, numéro de téléphone, ville, code postal et une photo de profil optionnelle. Informations de commande : liens produits, options choisies (taille, couleur, modèle, quantité) et prix. Informations d'utilisation : votre préférence de langue et vos demandes de commande en cours, stockées localement sur votre appareil pour ne pas perdre votre travail si vous changez d'application.",
+    s2Title: "2. Comment nous les utilisons",
+    s2Body:
+      "Pour créer et gérer votre compte, calculer les prix, traiter et exécuter vos commandes, et vous contacter à leur sujet - principalement sur WhatsApp, et par email pour la vérification de compte. Nous ne vendons vos informations à personne.",
+    s3Title: "3. Où vivent vos données",
+    s3Body:
+      "Vos données de compte et de commande sont stockées chez Supabase, un fournisseur de base de données cloud. Les emails de vérification de compte sont envoyés via Resend. La confirmation de commande et le support se font sur WhatsApp, exploité par Meta et régi par la politique de confidentialité propre à WhatsApp pour les messages que vous nous y envoyez.",
+    s4Title: "4. Cookies et stockage local",
+    s4Body:
+      "Nous utilisons le stockage local de votre navigateur pour mémoriser votre préférence de langue et sauvegarder une demande de commande en cours si vous quittez la page - pas pour de la publicité ou du suivi tiers.",
+    s5Title: "5. Vos droits",
+    s5Body:
+      "Vous pouvez consulter et modifier vos informations de compte à tout moment depuis votre page Compte. Pour demander une copie de vos données ou la suppression de votre compte, contactez-nous sur WhatsApp ou à jiblitunisia@gmail.com.",
+    s6Title: "6. Conservation des données",
+    s6Body: "Nous conservons vos informations de compte et de commande tant que votre compte est actif, ou selon les besoins pour résoudre toute commande en cours.",
+    s7Title: "7. Confidentialité des mineurs",
+    s7Body: "Jibli n'est pas destiné aux enfants de moins de 16 ans. Si vous pensez qu'un enfant a créé un compte, contactez-nous et nous le supprimerons.",
+    s8Title: "8. Modifications de cette politique",
+    s8Body: "Nous pouvons mettre à jour cette politique au fil de l'évolution du service. Continuer à utiliser Jibli après une modification signifie que vous acceptez la politique mise à jour.",
+    s9Title: "9. Contact",
+    s9Body: "Des questions sur votre confidentialité ? Contactez-nous sur WhatsApp ou à jiblitunisia@gmail.com.",
+  },
+  refund: {
+    title: "Politique de remboursement et d'annulation",
+    updated: "Dernière mise à jour : juillet 2026",
+    intro:
+      "Comme Jibli achète de vrais produits sur AliExpress, Shein et Temu en votre nom, et livre des recharges gaming activées instantanément, les remboursements fonctionnent un peu différemment que dans un magasin classique. Voici exactement comment cela fonctionne.",
+    s1Title: "1. Avant de payer un acompte",
+    s1Body:
+      "Vous pouvez modifier ou annuler votre demande à tout moment, gratuitement, jusqu'à ce que vous payiez un acompte et que nous confirmions votre commande. Rien n'est définitif avant cela.",
+    s2Title: "2. Après un acompte, avant que nous ayons commandé",
+    s2Body:
+      "Si nous n'avons pas encore passé la commande auprès du magasin d'origine, contactez-nous sur WhatsApp dès que possible et nous l'annulerons en vous remboursant l'acompte.",
+    s3Title: "3. Après que nous ayons passé la commande",
+    s3Body:
+      "Une fois que nous avons acheté l'article sur AliExpress, Shein ou Temu en votre nom, nous ne pouvons plus l'annuler ni le rembourser - comme si vous aviez commandé directement chez ce magasin. C'est le point de non-retour, alors merci de vérifier que vos options (taille, couleur, modèle, quantité) sont correctes avant de confirmer.",
+    s4Title: "4. Articles erronés, endommagés ou défectueux",
+    s4Body:
+      "Si ce que vous recevez ne correspond pas à votre commande, ou arrive endommagé, contactez-nous sur WhatsApp avec des photos dès réception. Nous ferons tout notre possible pour résoudre cela via la protection acheteur du magasin d'origine - nous ne pouvons pas garantir un résultat car cela dépend en dernier ressort des politiques de ce magasin, mais nous serons toujours de votre côté.",
+    s5Title: "5. Retards de livraison",
+    s5Body:
+      "Les délais d'expédition internationale varient et échappent à notre contrôle direct. Si votre commande met plus de temps que prévu, contactez-nous et nous vérifierons le suivi avec vous - un retard seul ne justifie pas un remboursement, la commande ayant déjà été passée auprès du magasin.",
+    s6Title: "6. Recharges gaming et produits numériques",
+    s6Body:
+      "Une fois qu'une recharge gaming, un code de carte cadeau ou un abonnement vous a été livré, il ne peut être ni remboursé ni échangé - c'est la norme pour les produits numériques, comme chez tout autre fournisseur de recharges. L'exception est notre erreur : si nous livrons le mauvais montant ou le mauvais produit, dites-le-nous immédiatement et nous corrigerons cela sans frais pour vous.",
+    s7Title: "7. Comment demander une annulation ou un remboursement",
+    s7Body: "WhatsApp est le moyen le plus rapide de nous contacter pour tout ce qui précède - indiquez les détails de votre commande pour que nous puissions vous aider rapidement.",
   },
 };
 

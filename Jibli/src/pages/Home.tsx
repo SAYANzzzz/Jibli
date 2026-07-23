@@ -15,6 +15,7 @@ import {
 } from "lucide-react";
 import { getCurrentSession } from "../auth";
 import Navbar from "../components/Navbar";
+import Footer from "../components/Footer";
 import ProfileNavLink from "../components/ProfileNavLink";
 import { supabase } from "../supabase";
 import { useTranslation } from "../i18n/LanguageContext";
@@ -162,6 +163,8 @@ function Home() {
 
         <Link to="/gaming" className="primaryBtn gamingTeaserBtn"><Gamepad2 size={16} /> {t("home.exploreGaming")}</Link>
       </section>
+
+      <Footer />
     </div>
   );
 }

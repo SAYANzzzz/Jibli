@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import Navbar from "../components/Navbar";
+import Footer from "../components/Footer";
 import ProfileNavLink from "../components/ProfileNavLink";
 import { useTranslation } from "../i18n/LanguageContext";
 
@@ -288,6 +289,8 @@ function GamingStore() {
 
         <p className="secureText">{t("gaming.notFound")}</p>
       </main>
+
+      <Footer />
     </div>
   );
 }
