@@ -61,7 +61,8 @@ function ProductRequest() {
 
   const allReady = activeItems.length > 0 && activeItems.every((item) => item.shop && item.priceResult);
   const itemsTotal = activeItems.reduce((sum, item) => sum + (item.priceResult?.total_price_tnd ?? 0), 0);
-  const shippingFee = activeItems.length > 0 ? SHIPPING_FEE_TND : 0;
+  // No shipping fee when every item in the order is from AliExpress.
+  const shippingFee = activeItems.some((item) => item.shop !== "aliexpress") ? SHIPPING_FEE_TND : 0;
   const grandTotal = itemsTotal + shippingFee;
   const canSubmit = allReady && !isSubmitting;
 
