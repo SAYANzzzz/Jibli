@@ -1,8 +1,8 @@
 import { useState } from "react";
 import type { FormEvent } from "react";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
-import { KeyRound, Mail, Phone, ShieldCheck, User } from "lucide-react";
-import { ensureUserProfile, getAuthErrorMessage, resendSignupOtp, signUp, verifySignupOtp } from "../auth";
+import { KeyRound, Mail, Phone, User } from "lucide-react";
+import { ensureUserProfile, getAuthErrorMessage, signUp } from "../auth";
 import logo from "../assets/Fast-Logo.gif";
 import { useTranslation } from "../i18n/LanguageContext";
 
@@ -14,21 +14,6 @@ function Register() {
   const loginPath = `/login?next=${encodeURIComponent(nextPath)}`;
   const [errorMessage, setErrorMessage] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
-
-  // Once the account is created, Supabase emails a verification code (sent
-  // from verify@jiblitunisia.com via Resend) instead of a click-through
-  // link. The account can't sign in until that code is verified here.
-  // Don't assume a fixed digit count for the code — it's been observed as
-  // 8 digits, not Supabase's usual 6.
-  const [pendingAccount, setPendingAccount] = useState<{
-    email: string;
-    fullName: string;
-    phone: string;
-  } | null>(null);
-  const [code, setCode] = useState("");
-  const [isVerifying, setIsVerifying] = useState(false);
-  const [isResending, setIsResending] = useState(false);
-  const [resendNotice, setResendNotice] = useState("");
 
   const handleRegister = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -59,33 +44,13 @@ function Register() {
       return;
     }
 
-    if (data.session) {
-      // Email confirmation isn't enabled in Supabase — the account is
-      // already active, so skip straight past the code step.
-      try {
-        await ensureUserProfile({
-          full_name: fullName,
-          phone,
-        });
-      } catch (profileError) {
-        setIsSubmitting(false);
-        setErrorMessage(profileError instanceof Error ? profileError.message : t("register.profileFailedRegister"));
-        return;
-      }
-
-      setIsSubmitting(false);
-      navigate(nextPath, { replace: true });
-      return;
-    }
-
-    setIsSubmitting(false);
-
     // Supabase deliberately returns an identical-looking response whether
     // the email is new or already registered (anti-enumeration), so it
     // can't be detected from `error`. The one reliable tell: a genuinely
     // new signup gets a real identity attached to the user; an existing
     // account gets an empty `identities` array back instead.
     if (data.user && data.user.identities && data.user.identities.length === 0) {
+      setIsSubmitting(false);
       navigate(
         `/login?next=${encodeURIComponent(nextPath)}&email=${encodeURIComponent(email)}&reason=exists`,
         { replace: true },
@@ -93,61 +58,19 @@ function Register() {
       return;
     }
 
-    setPendingAccount({ email, fullName, phone });
-  };
-
-  const handleVerify = async (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-
-    if (!pendingAccount) {
-      return;
-    }
-
-    setErrorMessage("");
-    setIsVerifying(true);
-
-    const { error } = await verifySignupOtp(pendingAccount.email, code.trim());
-
-    if (error) {
-      setIsVerifying(false);
-      setErrorMessage(getAuthErrorMessage(error, t("register.verifyFailed")));
-      return;
-    }
-
     try {
       await ensureUserProfile({
-        full_name: pendingAccount.fullName,
-        phone: pendingAccount.phone,
+        full_name: fullName,
+        phone,
       });
     } catch (profileError) {
-      setIsVerifying(false);
-      setErrorMessage(profileError instanceof Error ? profileError.message : t("register.profileFailedVerify"));
+      setIsSubmitting(false);
+      setErrorMessage(profileError instanceof Error ? profileError.message : t("register.profileFailedRegister"));
       return;
     }
 
-    setIsVerifying(false);
+    setIsSubmitting(false);
     navigate(nextPath, { replace: true });
-  };
-
-  const handleResend = async () => {
-    if (!pendingAccount) {
-      return;
-    }
-
-    setErrorMessage("");
-    setResendNotice("");
-    setIsResending(true);
-
-    const { error } = await resendSignupOtp(pendingAccount.email);
-
-    setIsResending(false);
-
-    if (error) {
-      setErrorMessage(getAuthErrorMessage(error, t("register.resendFailed")));
-      return;
-    }
-
-    setResendNotice(t("register.resendSuccess"));
   };
 
   return (
@@ -171,114 +94,71 @@ function Register() {
       <div className="authCard registerCard">
         <img src={logo} alt="Jibli logo" className="authCardLogo" />
 
-        {!pendingAccount ? (
-          <>
-            <h1>{t("register.title")}</h1>
-            <p>{t("register.subtitle")}</p>
-            <div className="authNotice">{t("register.notice")}</div>
-            {errorMessage && <div className="authError">{errorMessage}</div>}
+        <h1>{t("register.title")}</h1>
+        <p>{t("register.subtitle")}</p>
+        <div className="authNotice">{t("register.notice")}</div>
+        {errorMessage && <div className="authError">{errorMessage}</div>}
 
-            <form className="loginForm" onSubmit={handleRegister}>
-              <div className="loginInput">
-                <User size={24} />
-                <input
-                  name="fullName"
-                  type="text"
-                  placeholder={t("register.fullName")}
-                  aria-label={t("register.fullName")}
-                  required
-                />
-              </div>
+        <form className="loginForm" onSubmit={handleRegister}>
+          <div className="loginInput">
+            <User size={24} />
+            <input
+              name="fullName"
+              type="text"
+              placeholder={t("register.fullName")}
+              aria-label={t("register.fullName")}
+              required
+            />
+          </div>
 
-              <div className="loginInput">
-                <Mail size={24} />
-                <input name="email" type="email" placeholder={t("register.email")} aria-label={t("register.email")} required />
-              </div>
+          <div className="loginInput">
+            <Mail size={24} />
+            <input name="email" type="email" placeholder={t("register.email")} aria-label={t("register.email")} required />
+          </div>
 
-              <div className="loginInput">
-                <Phone size={24} />
-                <input
-                  name="phone"
-                  type="tel"
-                  placeholder={t("register.phone")}
-                  aria-label={t("register.phone")}
-                  required
-                />
-              </div>
+          <div className="loginInput">
+            <Phone size={24} />
+            <input
+              name="phone"
+              type="tel"
+              placeholder={t("register.phone")}
+              aria-label={t("register.phone")}
+              required
+            />
+          </div>
 
-              <div className="loginInput">
-                <KeyRound size={24} />
-                <input
-                  name="password"
-                  type="password"
-                  placeholder={t("register.password")}
-                  aria-label={t("register.password")}
-                  required
-                  minLength={6}
-                />
-              </div>
+          <div className="loginInput">
+            <KeyRound size={24} />
+            <input
+              name="password"
+              type="password"
+              placeholder={t("register.password")}
+              aria-label={t("register.password")}
+              required
+              minLength={6}
+            />
+          </div>
 
-              <div className="loginInput">
-                <KeyRound size={24} />
-                <input
-                  name="confirmPassword"
-                  type="password"
-                  placeholder={t("register.confirmPassword")}
-                  aria-label={t("register.confirmPassword")}
-                  required
-                  minLength={6}
-                />
-              </div>
+          <div className="loginInput">
+            <KeyRound size={24} />
+            <input
+              name="confirmPassword"
+              type="password"
+              placeholder={t("register.confirmPassword")}
+              aria-label={t("register.confirmPassword")}
+              required
+              minLength={6}
+            />
+          </div>
 
-              <button type="submit" className="authButton" disabled={isSubmitting}>
-                {isSubmitting ? t("register.creating") : t("register.submit")}
-              </button>
-            </form>
+          <button type="submit" className="authButton" disabled={isSubmitting}>
+            {isSubmitting ? t("register.creating") : t("register.submit")}
+          </button>
+        </form>
 
-            <p className="forgotText">
-              {t("register.alreadyHaveAccount")} <Link to={loginPath}>{t("register.loginHere")}</Link>
-            </p>
-          </>
-        ) : (
-          <>
-            <h1>{t("register.verifyTitle")}</h1>
-            <p>{t("register.verifySubtitle", { email: pendingAccount.email })}</p>
-            <div className="authNotice">{t("register.verifyNotice")}</div>
-            {errorMessage && <div className="authError">{errorMessage}</div>}
-            {resendNotice && <div className="authNotice success">{resendNotice}</div>}
-
-            <form className="loginForm" onSubmit={handleVerify}>
-              <div className="loginInput">
-                <ShieldCheck size={24} />
-                <input
-                  value={code}
-                  onChange={(event) => setCode(event.target.value)}
-                  type="text"
-                  inputMode="numeric"
-                  placeholder={t("register.codePlaceholder")}
-                  aria-label={t("register.codePlaceholder")}
-                  maxLength={12}
-                  required
-                />
-              </div>
-
-              <button type="submit" className="authButton" disabled={isVerifying || code.trim().length === 0}>
-                {isVerifying ? t("register.verifying") : t("register.verifySubmit")}
-              </button>
-            </form>
-
-            <p className="forgotText">
-              {t("register.noCode")}{" "}
-              <button type="button" onClick={handleResend} disabled={isResending}>
-                {isResending ? t("register.resending") : t("register.resendCode")}
-              </button>
-            </p>
-
-            <p className="forgotText">
-              {t("register.alreadyHaveAccount")} <Link to={loginPath}>{t("register.loginHere")}</Link>
-            </p>
-          </>
-        )}
+        <p className="forgotText">
+          {t("register.alreadyHaveAccount")} <Link to={loginPath}>{t("register.loginHere")}</Link>
+        </p>
       </div>
     </div>
   );
