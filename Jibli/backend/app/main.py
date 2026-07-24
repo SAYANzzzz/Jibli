@@ -64,7 +64,7 @@ def check_email(payload: EmailCheckIn) -> dict:
     .execute()
   )
 
-  return {"exists": bool(existing.data)}
+  return {"exists": bool(existing and existing.data)}
 
 
 @app.get("/me/profile")
