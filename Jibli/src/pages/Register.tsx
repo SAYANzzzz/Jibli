@@ -12,6 +12,8 @@ function Register() {
   const [searchParams] = useSearchParams();
   const nextPath = searchParams.get("next") ?? "/request";
   const loginPath = `/login?next=${encodeURIComponent(nextPath)}`;
+  const prefillEmail = searchParams.get("email") ?? "";
+  const accountNotFound = searchParams.get("reason") === "notfound";
   const [errorMessage, setErrorMessage] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -96,7 +98,11 @@ function Register() {
 
         <h1>{t("register.title")}</h1>
         <p>{t("register.subtitle")}</p>
-        <div className="authNotice">{t("register.notice")}</div>
+        {accountNotFound ? (
+          <div className="authNotice">{t("register.accountNotFound")}</div>
+        ) : (
+          <div className="authNotice">{t("register.notice")}</div>
+        )}
         {errorMessage && <div className="authError">{errorMessage}</div>}
 
         <form className="loginForm" onSubmit={handleRegister}>
@@ -113,7 +119,14 @@ function Register() {
 
           <div className="loginInput">
             <Mail size={24} />
-            <input name="email" type="email" placeholder={t("register.email")} aria-label={t("register.email")} required />
+            <input
+              name="email"
+              type="email"
+              placeholder={t("register.email")}
+              aria-label={t("register.email")}
+              defaultValue={prefillEmail}
+              required
+            />
           </div>
 
           <div className="loginInput">

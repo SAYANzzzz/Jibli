@@ -199,6 +199,7 @@ const en = {
     passwordMismatch: "Passwords do not match.",
     profileFailedRegister: "Account created, but profile creation failed.",
     signupFailed: "We couldn't create your account right now. Please try again in a moment, or contact us on WhatsApp if this keeps happening.",
+    accountNotFound: "No account found with this email. Please sign up below.",
   },
   account: {
     eyebrow: "My account",
@@ -579,6 +580,7 @@ const fr: typeof en = {
     passwordMismatch: "Les mots de passe ne correspondent pas.",
     profileFailedRegister: "Compte créé, mais la création du profil a échoué.",
     signupFailed: "Impossible de créer votre compte pour le moment. Réessayez dans un instant, ou contactez-nous sur WhatsApp si le problème persiste.",
+    accountNotFound: "Aucun compte trouvé avec cet email. Merci de vous inscrire ci-dessous.",
   },
   account: {
     eyebrow: "Mon compte",

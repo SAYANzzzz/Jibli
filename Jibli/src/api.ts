@@ -335,3 +335,12 @@ export async function quickOrderPrice(
     body: JSON.stringify({ shop, amount, quantity, currency }),
   }) as Promise<QuickOrderPriceResult>;
 }
+
+export async function checkEmailExists(email: string) {
+  const result = (await publicApiFetch("/auth/check-email", {
+    method: "POST",
+    body: JSON.stringify({ email }),
+  })) as { exists: boolean };
+
+  return result.exists;
+}

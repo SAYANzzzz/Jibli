@@ -8,7 +8,7 @@ from .auth import get_current_profile, get_current_user, require_admin
 from .config import get_settings
 from .pricing import calculate_price
 from .product_preview import preview_product
-from .schemas import CartRequestIn, PreviewRequest, ProfileUpdateIn, QuickOrderPriceIn, QuickPreviewIn
+from .schemas import CartRequestIn, EmailCheckIn, PreviewRequest, ProfileUpdateIn, QuickOrderPriceIn, QuickPreviewIn
 from .supabase_client import get_supabase_admin
 
 settings = get_settings()
@@ -51,6 +51,20 @@ def quick_order_price(payload: QuickOrderPriceIn) -> dict:
     return calculate_price(payload.shop, payload.amount, payload.quantity, payload.currency)
   except ValueError as error:
     raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(error))
+
+
+@app.post("/auth/check-email")
+def check_email(payload: EmailCheckIn) -> dict:
+  supabase = get_supabase_admin()
+  existing = (
+    supabase.table("profiles")
+    .select("id")
+    .ilike("email", payload.email.strip())
+    .maybe_single()
+    .execute()
+  )
+
+  return {"exists": bool(existing.data)}
 
 
 @app.get("/me/profile")

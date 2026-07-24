@@ -42,3 +42,7 @@ class ProfileUpdateIn(BaseModel):
   address: str | None = None
   postal_code: str | None = None
   avatar_url: str | None = None
+
+
+class EmailCheckIn(BaseModel):
+  email: str = Field(min_length=3)
