@@ -10,6 +10,17 @@ MULTIPLIERS: dict[Shop, float] = {
   "temu": 5.5,
 }
 
+# AliExpress items each carry their own flat fee on top of the multiplier,
+# added once per item/line (not multiplied by quantity). Shein and Temu
+# don't get a per-item fee - they're covered by the order-level shipping
+# fee in the frontend's ProductRequest page instead, which is waived when
+# every item in the order is AliExpress.
+ITEM_FEE_TND: dict[Shop, int] = {
+  "aliexpress": 5,
+  "shein": 0,
+  "temu": 0,
+}
+
 
 def arrondi(value: float) -> int:
   """Round up to the next whole dinar (3.2 -> 4, 5.01 -> 6)."""
@@ -28,10 +39,10 @@ def calculate_price(shop: str, amount: float, quantity: int = 1, currency: Curre
 
   # The multiplier is applied to the entered amount as-is, regardless of
   # whether the customer picked USD or EUR — no currency conversion. The
-  # flat shipping fee is applied once per order, not per item - see
-  # SHIPPING_FEE_TND in the frontend's ProductRequest page.
+  # item fee is added once per item/line, after multiplying by quantity -
+  # not per unit, so ordering 3 of the same item only adds the fee once.
   unit_price_tnd = arrondi(amount * MULTIPLIERS[shop])
-  total_price_tnd = unit_price_tnd * quantity
+  total_price_tnd = unit_price_tnd * quantity + ITEM_FEE_TND[shop]
 
   return {
     "shop": shop,
