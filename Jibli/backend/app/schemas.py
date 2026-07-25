@@ -1,6 +1,6 @@
 from typing import Any, Literal
 
-from pydantic import BaseModel, Field, HttpUrl
+from pydantic import BaseModel, Field
 
 Shop = Literal["aliexpress", "shein", "temu"]
 Currency = Literal["usd", "eur"]
@@ -22,7 +22,12 @@ class QuickOrderPriceIn(BaseModel):
 
 
 class CartItemIn(BaseModel):
-  product_link: HttpUrl
+  # Deliberately a plain string, not Pydantic's HttpUrl - real customers
+  # paste links copied from mobile share sheets that sometimes come out
+  # missing the scheme or otherwise not strictly RFC-valid, and strict
+  # parsing was hard-rejecting real orders with a 422. The frontend already
+  # normalizes/validates the link before this is ever sent.
+  product_link: str = Field(min_length=3)
   shop: Shop
   product_name: str | None = None
   selected_options: dict[str, Any] = Field(default_factory=dict)

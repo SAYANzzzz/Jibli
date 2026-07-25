@@ -132,8 +132,10 @@ export function OrderItemCard({ id, index, initialLink, onUpdate, onRemove, canR
   );
 
   useEffect(() => {
+    const trimmedLink = link.trim();
+
     onUpdate(id, {
-      link: link.trim(),
+      link: trimmedLink ? normalizeLink(trimmedLink) : trimmedLink,
       shop,
       productName: preview?.name || "",
       size,
