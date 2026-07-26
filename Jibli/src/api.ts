@@ -336,11 +336,13 @@ export async function quickOrderPrice(
   }) as Promise<QuickOrderPriceResult>;
 }
 
-export async function checkEmailExists(email: string) {
+export type EmailStatus = "confirmed" | "unconfirmed" | "not_found";
+
+export async function checkEmailStatus(email: string): Promise<EmailStatus> {
   const result = (await publicApiFetch("/auth/check-email", {
     method: "POST",
     body: JSON.stringify({ email }),
-  })) as { exists: boolean };
+  })) as { status: EmailStatus };
 
-  return result.exists;
+  return result.status;
 }

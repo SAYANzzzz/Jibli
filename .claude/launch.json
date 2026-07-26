@@ -6,6 +6,13 @@
       "runtimeExecutable": "npm",
       "runtimeArgs": ["run", "dev", "--prefix", "Jibli"],
       "port": 5173
+    },
+    {
+      "name": "jibli-backend",
+      "runtimeExecutable": "python",
+      "runtimeArgs": ["-m", "uvicorn", "app.main:app", "--reload", "--port", "8000"],
+      "port": 8000,
+      "cwd": "Jibli/backend"
     }
   ]
 }

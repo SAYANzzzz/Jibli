@@ -53,18 +53,58 @@ def quick_order_price(payload: QuickOrderPriceIn) -> dict:
     raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(error))
 
 
+def find_auth_user_by_email(supabase, email: str):
+  # The GoTrue admin "list users" endpoint doesn't actually filter by the
+  # email query param (confirmed by testing it directly - it just returns
+  # everyone), so there's no server-side lookup by email. Page through
+  # admin users and match manually instead.
+  target = email.strip().lower()
+  page = 1
+  per_page = 200
+
+  for _ in range(50):
+    users = supabase.auth.admin.list_users(page=page, per_page=per_page)
+
+    if not users:
+      return None
+
+    for user in users:
+      if user.email and user.email.lower() == target:
+        return user
+
+    if len(users) < per_page:
+      return None
+
+    page += 1
+
+  return None
+
+
 @app.post("/auth/check-email")
 def check_email(payload: EmailCheckIn) -> dict:
   supabase = get_supabase_admin()
-  existing = (
+  email = payload.email.strip()
+
+  # A row only lands in profiles once someone finishes verifying their
+  # email, so this alone can't tell "never signed up" apart from "signed
+  # up but never verified" - fall back to the auth user record for that.
+  existing_profile = (
     supabase.table("profiles")
     .select("id")
-    .ilike("email", payload.email.strip())
+    .ilike("email", email)
     .maybe_single()
     .execute()
   )
 
-  return {"exists": bool(existing and existing.data)}
+  if existing_profile and existing_profile.data:
+    return {"status": "confirmed"}
+
+  auth_user = find_auth_user_by_email(supabase, email)
+
+  if auth_user is None:
+    return {"status": "not_found"}
+
+  return {"status": "confirmed" if auth_user.email_confirmed_at else "unconfirmed"}
 
 
 @app.get("/me/profile")

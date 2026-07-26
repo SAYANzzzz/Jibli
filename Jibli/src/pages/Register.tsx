@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import type { FormEvent } from "react";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { KeyRound, Mail, Phone, ShieldCheck, User } from "lucide-react";
@@ -14,6 +14,11 @@ function Register() {
   const loginPath = `/login?next=${encodeURIComponent(nextPath)}`;
   const prefillEmail = searchParams.get("email") ?? "";
   const accountNotFound = searchParams.get("reason") === "notfound";
+  // A login attempt on an account that was created but never verified gets
+  // redirected here instead of showing a generic "no account found" - jump
+  // straight to the code screen and fire a fresh code rather than making
+  // them fill out the registration form again.
+  const resumeEmail = searchParams.get("reason") === "unconfirmed" ? searchParams.get("email") : null;
   const [errorMessage, setErrorMessage] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -21,16 +26,41 @@ function Register() {
   // from verify@jiblitunisia.com via Resend) instead of a click-through
   // link. The account can't sign in until that code is verified here.
   // Don't assume a fixed digit count for the code - it's been observed as
-  // 8 digits, not Supabase's usual 6.
+  // 8 digits, not Supabase's usual 6. fullName/phone are only known right
+  // after the registration form is submitted - when resuming a pending
+  // verification from the login redirect, they're left unset and
+  // ensureUserProfile() falls back to what Supabase already stored at
+  // signup time instead.
   const [pendingAccount, setPendingAccount] = useState<{
     email: string;
-    fullName: string;
-    phone: string;
+    fullName?: string;
+    phone?: string;
   } | null>(null);
   const [code, setCode] = useState("");
   const [isVerifying, setIsVerifying] = useState(false);
   const [isResending, setIsResending] = useState(false);
   const [resendNotice, setResendNotice] = useState("");
+
+  useEffect(() => {
+    if (!resumeEmail) {
+      return;
+    }
+
+    setPendingAccount({ email: resumeEmail });
+    setIsResending(true);
+
+    resendSignupOtp(resumeEmail).then(({ error }) => {
+      setIsResending(false);
+
+      if (error) {
+        setErrorMessage(getAuthErrorMessage(error, t("register.resendFailed")));
+      } else {
+        setResendNotice(t("register.resendSuccess"));
+      }
+    });
+    // Only meant to fire once, when landing here from the login redirect.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [resumeEmail]);
 
   const handleRegister = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -117,10 +147,11 @@ function Register() {
     }
 
     try {
-      await ensureUserProfile({
-        full_name: pendingAccount.fullName,
-        phone: pendingAccount.phone,
-      });
+      await ensureUserProfile(
+        pendingAccount.fullName
+          ? { full_name: pendingAccount.fullName, phone: pendingAccount.phone ?? "" }
+          : undefined,
+      );
     } catch (profileError) {
       setIsVerifying(false);
       setErrorMessage(profileError instanceof Error ? profileError.message : t("register.profileFailedVerify"));
@@ -256,7 +287,9 @@ function Register() {
           <>
             <h1>{t("register.verifyTitle")}</h1>
             <p>{t("register.verifySubtitle", { email: pendingAccount.email })}</p>
-            <div className="authNotice">{t("register.verifyNotice")}</div>
+            <div className="authNotice">
+              {resumeEmail ? t("register.resumeNotice") : t("register.verifyNotice")}
+            </div>
             {errorMessage && <div className="authError">{errorMessage}</div>}
             {resendNotice && <div className="authNotice success">{resendNotice}</div>}
 
