@@ -71,10 +71,40 @@ function buildStatusNotifyMessage(order: Order, params: { status: string; tracki
   return lines.join("\n");
 }
 
+function formatItemOptions(item: CartItem) {
+  const options = item.selected_options ?? {};
+  return Object.entries(options)
+    .filter(([, value]) => value && String(value).trim())
+    .map(([label, value]) => `${label}: ${value}`)
+    .join(", ");
+}
+
+// Photo first, then that item's info, then the next item's photo, then its
+// info, and so on - deliberately not the original product link, since a
+// photo of the actual item is clearer for the customer to confirm than a
+// link back to the store. WhatsApp auto-previews a bare image URL pasted
+// as text, so this is the closest a wa.me text-only link can get to
+// actually sending a photo.
 function buildPaymentRequestMessage(order: Order, amount: number) {
+  const itemBlocks = order.items.map((item, index) => {
+    const options = formatItemOptions(item);
+    const lines = [
+      item.image_url || "",
+      `${index + 1}. ${item.product_name || `${item.shop} product`}`,
+      `Quantity: ${item.quantity}`,
+      options ? options : "",
+    ].filter(Boolean);
+
+    return lines.join("\n");
+  });
+
   return [
     `Hi ${order.profiles?.full_name || "there"}, this is Jibli.`,
-    `Your order #${order.id.slice(0, 8).toUpperCase()} total is ${amount} TND.`,
+    `Your order #${order.id.slice(0, 8).toUpperCase()}:`,
+    "",
+    itemBlocks.join("\n\n"),
+    "",
+    `Total: ${amount} TND`,
     `Please send the payment to confirm your order, then reply here once it's done.`,
   ].join("\n");
 }
