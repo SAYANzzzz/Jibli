@@ -39,7 +39,7 @@ const GAMING_CATALOG: GamingGame[] = [
     category: "Game top-up",
     name: "Valorant — VP",
     image: "/games/valorant.jpg",
-    tiers: [{ label: "475 VP Key", priceTnd: 30 }],
+    tiers: [{ label: "475 VP Key", priceTnd: 22 }],
   },
   {
     id: "free-fire",
