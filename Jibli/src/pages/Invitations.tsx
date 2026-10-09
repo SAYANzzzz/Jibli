@@ -103,6 +103,7 @@ function Invitations() {
               <div className="occasionChooserHeading"><span className="eyebrow">Start here</span><h2>What are you celebrating?</h2><p>Choose an occasion to see the right invitation styles.</p></div>
               <div className="occasionChooserGrid">
                 <Link to="/invitations/weddings" className="occasionChoice wedding"><Heart size={22} /><strong>Wedding</strong><span>View wedding designs</span></Link>
+                <Link to="/invitations/engagements" className="occasionChoice engagement"><Heart size={22} /><strong>Engagement</strong><span>Choose an engagement style</span></Link>
                 <Link to="/invitations?category=Celebration#templates" className="occasionChoice birthday"><PartyPopper size={22} /><strong>Birthday</strong><span>Choose a birthday style</span></Link>
                 <Link to="/invitations?category=Celebration#templates" className="occasionChoice party"><Sparkles size={22} /><strong>Party</strong><span>Make it unforgettable</span></Link>
                 <Link to="/invitations?category=Business#templates" className="occasionChoice opening"><Store size={22} /><strong>Shop opening</strong><span>Announce your launch</span></Link>
@@ -123,7 +124,7 @@ function Invitations() {
                 {visibleTemplates.map((template) => {
                   const Icon = template.icon;
                   return (
-                    <button key={template.id} type="button" className={`invitationTemplate ${template.accent}`} onClick={() => template.id === "wedding-bloom" ? navigate("/invitations/weddings") : setSelectedId(template.id)}>
+                    <button key={template.id} type="button" className={`invitationTemplate ${template.accent}`} onClick={() => template.id === "wedding-bloom" ? navigate("/invitations/weddings") : template.id === "henna-night" ? navigate("/invitations/engagements") : setSelectedId(template.id)}>
                       <div className="invitationTemplateIcon"><Icon size={25} /></div>
                       <div className="invitationTemplateGlow" />
                       <span>{template.event}</span>
