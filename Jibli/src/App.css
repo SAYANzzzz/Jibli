@@ -4371,11 +4371,21 @@ td {
 
 /* Gaming store */
 
+.gamingStorePage { width: 100%; max-width: none; padding: 0 0 84px; }
+.gamingEditorialHero { position: relative; display: flex; align-items: center; min-height: min(640px, calc(100vh - 76px)); overflow: hidden; background-image: linear-gradient(90deg, rgba(2, 7, 18, 0.64) 0%, rgba(2, 7, 18, 0.29) 50%, rgba(2, 7, 18, 0.03) 100%), url("/games/hero-editorial.png"); background-position: center; background-size: cover; }
+.gamingEditorialContent { width: min(1160px, calc(100% - 72px)); margin: 0 auto; padding: 90px 0; color: #fff; }
+.gamingEditorialEyebrow { display: inline-flex; align-items: center; gap: 7px; color: #87e9ff; font-size: 13px; font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase; }
+.gamingEditorialHero h1 { max-width: 570px; margin: 16px 0; color: #fff; font-size: clamp(46px, 5.5vw, 78px); line-height: 0.98; letter-spacing: -0.06em; text-shadow: 0 4px 30px rgba(0, 0, 0, 0.42); }
+.gamingEditorialHero p { max-width: 540px; margin: 0 0 30px; color: rgba(255,255,255,0.87); font-size: 18px; line-height: 1.65; }
+.gamingBrowseBtn { display: inline-flex; align-items: center; gap: 9px; min-height: 54px; padding: 0 23px; background: #fff; color: #071326; font-size: 12px; font-weight: 900; letter-spacing: 0.11em; text-transform: uppercase; transition: transform 0.18s ease, background 0.18s ease; }
+.gamingBrowseBtn:hover { transform: translateY(-3px); background: #8cecff; }
+
 .gamingGameGrid {
+  width: min(1160px, calc(100% - 40px));
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
   gap: 18px;
-  margin-top: 30px;
+  margin: 56px auto 0;
 }
 
 .gamingGameCard {
@@ -4546,6 +4556,11 @@ td {
   width: auto;
   min-width: 220px;
   margin-top: 0;
+}
+
+@media (max-width: 800px) {
+  .gamingEditorialHero { min-height: 560px; background-position: 62% center; }
+  .gamingEditorialContent { width: min(100% - 32px, 620px); padding: 64px 0; }
 }
 
 .gamingTierPrice {

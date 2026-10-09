@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
+import { Gamepad2, Zap } from "lucide-react";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import ProfileNavLink from "../components/ProfileNavLink";
@@ -189,15 +190,17 @@ function GamingStore() {
       </Navbar>
 
       <main className="requestPage gamingStorePage">
-        <section className="requestHero">
-          <div className="requestHeroText">
+        <section className="gamingEditorialHero">
+          <div className="gamingEditorialContent">
+            <span className="gamingEditorialEyebrow"><Zap size={15} /> Instant digital delivery</span>
             <h1>{t("gaming.title")}</h1>
             <p>{t("gaming.subtitle")}</p>
+            <a className="gamingBrowseBtn" href="#gaming-catalog"><Gamepad2 size={17} /> Explore top-ups</a>
           </div>
         </section>
 
         {!selectedGame ? (
-          <div className="gamingGameGrid">
+          <div className="gamingGameGrid" id="gaming-catalog">
             {GAMING_CATALOG.map((game) => (
               <button
                 type="button"
