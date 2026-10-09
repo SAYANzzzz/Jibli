@@ -31,7 +31,7 @@ function weddingWhatsappUrl(design: WeddingDesign, details: Record<string, strin
   const lines = [
     "Hi Jibli! I want a personalised wedding invitation.",
     "",
-    `Design: ${design.title} (${design.style})`,
+    `Design: ${design.title} (${design.style})`, "Price: 15 TND",
     `Couple: ${details.couple || "Not decided"}`,
     `Date: ${details.date || "Not decided"}`,
     `Time: ${details.time || "Not decided"}`,
@@ -79,7 +79,7 @@ function WeddingInvitations() {
                 {WEDDING_DESIGNS.map((design) => (
                   <button type="button" className="weddingDesignCard" key={design.id} onClick={() => setSelectedId(design.id)}>
                     <img src={design.image} alt={`${design.title} wedding invitation example`} />
-                    <div className="weddingDesignOverlay"><span>{design.style}</span><strong>{design.title}</strong><p>{design.description}</p>{design.needsPhotos && <small><ImagePlus size={14} /> Couple photos needed</small>}<b>Personalise this design <ArrowRight size={15} /></b></div>
+                    <div className="weddingDesignOverlay"><span>{design.style}</span><strong>{design.title}</strong><p>{design.description}</p>{design.needsPhotos && <small><ImagePlus size={14} /> Couple photos needed</small>}<b>15 TND · Personalise this design <ArrowRight size={15} /></b></div>
                   </button>
                 ))}
               </div>
@@ -91,7 +91,7 @@ function WeddingInvitations() {
               <Link to="/invitations#occasion-types" className="weddingAllTypesLink"><ChevronLeft size={16} /> Choose another occasion</Link>
               <button type="button" className="invitationBack" onClick={() => setSelectedId(null)}><ChevronLeft size={18} /> All wedding designs</button>
             </div>
-            <div className="weddingOrderHeading"><span className="eyebrow">{selected.style}</span><h1>Personalise {selected.title}</h1><p>Your selected design is below. Send the essentials and we will confirm the final wording, price and delivery time before we start.</p></div>
+            <div className="weddingOrderHeading"><span className="eyebrow">{selected.style}</span><h1>Personalise {selected.title}</h1><strong className="invitationPrice">15 TND</strong><p>Your selected design is below. Send the essentials and we will confirm the final wording and delivery time before we start.</p></div>
             <div className="weddingOrderGrid">
               <div className="weddingSelectedDesign"><img src={selected.image} alt={`${selected.title} wedding invitation`} /><div><strong>{selected.title}</strong><span>{selected.description}</span>{selected.needsPhotos && <p><ImagePlus size={15} /> Send your photos in the WhatsApp chat after submitting.</p>}</div></div>
               <form className="invitationForm weddingOrderForm" onSubmit={(event) => event.preventDefault()}>

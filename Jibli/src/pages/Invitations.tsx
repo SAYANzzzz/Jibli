@@ -22,7 +22,6 @@ const TEMPLATES: InvitationTemplate[] = [
   { id: "henna-night", title: "Henna night", event: "Engagement & henna", description: "Warm, celebratory and full of colour.", accent: "gold", group: "Romance", icon: Sparkles },
   { id: "birthday-confetti", title: "Confetti", event: "Birthday", description: "A joyful invitation for every age.", accent: "violet", group: "Celebration", icon: PartyPopper },
   { id: "grand-opening", title: "Grand opening", event: "Business opening", description: "Announce your next big beginning.", accent: "ink", group: "Business", icon: Store },
-  { id: "after-hours", title: "After hours", event: "Party", description: "A bold invitation for an unforgettable night.", accent: "coral", group: "Celebration", icon: PartyPopper },
   { id: "graduation-day", title: "The next chapter", event: "Graduation", description: "Celebrate a milestone worth sharing.", accent: "navy", group: "Milestone", icon: Sparkles },
   { id: "family-table", title: "Family table", event: "Family gathering", description: "A warm welcome for the people who matter.", accent: "olive", group: "Milestone", icon: Users },
 ];
@@ -34,6 +33,7 @@ function invitationWhatsappUrl(template: InvitationTemplate, details: Record<str
     "Hi Jibli! I'd like a digital invitation.",
     "",
     `Template: ${template.title} (${template.event})`,
+    `Price: ${template.event === "Wedding" ? "15 TND" : "10 TND"}`,
     `Hosts / name: ${details.hosts || "Not decided"}`,
     `Date: ${details.date || "Not decided"}`,
     `Time: ${details.time || "Not decided"}`,
@@ -84,7 +84,7 @@ function Invitations() {
               <div className="invitationHeroContent">
                 <span className="invitationEyebrow"><Sparkles size={15} /> Jibli celebrations</span>
                 <h1>Online invitations<br />and cards for all<br /><em>moments that matter.</em></h1>
-                <p>Personalised invitations, made to be shared beautifully on WhatsApp.</p>
+                <p>Personalised invitations, made to be shared beautifully on WhatsApp. All invitations 10 TND · Weddings 15 TND.</p>
                 <div className="invitationHeroActions">
                   <a className="invitationBrowseBtn" href="#templates"><Palette size={17} /> Browse invitations</a>
                   <span><WandSparkles size={15} /> Made around your story</span>
@@ -104,7 +104,8 @@ function Invitations() {
                 <Link to="/invitations/weddings" className="occasionChoice wedding"><Heart size={22} /><strong>Wedding</strong><span>View wedding designs</span></Link>
                 <Link to="/invitations/engagements" className="occasionChoice engagement"><Heart size={22} /><strong>Engagement</strong><span>Choose an engagement style</span></Link>
                 <Link to="/invitations/birthdays" className="occasionChoice birthday"><PartyPopper size={22} /><strong>Birthday</strong><span>Choose a birthday style</span></Link>
-                <Link to="/invitations?category=Celebration#templates" className="occasionChoice party"><Sparkles size={22} /><strong>Party</strong><span>Make it unforgettable</span></Link>
+                <Link to="/invitations/graduations" className="occasionChoice graduation"><Sparkles size={22} /><strong>Graduation</strong><span>Celebrate your next chapter</span></Link>
+                <Link to="/invitations/family" className="occasionChoice family"><Users size={22} /><strong>Family gathering</strong><span>Bring everyone together</span></Link>
                 <Link to="/invitations/openings" className="occasionChoice opening"><Store size={22} /><strong>Business opening</strong><span>Announce your launch</span></Link>
               </div>
             </section>
@@ -123,7 +124,7 @@ function Invitations() {
                 {visibleTemplates.map((template) => {
                   const Icon = template.icon;
                   return (
-                    <button key={template.id} type="button" className={`invitationTemplate ${template.accent}`} onClick={() => template.id === "wedding-bloom" ? navigate("/invitations/weddings") : template.id === "henna-night" ? navigate("/invitations/engagements") : template.id === "birthday-confetti" ? navigate("/invitations/birthdays") : template.id === "grand-opening" ? navigate("/invitations/openings") : setSelectedId(template.id)}>
+                    <button key={template.id} type="button" className={`invitationTemplate ${template.accent}`} onClick={() => template.id === "wedding-bloom" ? navigate("/invitations/weddings") : template.id === "henna-night" ? navigate("/invitations/engagements") : template.id === "birthday-confetti" ? navigate("/invitations/birthdays") : template.id === "grand-opening" ? navigate("/invitations/openings") : template.id === "graduation-day" ? navigate("/invitations/graduations") : template.id === "family-table" ? navigate("/invitations/family") : setSelectedId(template.id)}>
                       <div className="invitationTemplateIcon"><Icon size={25} /></div>
                       <div className="invitationTemplateGlow" />
                       <span>{template.event}</span>
@@ -167,7 +168,7 @@ function Invitations() {
                 <label>Invitation language<select value={details.language} onChange={(event) => changeDetail("language", event.target.value)}><option>French / Arabic</option><option>Arabic</option><option>French</option><option>English</option></select></label>
                 <label>Anything else you want us to know?<textarea value={details.note} onChange={(event) => changeDetail("note", event.target.value)} placeholder="Colours, dress code, RSVP details, special wording..." /></label>
                 <a className="primaryBtn invitationWhatsappBtn" href={invitationWhatsappUrl(selected, details)} target="_blank" rel="noreferrer"><Send size={17} /> Request on WhatsApp</a>
-                <p><Check size={15} /> We will confirm the final design and price with you before starting.</p>
+                <p><Check size={15} /> Invitations cost 10 TND; weddings cost 15 TND. We will confirm the final design before starting.</p>
               </form>
             </div>
           </section>

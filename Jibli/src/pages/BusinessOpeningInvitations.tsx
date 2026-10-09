@@ -9,7 +9,7 @@ const DESIGNS = [
   { id: "bold-coffee", title: "Bold coffee", style: "Bold / Café", description: "Bright red typography and a coffee centrepiece for a memorable launch." },
   { id: "red-ribbon", title: "Ribbon reveal", style: "Elegant / Salon", description: "Red satin ribbons and a storefront reveal for your grand opening." },
   { id: "burgundy-bow", title: "Burgundy bow", style: "Classic / Boutique", description: "Cream paper, flowing lettering and a rich burgundy bow." },
-  { id: "popup-party", title: "Popup party", style: "Editorial / Popup", description: "A storefront photograph and elegant white lettering for an opening party." },
+  { id: "popup-party", title: "Popup opening", style: "Editorial / Popup", description: "A storefront photograph and elegant white lettering for an opening celebration." },
 ];
 
 export default function BusinessOpeningInvitations() {
@@ -19,7 +19,7 @@ export default function BusinessOpeningInvitations() {
   const update = (field: keyof typeof details, value: string) => setDetails((current) => ({ ...current, [field]: value }));
   const whatsappUrl = selected ? `https://wa.me/21692001397?text=${encodeURIComponent([
     "Hi Jibli! I want a personalised business opening invitation.",
-    `Design: ${selected.title} (${selected.style})`,
+    `Design: ${selected.title} (${selected.style})`, "Price: 10 TND",
     `Business name: ${details.name || "Not decided"}`,
     `Business type: ${details.businessType || "Not decided"}`,
     `Date: ${details.date || "Not decided"}`,
@@ -56,13 +56,13 @@ export default function BusinessOpeningInvitations() {
           <div className="weddingDesignGrid">
             {DESIGNS.map((design) => <button type="button" className="weddingDesignCard" key={design.id} onClick={() => setSelectedId(design.id)}>
               <img src={`/invitations/openings/${design.id}.jfif`} alt={`${design.title} business opening invitation example`} loading="lazy" />
-              <div className="weddingDesignOverlay"><span>{design.style}</span><strong>{design.title}</strong><p>{design.description}</p><b>Personalise this design <ArrowRight size={15} /></b></div>
+              <div className="weddingDesignOverlay"><span>{design.style}</span><strong>{design.title}</strong><p>{design.description}</p><b>10 TND · Personalise this design <ArrowRight size={15} /></b></div>
             </button>)}
           </div>
         </section>
       </> : <section className="weddingOrderPage">
         <div className="weddingOrderBackLinks"><Link to="/invitations#occasion-types" className="weddingAllTypesLink"><ChevronLeft size={16} /> Choose another occasion</Link><button type="button" className="invitationBack" onClick={() => setSelectedId(null)}><ChevronLeft size={18} /> All opening designs</button></div>
-        <div className="weddingOrderHeading"><span className="eyebrow">{selected.style}</span><h1>Personalise {selected.title}</h1><p>Tell us about your opening. We will confirm the final design, price and delivery time before starting.</p></div>
+        <div className="weddingOrderHeading"><span className="eyebrow">{selected.style}</span><h1>Personalise {selected.title}</h1><strong className="invitationPrice">10 TND</strong><p>Tell us about your opening. We will confirm the final design and delivery time before starting.</p></div>
         <div className="weddingOrderGrid">
           <div className="weddingSelectedDesign"><img src={`/invitations/openings/${selected.id}.jfif`} alt={`${selected.title} business opening invitation`} /><div><strong>{selected.title}</strong><span>{selected.description}</span><p>Send your logo or business photos in the WhatsApp chat if you want them included.</p></div></div>
           <form className="invitationForm weddingOrderForm" onSubmit={(event) => event.preventDefault()}>

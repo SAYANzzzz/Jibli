@@ -15,6 +15,8 @@ import WeddingInvitations from "./pages/WeddingInvitations.tsx";
 import EngagementInvitations from "./pages/EngagementInvitations.tsx";
 import BirthdayInvitations from "./pages/BirthdayInvitations.tsx";
 import BusinessOpeningInvitations from "./pages/BusinessOpeningInvitations.tsx";
+import GraduationInvitations from "./pages/GraduationInvitations.tsx";
+import FamilyGatheringInvitations from "./pages/FamilyGatheringInvitations.tsx";
 import AboutUs from "./pages/AboutUs.tsx";
 import Contact from "./pages/Contact.tsx";
 import TermsOfService from "./pages/TermsOfService.tsx";
@@ -228,6 +230,8 @@ function App() {
         <Route path="/invitations/engagements" element={<EngagementInvitations />} />
         <Route path="/invitations/birthdays" element={<BirthdayInvitations />} />
         <Route path="/invitations/openings" element={<BusinessOpeningInvitations />} />
+        <Route path="/invitations/graduations" element={<GraduationInvitations />} />
+        <Route path="/invitations/family" element={<FamilyGatheringInvitations />} />
         <Route path="/about" element={<AboutUs />} />
         <Route path="/contact" element={<Contact />} />
         <Route path="/terms" element={<TermsOfService />} />

@@ -4779,18 +4779,21 @@ td {
 .occasionChoice svg { margin-bottom: 6px; color: #f1b99a; }
 .occasionChoice strong { font-size: 19px; letter-spacing: -.02em; }
 .occasionChoice span { color: #bdc0cc; font-size: 12px; }
-.occasionChoice.wedding { background: linear-gradient(135deg, #3f2229, #171b30); }.occasionChoice.birthday { background: linear-gradient(135deg, #35224b, #171b30); }.occasionChoice.party { background: linear-gradient(135deg, #193b4a, #171b30); }.occasionChoice.opening { background: linear-gradient(135deg, #3d3420, #171b30); }
+.occasionChoice.wedding { background: linear-gradient(135deg, #3f2229, #171b30); }.occasionChoice.birthday { background: linear-gradient(135deg, #35224b, #171b30); }.occasionChoice.opening { background: linear-gradient(135deg, #3d3420, #171b30); }
 .occasionChoice.engagement { background: linear-gradient(135deg, #45303a, #171b30); }
 .engagementDesignGrid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+.invitationPrice { display: inline-block; margin-top: 14px; padding: 8px 14px; border: 1px solid #d99975; border-radius: 8px; color: #f5c9aa; font-size: 20px; }
+.familyStudioHero { background: linear-gradient(108deg, rgba(12,16,32,.97), rgba(12,16,32,.75) 55%, rgba(12,16,32,.35)), url('/invitations/family/nouveau-florals.jfif') center / cover; }
+.graduationStudioHero { background: linear-gradient(108deg, rgba(12,16,32,.97), rgba(12,16,32,.75) 55%, rgba(12,16,32,.35)), url('/invitations/graduations/midnight-silver.jfif') center / cover; }
 .businessOpeningStudioHero { background: linear-gradient(108deg, rgba(12,16,32,.97), rgba(12,16,32,.75) 55%, rgba(12,16,32,.35)), url('/invitations/openings/burgundy-bow.jfif') center / cover; }
-:is(.birthdayStudioPage, .businessOpeningStudioPage) .weddingDesignCard { min-height: 0; display: flex; flex-direction: column; }
-:is(.birthdayStudioPage, .businessOpeningStudioPage) .weddingDesignCard img { position: static; display: block; height: auto; aspect-ratio: 9 / 16; object-fit: contain; background: #f6f0e8; }
-:is(.birthdayStudioPage, .businessOpeningStudioPage) .weddingDesignCard::after { display: none; }
-:is(.birthdayStudioPage, .businessOpeningStudioPage) .weddingDesignOverlay { position: static; flex: 1; width: 100%; box-sizing: border-box; background: #171e34; }
-:is(.birthdayStudioPage, .businessOpeningStudioPage) .weddingDesignCard:hover img { transform: none; }
-:is(.birthdayStudioPage, .businessOpeningStudioPage) .weddingDesignCard:focus-visible { outline: 3px solid #f5c9aa; outline-offset: 4px; }
-:is(.birthdayStudioPage, .businessOpeningStudioPage) .weddingSelectedDesign { display: block; }
-:is(.birthdayStudioPage, .businessOpeningStudioPage) .weddingSelectedDesign > img { height: auto; max-height: none; object-fit: contain; }
+:is(.birthdayStudioPage, .businessOpeningStudioPage, .graduationStudioPage, .familyStudioPage) .weddingDesignCard { min-height: 0; display: flex; flex-direction: column; }
+:is(.birthdayStudioPage, .businessOpeningStudioPage, .graduationStudioPage, .familyStudioPage) .weddingDesignCard img { position: static; display: block; height: auto; aspect-ratio: 9 / 16; object-fit: contain; background: #f6f0e8; }
+:is(.birthdayStudioPage, .businessOpeningStudioPage, .graduationStudioPage, .familyStudioPage) .weddingDesignCard::after { display: none; }
+:is(.birthdayStudioPage, .businessOpeningStudioPage, .graduationStudioPage, .familyStudioPage) .weddingDesignOverlay { position: static; flex: 1; width: 100%; box-sizing: border-box; background: #171e34; }
+:is(.birthdayStudioPage, .businessOpeningStudioPage, .graduationStudioPage, .familyStudioPage) .weddingDesignCard:hover img { transform: none; }
+:is(.birthdayStudioPage, .businessOpeningStudioPage, .graduationStudioPage, .familyStudioPage) .weddingDesignCard:focus-visible { outline: 3px solid #f5c9aa; outline-offset: 4px; }
+:is(.birthdayStudioPage, .businessOpeningStudioPage, .graduationStudioPage, .familyStudioPage) .weddingSelectedDesign { display: block; }
+:is(.birthdayStudioPage, .businessOpeningStudioPage, .graduationStudioPage, .familyStudioPage) .weddingSelectedDesign > img { height: auto; max-height: none; object-fit: contain; }
 .occasionChoice:hover { transform: translateY(-3px); border-color: #eead8c; box-shadow: 0 12px 30px rgba(0,0,0,.22); }
 @media (max-width: 900px) { .weddingStudioHero { grid-template-columns: 1fr; gap: 35px; } .weddingHeroPromise { max-width: 430px; } .weddingDesignGrid { grid-template-columns: repeat(2, minmax(0, 1fr)); } .weddingOrderGrid { grid-template-columns: 1fr; } .weddingSelectedDesign { position: static; display: grid; grid-template-columns: 150px 1fr; } .weddingSelectedDesign > img { height: 100%; max-height: 260px; } .occasionChooserGrid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 @media (max-width: 560px) { .weddingStudioHero { min-height: 560px; padding: 56px 22px; background-position: 63% center; } .weddingStudioHero h1 { font-size: 45px; } .weddingSectionHeading, .occasionChooserHeading { align-items: start; flex-direction: column; gap: 12px; } .weddingDesignGrid { gap: 11px; } .weddingDesignCard { min-height: 315px; } .weddingDesignOverlay { padding: 14px 12px; } .weddingDesignOverlay strong { font-size: 16px; } .weddingDesignOverlay b { font-size: 9px; } .weddingDesignOverlay p { display: none; } .weddingSelectedDesign { grid-template-columns: 115px 1fr; } .occasionChooser { padding-top: 8px; } .occasionChoice { min-height: 124px; padding: 15px; } }
