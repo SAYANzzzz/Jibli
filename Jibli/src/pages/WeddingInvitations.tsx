@@ -74,7 +74,7 @@ function WeddingInvitations() {
               </aside>
             </section>
             <section className="weddingDesignSection" id="wedding-designs">
-              <div className="weddingSectionHeading"><div><span className="eyebrow">Wedding collection</span><h2>Choose your starting style</h2><Link to="/invitations#occasion-types" className="weddingAllTypesLink"><ChevronLeft size={16} /> Change occasion: wedding, birthday, party...</Link></div><p>Every design is personalised by Jibli. Select one to begin your request.</p></div>
+              <div className="weddingSectionHeading"><div><span className="eyebrow">Wedding collection</span><h2>Choose your starting style</h2><Link to="/invitations#occasion-types" className="weddingAllTypesLink"><ChevronLeft size={16} /> Choose another occasion</Link></div><p>Every design is personalised by Jibli. Select one to begin your request.</p></div>
               <div className="weddingDesignGrid">
                 {WEDDING_DESIGNS.map((design) => (
                   <button type="button" className="weddingDesignCard" key={design.id} onClick={() => setSelectedId(design.id)}>
@@ -88,7 +88,7 @@ function WeddingInvitations() {
         ) : (
           <section className="weddingOrderPage">
             <div className="weddingOrderBackLinks">
-              <Link to="/invitations#occasion-types" className="weddingAllTypesLink"><ChevronLeft size={16} /> Change occasion: wedding, birthday, party...</Link>
+              <Link to="/invitations#occasion-types" className="weddingAllTypesLink"><ChevronLeft size={16} /> Choose another occasion</Link>
               <button type="button" className="invitationBack" onClick={() => setSelectedId(null)}><ChevronLeft size={18} /> All wedding designs</button>
             </div>
             <div className="weddingOrderHeading"><span className="eyebrow">{selected.style}</span><h1>Personalise {selected.title}</h1><p>Your selected design is below. Send the essentials and we will confirm the final wording, price and delivery time before we start.</p></div>
