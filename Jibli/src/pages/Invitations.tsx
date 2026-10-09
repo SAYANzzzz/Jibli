@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import { Check, ChevronLeft, Heart, MapPin, Palette, PartyPopper, Send, Sparkles, Store, Users } from "lucide-react";
+import { Check, ChevronLeft, Heart, MapPin, Palette, PartyPopper, Send, Sparkles, Store, Users, WandSparkles } from "lucide-react";
 import { Link } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
@@ -13,19 +13,22 @@ type InvitationTemplate = {
   event: string;
   description: string;
   accent: string;
+  group: "Romance" | "Celebration" | "Business" | "Milestone";
   icon: typeof Heart;
 };
 
 const TEMPLATES: InvitationTemplate[] = [
-  { id: "wedding-bloom", title: "Blooming vows", event: "Wedding", description: "Soft florals and timeless elegance.", accent: "rose", icon: Heart },
-  { id: "henna-night", title: "Henna night", event: "Engagement & henna", description: "Warm, celebratory and full of colour.", accent: "gold", icon: Sparkles },
-  { id: "birthday-confetti", title: "Confetti", event: "Birthday", description: "A joyful invitation for every age.", accent: "violet", icon: PartyPopper },
-  { id: "little-star", title: "Little star", event: "Kids birthday", description: "Playful, bright and made for little guests.", accent: "sky", icon: Sparkles },
-  { id: "grand-opening", title: "Grand opening", event: "Business opening", description: "Announce your next big beginning.", accent: "ink", icon: Store },
-  { id: "after-hours", title: "After hours", event: "Party", description: "A bold invitation for an unforgettable night.", accent: "coral", icon: PartyPopper },
-  { id: "graduation-day", title: "The next chapter", event: "Graduation", description: "Celebrate a milestone worth sharing.", accent: "navy", icon: Sparkles },
-  { id: "family-table", title: "Family table", event: "Family gathering", description: "A warm welcome for the people who matter.", accent: "olive", icon: Users },
+  { id: "wedding-bloom", title: "Blooming vows", event: "Wedding", description: "Soft florals and timeless elegance.", accent: "rose", group: "Romance", icon: Heart },
+  { id: "henna-night", title: "Henna night", event: "Engagement & henna", description: "Warm, celebratory and full of colour.", accent: "gold", group: "Romance", icon: Sparkles },
+  { id: "birthday-confetti", title: "Confetti", event: "Birthday", description: "A joyful invitation for every age.", accent: "violet", group: "Celebration", icon: PartyPopper },
+  { id: "little-star", title: "Little star", event: "Kids birthday", description: "Playful, bright and made for little guests.", accent: "sky", group: "Celebration", icon: Sparkles },
+  { id: "grand-opening", title: "Grand opening", event: "Business opening", description: "Announce your next big beginning.", accent: "ink", group: "Business", icon: Store },
+  { id: "after-hours", title: "After hours", event: "Party", description: "A bold invitation for an unforgettable night.", accent: "coral", group: "Celebration", icon: PartyPopper },
+  { id: "graduation-day", title: "The next chapter", event: "Graduation", description: "Celebrate a milestone worth sharing.", accent: "navy", group: "Milestone", icon: Sparkles },
+  { id: "family-table", title: "Family table", event: "Family gathering", description: "A warm welcome for the people who matter.", accent: "olive", group: "Milestone", icon: Users },
 ];
+
+const CATEGORIES = ["All", "Romance", "Celebration", "Business", "Milestone"] as const;
 
 function invitationWhatsappUrl(template: InvitationTemplate, details: Record<string, string>) {
   const lines = [
@@ -45,6 +48,7 @@ function invitationWhatsappUrl(template: InvitationTemplate, details: Record<str
 
 function Invitations() {
   const [selectedId, setSelectedId] = useState<string | null>(null);
+  const [activeCategory, setActiveCategory] = useState<(typeof CATEGORIES)[number]>("All");
   const [details, setDetails] = useState({
     hosts: "",
     date: "",
@@ -54,6 +58,10 @@ function Invitations() {
     note: "",
   });
   const selected = useMemo(() => TEMPLATES.find((template) => template.id === selectedId) ?? null, [selectedId]);
+  const visibleTemplates = useMemo(
+    () => activeCategory === "All" ? TEMPLATES : TEMPLATES.filter((template) => template.group === activeCategory),
+    [activeCategory],
+  );
 
   const changeDetail = (field: keyof typeof details, value: string) => {
     setDetails((current) => ({ ...current, [field]: value }));
@@ -74,13 +82,21 @@ function Invitations() {
                 <span className="invitationEyebrow"><Sparkles size={15} /> Jibli celebrations</span>
                 <h1>Invite beautifully.<br /><em>Celebrate freely.</em></h1>
                 <p>Personalised digital invitations for the moments people remember: weddings, birthdays, business openings, parties and more.</p>
-                <a className="primaryBtn" href="#templates"><Palette size={17} /> Choose a design</a>
+                <div className="invitationHeroActions">
+                  <a className="primaryBtn" href="#templates"><Palette size={17} /> Choose a design</a>
+                  <span><WandSparkles size={15} /> Made around your story</span>
+                </div>
               </div>
-              <div className="invitationHeroCard" aria-hidden="true">
-                <Heart size={38} fill="currentColor" />
-                <span>You are warmly invited</span>
-                <strong>Our special day</strong>
-                <small>Made with Jibli</small>
+              <div className="invitationHeroArt" aria-hidden="true">
+                <i className="invitationOrb orbOne" /><i className="invitationOrb orbTwo" /><i className="invitationOrb orbThree" />
+                <div className="invitationHeroCard">
+                  <Heart size={38} fill="currentColor" />
+                  <span>You are warmly invited</span>
+                  <strong>Our special day</strong>
+                  <small>Made with Jibli</small>
+                </div>
+                <div className="invitationFloatingTag tagTop"><Sparkles size={14} /> Digital & shareable</div>
+                <div className="invitationFloatingTag tagBottom"><Check size={14} /> Your details, your style</div>
               </div>
             </section>
 
@@ -95,12 +111,18 @@ function Invitations() {
                 <div><span className="eyebrow">Start with a style</span><h2>Designed for your moment</h2></div>
                 <p>Choose a starting point. We will personalise every detail for you.</p>
               </div>
+              <div className="invitationCategoryBar" role="tablist" aria-label="Invitation categories">
+                {CATEGORIES.map((category) => (
+                  <button key={category} type="button" role="tab" aria-selected={activeCategory === category} className={activeCategory === category ? "active" : ""} onClick={() => setActiveCategory(category)}>{category}</button>
+                ))}
+              </div>
               <div className="invitationTemplateGrid">
-                {TEMPLATES.map((template) => {
+                {visibleTemplates.map((template) => {
                   const Icon = template.icon;
                   return (
                     <button key={template.id} type="button" className={`invitationTemplate ${template.accent}`} onClick={() => setSelectedId(template.id)}>
                       <div className="invitationTemplateIcon"><Icon size={25} /></div>
+                      <div className="invitationTemplateGlow" />
                       <span>{template.event}</span>
                       <strong>{template.title}</strong>
                       <p>{template.description}</p>
