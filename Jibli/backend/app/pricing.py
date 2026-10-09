@@ -1,13 +1,11 @@
 import math
 from typing import Literal
 
-Shop = Literal["aliexpress", "shein", "temu"]
-Currency = Literal["usd", "eur"]
+Shop = Literal["aliexpress"]
+Currency = Literal["usd"]
 
 MULTIPLIERS: dict[Shop, float] = {
   "aliexpress": 3.7,
-  "shein": 5.5,
-  "temu": 5.5,
 }
 
 # AliExpress items each carry their own flat fee on top of the multiplier,
@@ -17,8 +15,6 @@ MULTIPLIERS: dict[Shop, float] = {
 # every item in the order is AliExpress.
 ITEM_FEE_TND: dict[Shop, int] = {
   "aliexpress": 5,
-  "shein": 0,
-  "temu": 0,
 }
 
 

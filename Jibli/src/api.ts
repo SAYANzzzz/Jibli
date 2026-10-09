@@ -83,7 +83,7 @@ async function apiFetch(path: string, options: RequestInit = {}) {
   return data;
 }
 
-export type Shop = "aliexpress" | "shein" | "temu";
+export type Shop = "aliexpress";
 
 export type CartItemPayload = {
   product_link: string;
@@ -295,7 +295,7 @@ async function publicApiFetch(path: string, options: RequestInit = {}) {
   return data;
 }
 
-export type QuickOrderShop = Shop;
+export type QuickOrderShop = "aliexpress";
 
 export type QuickOrderPreview = {
   link: string;
@@ -314,7 +314,7 @@ export async function quickOrderPreview(link: string) {
   }) as Promise<QuickOrderPreview>;
 }
 
-export type PriceCurrency = "usd" | "eur";
+export type PriceCurrency = "usd";
 
 export type QuickOrderPriceResult = {
   shop: QuickOrderShop;
@@ -336,13 +336,3 @@ export async function quickOrderPrice(
   }) as Promise<QuickOrderPriceResult>;
 }
 
-export type EmailStatus = "confirmed" | "unconfirmed" | "not_found";
-
-export async function checkEmailStatus(email: string): Promise<EmailStatus> {
-  const result = (await publicApiFetch("/auth/check-email", {
-    method: "POST",
-    body: JSON.stringify({ email }),
-  })) as { status: EmailStatus };
-
-  return result.status;
-}

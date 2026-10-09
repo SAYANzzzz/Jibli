@@ -12,7 +12,6 @@ import ProfileNavLink from "../components/ProfileNavLink";
 import { useTranslation } from "../i18n/LanguageContext";
 
 const ADMIN_WHATSAPP_NUMBER = "21692001397";
-const SHIPPING_FEE_TND = 5;
 
 function ProductRequest() {
   const { t } = useTranslation();
@@ -61,9 +60,7 @@ function ProductRequest() {
 
   const allReady = activeItems.length > 0 && activeItems.every((item) => item.shop && item.priceResult);
   const itemsTotal = activeItems.reduce((sum, item) => sum + (item.priceResult?.total_price_tnd ?? 0), 0);
-  // No shipping fee when every item in the order is from AliExpress.
-  const shippingFee = activeItems.some((item) => item.shop !== "aliexpress") ? SHIPPING_FEE_TND : 0;
-  const grandTotal = itemsTotal + shippingFee;
+  const grandTotal = itemsTotal;
   const canSubmit = allReady && !isSubmitting;
 
   const whatsappUrl = useMemo(() => {
@@ -92,12 +89,11 @@ function ProductRequest() {
       itemLines.join("\n\n"),
       "",
       `Items total: ${itemsTotal} TND`,
-      `Shipping fee: ${shippingFee} TND`,
       `Grand total: ${grandTotal} TND`,
     ].join("\n");
 
     return `https://wa.me/${ADMIN_WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`;
-  }, [allReady, activeItems, itemsTotal, shippingFee, grandTotal]);
+  }, [allReady, activeItems, itemsTotal, grandTotal]);
 
   const handleSubmitRequest = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -176,9 +172,6 @@ function ProductRequest() {
             <div className="floatingShopCard top logoFloat">
               <img src="/aliexpress-logo.png" alt="AliExpress logo" />
             </div>
-            <div className="floatingShopCard middle logoFloat">
-              <img src="/shein-logo.png" alt="Shein logo" />
-            </div>
           </div>
         </section>
 
@@ -228,10 +221,6 @@ function ProductRequest() {
                 <div className="qoPriceRow">
                   <span>{t("request.itemsSubtotal")}</span>
                   <span>{itemsTotal} TND</span>
-                </div>
-                <div className="qoPriceRow">
-                  <span>{t("request.shippingFee")}</span>
-                  <span>{shippingFee} TND</span>
                 </div>
                 <div className="qoPriceRow qoPriceTotal">
                   <span>{t("request.grandTotal")}</span>

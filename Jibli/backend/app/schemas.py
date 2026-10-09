@@ -2,8 +2,8 @@ from typing import Any, Literal
 
 from pydantic import BaseModel, Field
 
-Shop = Literal["aliexpress", "shein", "temu"]
-Currency = Literal["usd", "eur"]
+Shop = Literal["aliexpress"]
+Currency = Literal["usd"]
 
 
 class PreviewRequest(BaseModel):
@@ -49,5 +49,9 @@ class ProfileUpdateIn(BaseModel):
   avatar_url: str | None = None
 
 
-class EmailCheckIn(BaseModel):
-  email: str = Field(min_length=3)
+class AdminOrderUpdateIn(BaseModel):
+  status: Literal["new_request", "waiting_confirmation", "price_confirmed", "deposit_paid", "ordered", "preparing", "collected_by_carrier", "at_origin_sorting", "left_origin_sorting", "at_origin_airport", "awaiting_flight", "leaving_origin_country", "arrived_transit_country", "left_transit_country", "arrived_local_airport", "arrived_tunisia", "out_for_delivery", "delivered", "cancelled"]
+  final_price: float | None = Field(default=None, ge=0)
+  deposit_amount: float | None = Field(default=None, ge=0)
+  tracking_number: str | None = Field(default=None, max_length=200)
+  note: str | None = Field(default=None, max_length=2_000)

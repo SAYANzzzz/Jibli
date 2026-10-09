@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import type { ChangeEvent, FormEvent } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { LogOut, PackageSearch, PlusCircle, Shield } from "lucide-react";
-import { isAdminEmail } from "../admin";
 import { supabase } from "../supabase";
 import Navbar from "../components/Navbar";
 import { useTranslation } from "../i18n/LanguageContext";
@@ -56,6 +55,7 @@ function Account() {
   const [avatarUrl, setAvatarUrl] = useState("");
   const [email, setEmail] = useState("");
   const [originalEmail, setOriginalEmail] = useState("");
+  const [isAdmin, setIsAdmin] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
   const [message, setMessage] = useState("");
@@ -92,6 +92,7 @@ function Account() {
         setCity(profile.city ?? "");
         setPostalCode(profile.postal_code ?? "");
         setAvatarUrl(profile.avatar_url ?? "");
+        setIsAdmin(profile.role === "admin");
       }
 
       setIsLoading(false);
@@ -101,7 +102,7 @@ function Account() {
   }, []);
 
   const displayName = fullName.trim() || t("account.defaultName");
-  const canAccessAdmin = isAdminEmail(originalEmail);
+  const canAccessAdmin = isAdmin;
   const initials = displayName
     .split(" ")
     .filter(Boolean)
@@ -182,7 +183,7 @@ function Account() {
       } else {
         const { error: insertProfileError } = await supabase.from("profiles").insert({
           id: userData.user.id,
-          role: isAdminEmail(userData.user.email) ? "admin" : "user",
+          role: "user",
           ...profilePayload,
         });
 

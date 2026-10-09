@@ -2,17 +2,11 @@ import type { QuickOrderPriceResult, QuickOrderShop } from "./api";
 
 export const SHOP_LABELS: Record<QuickOrderShop, string> = {
   aliexpress: "AliExpress",
-  shein: "Shein",
-  temu: "Temu",
 };
 
 export const SHOP_LOGOS: Partial<Record<QuickOrderShop, string>> = {
   aliexpress: "/aliexpress-logo.png",
-  shein: "/shein-logo.png",
-  temu: "/temu-logo.png",
 };
-
-export const SHEIN_FRANCE_URL = "https://fr.shein.com";
 
 export type ExtraOption = { id: string; label: string; value: string };
 
@@ -29,13 +23,12 @@ export type ItemSnapshot = {
 };
 
 export function detectShop(link: string): QuickOrderShop | null {
-  const normalized = link.toLowerCase();
-
-  if (normalized.includes("aliexpress")) return "aliexpress";
-  if (normalized.includes("shein")) return "shein";
-  if (normalized.includes("temu")) return "temu";
-
-  return null;
+  try {
+    const hostname = new URL(normalizeLink(link)).hostname.toLowerCase();
+    return hostname === "aliexpress.com" || hostname.endsWith(".aliexpress.com") ? "aliexpress" : null;
+  } catch {
+    return null;
+  }
 }
 
 export function isSheinFranceLink(link: string): boolean {

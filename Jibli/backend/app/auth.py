@@ -4,9 +4,6 @@ from fastapi import Depends, Header, HTTPException, status
 
 from .supabase_client import get_supabase_admin
 
-ADMIN_EMAIL = "sayanzzz2004@gmail.com"
-
-
 def get_current_user(authorization: Annotated[str | None, Header()] = None) -> dict:
   if not authorization or not authorization.startswith("Bearer "):
     raise HTTPException(
@@ -52,7 +49,7 @@ def get_current_profile(user: dict = Depends(get_current_user)) -> dict:
         "id": user["id"],
         "full_name": metadata.get("full_name"),
         "phone": metadata.get("phone"),
-        "role": "admin" if user.get("email", "").lower() == ADMIN_EMAIL else "user",
+        "role": "user",
       }
     )
     .execute()
@@ -65,14 +62,10 @@ def require_admin(
   user: dict = Depends(get_current_user),
   profile: dict = Depends(get_current_profile),
 ) -> dict:
-  if user.get("email", "").lower() != ADMIN_EMAIL:
+  if profile.get("role") != "admin":
     raise HTTPException(
       status_code=status.HTTP_403_FORBIDDEN,
       detail="Admin access required.",
     )
-
-  if profile.get("role") != "admin":
-    get_supabase_admin().table("profiles").update({"role": "admin"}).eq("id", user["id"]).execute()
-    profile["role"] = "admin"
 
   return profile

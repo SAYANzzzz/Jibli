@@ -141,6 +141,7 @@ function AdminDashboard() {
   const [itemNameDrafts, setItemNameDrafts] = useState<Record<string, string>>({});
   const [itemFileDrafts, setItemFileDrafts] = useState<Record<string, File | null>>({});
   const [savingItemId, setSavingItemId] = useState("");
+  const [searchQuery, setSearchQuery] = useState("");
 
   const loadOrders = async () => {
     setIsLoading(true);
@@ -193,6 +194,23 @@ function AdminDashboard() {
     () => orders.filter((order) => order.status !== "new_request" && order.status !== "waiting_confirmation"),
     [orders],
   );
+
+  const matchesSearch = (order: Order) => {
+    const query = searchQuery.trim().toLowerCase();
+    if (!query) return true;
+
+    return [
+      order.id,
+      order.profiles?.full_name,
+      order.profiles?.email,
+      order.profiles?.phone,
+      ...order.items.flatMap((item) => [item.product_name, item.product_link]),
+    ].some((value) => value?.toLowerCase().includes(query));
+  };
+
+  const visibleNewRequests = newRequests.filter(matchesSearch);
+  const visibleWaitingPaymentOrders = waitingPaymentOrders.filter(matchesSearch);
+  const visibleConfirmedOrders = confirmedOrders.filter(matchesSearch);
 
   const notifyCustomer = (order: Order, message: string) => {
     const phone = sanitizePhoneForWhatsApp(order.profiles?.phone);
@@ -386,6 +404,16 @@ function AdminDashboard() {
           <p>Every request saved before WhatsApp opens appears here. Confirm it when you are ready.</p>
         </section>
 
+        <label className="adminOrderSearch">
+          <span>Find an order</span>
+          <input
+            type="search"
+            value={searchQuery}
+            onChange={(event) => setSearchQuery(event.target.value)}
+            placeholder="Customer, phone, order ID, product or link"
+          />
+        </label>
+
         <section className="simpleAdminStats">
           <div>
             <span>New requests</span>
@@ -434,15 +462,15 @@ function AdminDashboard() {
 
           {isLoading ? (
             <div className="emptyOrdersState">Loading orders...</div>
-          ) : newRequests.length === 0 ? (
+          ) : visibleNewRequests.length === 0 ? (
             <div className="emptyOrdersState">
               <CheckCircle2 size={42} />
-              <h2>No new requests</h2>
-              <p>When a user sends a request through WhatsApp, it will appear here.</p>
+              <h2>{searchQuery ? "No matching requests" : "No new requests"}</h2>
+              <p>{searchQuery ? "Try a different customer, product, phone number, or order ID." : "When a user sends a request through WhatsApp, it will appear here."}</p>
             </div>
           ) : (
             <div className="simpleOrderList">
-              {newRequests.map((order) => (
+              {visibleNewRequests.map((order) => (
                 <article className="simpleOrderCard" key={order.id}>
                   <div className="simpleOrderTop">
                     <div>
@@ -551,11 +579,11 @@ function AdminDashboard() {
             </div>
           </div>
 
-          {waitingPaymentOrders.length === 0 ? (
+          {visibleWaitingPaymentOrders.length === 0 ? (
             <div className="compactEmpty">No orders waiting for payment.</div>
           ) : (
             <div className="simpleOrderList">
-              {waitingPaymentOrders.map((order) => (
+              {visibleWaitingPaymentOrders.map((order) => (
                 <article className="simpleOrderCard" key={order.id}>
                   <div className="simpleOrderTop">
                     <div>
@@ -636,11 +664,11 @@ function AdminDashboard() {
             </div>
           </div>
 
-          {confirmedOrders.length === 0 ? (
+          {visibleConfirmedOrders.length === 0 ? (
             <div className="compactEmpty">No confirmed orders yet.</div>
           ) : (
             <div className="adminCompactList">
-              {confirmedOrders.slice(0, 10).map((order) => (
+              {visibleConfirmedOrders.slice(0, 10).map((order) => (
                 <div className="adminCompactRow managedOrderRow" key={order.id}>
                   <div className="managedOrderInfo">
                     <div>

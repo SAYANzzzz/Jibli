@@ -20,6 +20,9 @@ class Settings:
     raw_origins = os.getenv("FRONTEND_ORIGIN", "http://localhost:5174")
     self.frontend_origins = [origin.strip() for origin in raw_origins.split(",") if origin.strip()]
 
+    if "*" in self.frontend_origins:
+      raise RuntimeError("FRONTEND_ORIGIN must list explicit origins; wildcards are not allowed.")
+
     if not self.supabase_url or not self.supabase_service_role_key:
       raise RuntimeError(
         "Missing SUPABASE_URL or SUPABASE_SERVICE_ROLE_KEY in backend environment."

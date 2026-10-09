@@ -17,7 +17,7 @@ import PrivacyPolicy from "./pages/PrivacyPolicy.tsx";
 import RefundPolicy from "./pages/RefundPolicy.tsx";
 import NotFound from "./pages/NotFound.tsx";
 import AdminDashboard from "./pages/AdminDashboard";
-import { isAdminEmail } from "./admin";
+import { getProfile } from "./api";
 import { getCurrentSession } from "./auth";
 import "./App.css";
 
@@ -136,8 +136,11 @@ function AdminRoute({ children }: { children: ReactElement }) {
       }
 
       if (isMounted) {
-        setIsAuthenticated(true);
-        setIsAdmin(isAdminEmail(session.user.email));
+        const profile = await getProfile();
+        if (isMounted) {
+          setIsAuthenticated(true);
+          setIsAdmin(profile.role === "admin");
+        }
       }
     };
 

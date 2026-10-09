@@ -3360,6 +3360,26 @@ textarea {
   font-size: 34px;
 }
 
+.adminOrderSearch {
+  display: grid;
+  gap: 6px;
+  max-width: 540px;
+  margin: 0 0 28px;
+  color: var(--ink);
+  font-weight: 700;
+}
+
+.adminOrderSearch input {
+  width: 100%;
+  padding: 12px 14px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--surface);
+  color: var(--ink);
+  font: inherit;
+  font-weight: 400;
+}
+
 .simpleAdminPanel {
   margin-top: 26px;
   padding: 24px;

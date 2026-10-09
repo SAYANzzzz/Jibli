@@ -3,13 +3,11 @@ import { X } from "lucide-react";
 import { quickOrderPreview, quickOrderPrice } from "../api";
 import type { PriceCurrency, QuickOrderPreview, QuickOrderPriceResult, QuickOrderShop } from "../api";
 import {
-  SHEIN_FRANCE_URL,
   SHOP_LABELS,
   SHOP_LOGOS,
   createId,
   detectShop,
   extractUrl,
-  isSheinFranceLink,
   loadItemDraft,
   looksLikeCartShare,
   normalizeLink,
@@ -44,8 +42,7 @@ export function OrderItemCard({ id, index, initialLink, onUpdate, onRemove, canR
   const [isCartShare, setIsCartShare] = useState(false);
   const detectedShop = useMemo(() => detectShop(link), [link]);
   const shopMismatch = Boolean(shop && detectedShop && detectedShop !== shop);
-  const isBlockedShein = shop === "shein" && link.trim() !== "" && !isSheinFranceLink(link);
-  const isBlocked = isBlockedShein || isCartShare;
+  const isBlocked = isCartShare;
 
   const [preview, setPreview] = useState<QuickOrderPreview | null>(null);
   const [isPreviewLoading, setIsPreviewLoading] = useState(false);
@@ -181,7 +178,7 @@ export function OrderItemCard({ id, index, initialLink, onUpdate, onRemove, canR
           </p>
         </div>
         <div className="qoItemHeaderActions">
-          {shop && <span className="platformBadge">{shop === "shein" ? "Shein France" : SHOP_LABELS[shop]}</span>}
+          {shop && <span className="platformBadge">{SHOP_LABELS[shop]}</span>}
           {canRemove && (
             <button type="button" className="qoRemoveItemBtn" onClick={() => onRemove(id)}>
               {t("orderItem.remove")}
@@ -200,7 +197,7 @@ export function OrderItemCard({ id, index, initialLink, onUpdate, onRemove, canR
             onClick={() => setShop(shopKey)}
           >
             {SHOP_LOGOS[shopKey] && <img src={SHOP_LOGOS[shopKey]} alt="" />}
-            <span>{shopKey === "shein" ? "Shein France" : SHOP_LABELS[shopKey]}</span>
+            <span>{SHOP_LABELS[shopKey]}</span>
           </button>
         ))}
       </div>
@@ -219,7 +216,7 @@ export function OrderItemCard({ id, index, initialLink, onUpdate, onRemove, canR
                 setLink(extractUrl(raw));
               }}
               placeholder={t("orderItem.pastePlaceholder", {
-                shop: shop === "shein" ? "Shein France" : SHOP_LABELS[shop],
+                shop: SHOP_LABELS[shop],
               })}
             />
             {link && (
@@ -237,21 +234,12 @@ export function OrderItemCard({ id, index, initialLink, onUpdate, onRemove, canR
             )}
           </div>
 
-          {shopMismatch && !isBlockedShein && detectedShop && (
+          {shopMismatch && detectedShop && (
             <div className="noticeBox warning">
               {t("orderItem.mismatchWarning", {
                 detected: SHOP_LABELS[detectedShop],
-                chosen: shop === "shein" ? "Shein France" : SHOP_LABELS[shop],
+                chosen: SHOP_LABELS[shop],
               })}
-            </div>
-          )}
-
-          {isBlockedShein && (
-            <div className="noticeBox warning">
-              {t("orderItem.sheinBlockWarning")}
-              <a href={SHEIN_FRANCE_URL} target="_blank" rel="noreferrer" className="qoSheinFranceLink">
-                {t("orderItem.openSheinFrance")}
-              </a>
             </div>
           )}
 

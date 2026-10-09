@@ -3,10 +3,10 @@ import json
 import re
 from typing import Literal
 from urllib.error import URLError
-from urllib.parse import urljoin
+from urllib.parse import urljoin, urlparse
 from urllib.request import Request, urlopen
 
-Shop = Literal["aliexpress", "shein", "temu"]
+Shop = Literal["aliexpress"]
 
 
 DEMO_PRODUCTS = {
@@ -26,38 +26,9 @@ DEMO_PRODUCTS = {
       {"label": "Shipping", "name": "shipping", "options": ["Standard", "Saver", "Fast"]},
     ],
   },
-  "shein": {
-    "name": "Shein product from your link",
-    "price": "Part of Shein panier",
-    "image_label": "Shein item",
-    "image_url": None,
-    "rating": "Shared panier item",
-    "sold_count": "Pending panier target",
-    "shipping": "Grouped with Shein panier",
-    "delivery_eta": "Launches after 129 USD",
-    "seller": "Shein",
-    "variants": [
-      {"label": "Color", "name": "color", "options": ["Black", "White", "Beige", "Pink"]},
-      {"label": "Size", "name": "size", "options": ["XS", "S", "M", "L", "XL"]},
-      {"label": "Category", "name": "category", "options": ["Women", "Men", "Kids", "Home"]},
-    ],
-  },
-  "temu": {
-    "name": "Temu product from your link",
-    "price": "Checked after link review",
-    "image_label": "Temu item",
-    "image_url": None,
-    "rating": "Verified by Jibli",
-    "sold_count": "Options checked after link review",
-    "shipping": "Shipping confirmed before payment",
-    "delivery_eta": "Confirmed by admin",
-    "seller": "Temu seller",
-    "variants": [
-      {"label": "Color", "name": "color", "options": ["Black", "White", "Blue", "Red"]},
-      {"label": "Size", "name": "size", "options": ["One size", "S", "M", "L", "XL"]},
-    ],
-  },
 }
+
+ALLOWED_HOSTS = {"aliexpress.com", "www.aliexpress.com", "m.aliexpress.com"}
 
 
 def _normalize_image_url(base_url: str, image_url: str | None) -> str | None:
@@ -230,18 +201,12 @@ def _fetch_public_metadata(link: str) -> dict:
 
 
 def detect_shop(link: str) -> Shop | None:
-  normalized = link.lower()
+  parsed = urlparse(link.strip())
+  if parsed.scheme not in {"http", "https"}:
+    return None
 
-  if "aliexpress" in normalized:
-    return "aliexpress"
-
-  if "shein" in normalized:
-    return "shein"
-
-  if "temu" in normalized:
-    return "temu"
-
-  return None
+  hostname = (parsed.hostname or "").lower()
+  return "aliexpress" if hostname in ALLOWED_HOSTS or hostname.endswith(".aliexpress.com") else None
 
 
 def preview_product(link: str) -> dict:
@@ -252,7 +217,7 @@ def preview_product(link: str) -> dict:
       "link": link,
       "shop": None,
       "supported": False,
-      "error": "Only AliExpress, Shein, and Temu links are supported.",
+      "error": "Only AliExpress product links are supported.",
     }
 
   product = {

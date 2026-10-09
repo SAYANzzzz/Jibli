@@ -3,7 +3,6 @@ import type { FormEvent } from "react";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { KeyRound, User } from "lucide-react";
 import { ensureUserProfile, getAuthErrorMessage, sendPasswordReset, signIn, signInWithProvider } from "../auth";
-import { checkEmailStatus } from "../api";
 import logo from "../assets/Fast-Logo.gif";
 import { useTranslation } from "../i18n/LanguageContext";
 
@@ -36,33 +35,6 @@ function Login() {
     const { error } = await signIn(formEmail, password);
 
     if (error) {
-      // Supabase returns the identical "Invalid login credentials" error
-      // whether the email doesn't exist or the password is just wrong
-      // (anti-enumeration), so it can't be told apart from the login
-      // response itself. Ask the backend directly instead - if there's
-      // really no account with this email, or an account that was
-      // started but never verified, send them to register with a clear
-      // message instead of a generic login error.
-      const status = await checkEmailStatus(formEmail).catch(() => "confirmed" as const);
-
-      if (status === "not_found") {
-        setIsSubmitting(false);
-        navigate(
-          `/register?next=${encodeURIComponent(nextPath)}&email=${encodeURIComponent(formEmail)}&reason=notfound`,
-          { replace: true },
-        );
-        return;
-      }
-
-      if (status === "unconfirmed") {
-        setIsSubmitting(false);
-        navigate(
-          `/register?next=${encodeURIComponent(nextPath)}&email=${encodeURIComponent(formEmail)}&reason=unconfirmed`,
-          { replace: true },
-        );
-        return;
-      }
-
       setIsSubmitting(false);
       setErrorMessage(getAuthErrorMessage(error, t("login.loginFailed")));
       return;

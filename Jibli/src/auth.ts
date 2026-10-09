@@ -1,5 +1,4 @@
 import { supabase } from "./supabase";
-import { isAdminEmail } from "./admin";
 
 // Supabase's error shape isn't always what supabase-js expects (e.g. a
 // backend/SMTP failure can come back with a body it doesn't parse into a
@@ -52,7 +51,7 @@ export async function ensureUserProfile(metadata?: { full_name?: string; phone?:
       email: user.email ?? "",
       full_name: fullName,
       phone,
-      role: isAdminEmail(user.email) ? "admin" : "user",
+      role: "user",
     },
     {
       onConflict: "id",

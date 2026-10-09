@@ -8,10 +8,13 @@ from .auth import get_current_profile, get_current_user, require_admin
 from .config import get_settings
 from .pricing import calculate_price
 from .product_preview import preview_product
-from .schemas import CartRequestIn, EmailCheckIn, PreviewRequest, ProfileUpdateIn, QuickOrderPriceIn, QuickPreviewIn
+from .schemas import AdminOrderUpdateIn, CartRequestIn, PreviewRequest, ProfileUpdateIn, QuickOrderPriceIn, QuickPreviewIn
 from .supabase_client import get_supabase_admin
 
 settings = get_settings()
+
+MAX_IMAGE_BYTES = 5 * 1024 * 1024
+ALLOWED_IMAGE_TYPES = {"image/jpeg", "image/png", "image/webp"}
 
 app = FastAPI(title="Jibli API")
 
@@ -35,6 +38,25 @@ def health() -> dict:
   return {"status": "ok"}
 
 
+async def read_validated_image(image: UploadFile) -> bytes:
+  if image.content_type not in ALLOWED_IMAGE_TYPES:
+    raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Use a JPG, PNG, or WebP image.")
+
+  contents = await image.read(MAX_IMAGE_BYTES + 1)
+  if not contents or len(contents) > MAX_IMAGE_BYTES:
+    raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Image must be smaller than 5 MB.")
+
+  image_signatures = (
+    contents.startswith(b"\xff\xd8\xff"),
+    contents.startswith(b"\x89PNG\r\n\x1a\n"),
+    contents.startswith(b"RIFF") and contents[8:12] == b"WEBP",
+  )
+  if not any(image_signatures):
+    raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Invalid image file.")
+
+  return contents
+
+
 @app.post("/products/preview")
 def preview_products(payload: PreviewRequest, user: dict = Depends(get_current_user)) -> dict:
   return {"items": [preview_product(link) for link in payload.links]}
@@ -51,60 +73,6 @@ def quick_order_price(payload: QuickOrderPriceIn) -> dict:
     return calculate_price(payload.shop, payload.amount, payload.quantity, payload.currency)
   except ValueError as error:
     raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(error))
-
-
-def find_auth_user_by_email(supabase, email: str):
-  # The GoTrue admin "list users" endpoint doesn't actually filter by the
-  # email query param (confirmed by testing it directly - it just returns
-  # everyone), so there's no server-side lookup by email. Page through
-  # admin users and match manually instead.
-  target = email.strip().lower()
-  page = 1
-  per_page = 200
-
-  for _ in range(50):
-    users = supabase.auth.admin.list_users(page=page, per_page=per_page)
-
-    if not users:
-      return None
-
-    for user in users:
-      if user.email and user.email.lower() == target:
-        return user
-
-    if len(users) < per_page:
-      return None
-
-    page += 1
-
-  return None
-
-
-@app.post("/auth/check-email")
-def check_email(payload: EmailCheckIn) -> dict:
-  supabase = get_supabase_admin()
-  email = payload.email.strip()
-
-  # A row only lands in profiles once someone finishes verifying their
-  # email, so this alone can't tell "never signed up" apart from "signed
-  # up but never verified" - fall back to the auth user record for that.
-  existing_profile = (
-    supabase.table("profiles")
-    .select("id")
-    .ilike("email", email)
-    .maybe_single()
-    .execute()
-  )
-
-  if existing_profile and existing_profile.data:
-    return {"status": "confirmed"}
-
-  auth_user = find_auth_user_by_email(supabase, email)
-
-  if auth_user is None:
-    return {"status": "not_found"}
-
-  return {"status": "confirmed" if auth_user.email_confirmed_at else "unconfirmed"}
 
 
 @app.get("/me/profile")
@@ -197,12 +165,18 @@ def add_cart_items(payload: CartRequestIn, user: dict = Depends(get_current_user
 def submit_order(user: dict = Depends(get_current_user)) -> dict:
   supabase = get_supabase_admin()
   cart = get_or_create_active_cart(user["id"])
-  items = supabase.table("cart_items").select("id").eq("cart_id", cart["id"]).execute()
+  items = supabase.table("cart_items").select("id, shop").eq("cart_id", cart["id"]).execute()
 
   if not items.data:
     raise HTTPException(
       status_code=status.HTTP_400_BAD_REQUEST,
       detail="Your panier is empty.",
+    )
+
+  if any(item.get("shop") != "aliexpress" for item in items.data):
+    raise HTTPException(
+      status_code=status.HTTP_400_BAD_REQUEST,
+      detail="Only AliExpress products can be submitted.",
     )
 
   order = (
@@ -357,20 +331,18 @@ def list_all_users(_: dict = Depends(require_admin)) -> dict:
 @app.patch("/admin/orders/{order_id}/status")
 def update_order_status(
   order_id: str,
-  payload: dict,
+  payload: AdminOrderUpdateIn,
   admin_profile: dict = Depends(require_admin),
 ) -> dict:
-  status_value = payload.get("status")
-
-  if not status_value:
-    raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Status is required.")
+  status_value = payload.status
 
   supabase = get_supabase_admin()
   update_data = {"status": status_value}
 
   for field in ["tracking_number", "final_price", "deposit_amount"]:
-    if field in payload:
-      update_data[field] = payload.get(field)
+    value = getattr(payload, field)
+    if value is not None:
+      update_data[field] = value
 
   updated = (
     supabase.table("orders")
@@ -388,7 +360,7 @@ def update_order_status(
       "order_id": order_id,
       "user_id": order["user_id"],
       "status": status_value,
-      "note": payload.get("note") or f"Updated by admin {admin_profile.get('full_name') or ''}".strip(),
+      "note": payload.note or f"Updated by admin {admin_profile.get('full_name') or ''}".strip(),
     }
   ).execute()
 
@@ -409,10 +381,7 @@ async def update_order_item(
     update_data["product_name"] = product_name.strip() or None
 
   if image is not None:
-    if not image.content_type or not image.content_type.startswith("image/"):
-      raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="File must be an image.")
-
-    contents = await image.read()
+    contents = await read_validated_image(image)
     extension = image.filename.rsplit(".", 1)[-1] if image.filename and "." in image.filename else "jpg"
     path = f"{item_id}/{uuid4()}.{extension}"
 
