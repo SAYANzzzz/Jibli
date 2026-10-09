@@ -21,7 +21,6 @@ const TEMPLATES: InvitationTemplate[] = [
   { id: "wedding-bloom", title: "Blooming vows", event: "Wedding", description: "Soft florals and timeless elegance.", accent: "rose", group: "Romance", icon: Heart },
   { id: "henna-night", title: "Henna night", event: "Engagement & henna", description: "Warm, celebratory and full of colour.", accent: "gold", group: "Romance", icon: Sparkles },
   { id: "birthday-confetti", title: "Confetti", event: "Birthday", description: "A joyful invitation for every age.", accent: "violet", group: "Celebration", icon: PartyPopper },
-  { id: "little-star", title: "Little star", event: "Kids birthday", description: "Playful, bright and made for little guests.", accent: "sky", group: "Celebration", icon: Sparkles },
   { id: "grand-opening", title: "Grand opening", event: "Business opening", description: "Announce your next big beginning.", accent: "ink", group: "Business", icon: Store },
   { id: "after-hours", title: "After hours", event: "Party", description: "A bold invitation for an unforgettable night.", accent: "coral", group: "Celebration", icon: PartyPopper },
   { id: "graduation-day", title: "The next chapter", event: "Graduation", description: "Celebrate a milestone worth sharing.", accent: "navy", group: "Milestone", icon: Sparkles },
@@ -104,9 +103,9 @@ function Invitations() {
               <div className="occasionChooserGrid">
                 <Link to="/invitations/weddings" className="occasionChoice wedding"><Heart size={22} /><strong>Wedding</strong><span>View wedding designs</span></Link>
                 <Link to="/invitations/engagements" className="occasionChoice engagement"><Heart size={22} /><strong>Engagement</strong><span>Choose an engagement style</span></Link>
-                <Link to="/invitations?category=Celebration#templates" className="occasionChoice birthday"><PartyPopper size={22} /><strong>Birthday</strong><span>Choose a birthday style</span></Link>
+                <Link to="/invitations/birthdays" className="occasionChoice birthday"><PartyPopper size={22} /><strong>Birthday</strong><span>Choose a birthday style</span></Link>
                 <Link to="/invitations?category=Celebration#templates" className="occasionChoice party"><Sparkles size={22} /><strong>Party</strong><span>Make it unforgettable</span></Link>
-                <Link to="/invitations?category=Business#templates" className="occasionChoice opening"><Store size={22} /><strong>Shop opening</strong><span>Announce your launch</span></Link>
+                <Link to="/invitations/openings" className="occasionChoice opening"><Store size={22} /><strong>Business opening</strong><span>Announce your launch</span></Link>
               </div>
             </section>
 
@@ -124,7 +123,7 @@ function Invitations() {
                 {visibleTemplates.map((template) => {
                   const Icon = template.icon;
                   return (
-                    <button key={template.id} type="button" className={`invitationTemplate ${template.accent}`} onClick={() => template.id === "wedding-bloom" ? navigate("/invitations/weddings") : template.id === "henna-night" ? navigate("/invitations/engagements") : setSelectedId(template.id)}>
+                    <button key={template.id} type="button" className={`invitationTemplate ${template.accent}`} onClick={() => template.id === "wedding-bloom" ? navigate("/invitations/weddings") : template.id === "henna-night" ? navigate("/invitations/engagements") : template.id === "birthday-confetti" ? navigate("/invitations/birthdays") : template.id === "grand-opening" ? navigate("/invitations/openings") : setSelectedId(template.id)}>
                       <div className="invitationTemplateIcon"><Icon size={25} /></div>
                       <div className="invitationTemplateGlow" />
                       <span>{template.event}</span>
