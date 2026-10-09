@@ -11,6 +11,7 @@ import ProductRequest from "./pages/ProductRequest.tsx";
 import OrderTracking from "./pages/OrderTracking.tsx";
 import GamingStore from "./pages/GamingStore.tsx";
 import Invitations from "./pages/Invitations.tsx";
+import WeddingInvitations from "./pages/WeddingInvitations.tsx";
 import AboutUs from "./pages/AboutUs.tsx";
 import Contact from "./pages/Contact.tsx";
 import TermsOfService from "./pages/TermsOfService.tsx";
@@ -220,6 +221,7 @@ function App() {
         <Route path="/order" element={<OrderRedirect />} />
         <Route path="/gaming" element={<GamingStore />} />
         <Route path="/invitations" element={<Invitations />} />
+        <Route path="/invitations/weddings" element={<WeddingInvitations />} />
         <Route path="/about" element={<AboutUs />} />
         <Route path="/contact" element={<Contact />} />
         <Route path="/terms" element={<TermsOfService />} />

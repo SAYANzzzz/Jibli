@@ -4718,3 +4718,50 @@ td {
   color: var(--text-muted);
   margin: 10px 0 24px;
 }
+
+/* Wedding invitation studio */
+.weddingStudioPage { min-height: calc(100vh - 88px); padding-bottom: 84px; background: #0c1020; }
+.weddingStudioHero { min-height: 510px; padding: 80px clamp(24px, 8vw, 130px); display: grid; grid-template-columns: minmax(0, 1fr) minmax(255px, 350px); gap: 70px; align-items: center; position: relative; overflow: hidden; background: radial-gradient(circle at 84% 18%, rgba(178, 124, 91, .34), transparent 25%), linear-gradient(108deg, rgba(12,16,32,.96) 0%, rgba(12,16,32,.79) 47%, rgba(12,16,32,.3) 100%), url('/invitations/weddings/arabesque-burgundy.jfif') center 38% / cover; }
+.weddingStudioHero::after { content: ''; position: absolute; inset: 0; pointer-events: none; background: linear-gradient(90deg, rgba(7,9,20,.48), transparent 64%); }
+.weddingStudioHero > * { position: relative; z-index: 1; }
+.weddingStudioEyebrow { display: inline-flex; align-items: center; gap: 8px; color: #f6d9c7; letter-spacing: .11em; text-transform: uppercase; font-size: 11px; font-weight: 800; }
+.weddingStudioHero h1 { max-width: 730px; margin: 20px 0 18px; color: #fff9f4; font-size: clamp(44px, 6vw, 78px); line-height: .97; letter-spacing: -.055em; }
+.weddingStudioHero h1 em { color: #e8b58e; font-family: Georgia, serif; font-weight: 400; letter-spacing: -.04em; }
+.weddingStudioHero > div > p { max-width: 500px; margin: 0 0 27px; color: #e6d5cd; font-size: 17px; line-height: 1.65; }
+.weddingHeroButton { display: inline-flex; align-items: center; gap: 9px; padding: 15px 19px; background: #fffaf7; color: #341d20; font-size: 12px; letter-spacing: .09em; font-weight: 800; text-transform: uppercase; transition: transform .2s ease, background .2s ease; }
+.weddingHeroButton:hover { transform: translateY(-2px); background: #f3d7c2; }
+.weddingHeroPromise { padding: 25px 27px; display: grid; grid-template-columns: 35px 1fr; gap: 4px 13px; background: rgba(27, 22, 31, .66); border: 1px solid rgba(255, 231, 217, .24); backdrop-filter: blur(8px); }
+.weddingHeroPromise span { color: #f2bd99; font-weight: 800; font-size: 13px; }
+.weddingHeroPromise strong { color: #fff7f1; font-size: 15px; }
+.weddingHeroPromise p { grid-column: 2; margin: 0 0 16px; color: #dac9c5; font-size: 13px; line-height: 1.45; }
+.weddingHeroPromise p:last-child { margin-bottom: 0; }
+.weddingDesignSection, .weddingOrderPage { max-width: 1240px; margin: 0 auto; padding: 76px clamp(20px, 5vw, 72px) 0; }
+.weddingSectionHeading { display: flex; align-items: end; justify-content: space-between; gap: 35px; margin-bottom: 32px; }
+.weddingSectionHeading h2, .weddingOrderHeading h1 { margin: 7px 0 0; color: #fff8f2; font-size: clamp(30px, 4vw, 48px); letter-spacing: -.04em; }
+.weddingSectionHeading > p, .weddingOrderHeading > p { max-width: 360px; margin: 0; color: #aaaec0; line-height: 1.6; }
+.weddingDesignGrid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 17px; }
+.weddingDesignCard { position: relative; padding: 0; min-height: 390px; overflow: hidden; border: 1px solid #313950; background: #171e34; color: white; cursor: pointer; text-align: left; isolation: isolate; }
+.weddingDesignCard img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; transition: transform .5s ease; }
+.weddingDesignCard::after { content: ''; position: absolute; inset: 0; background: linear-gradient(180deg, transparent 22%, rgba(6,9,19,.92) 91%); z-index: -1; }
+.weddingDesignOverlay { position: absolute; inset: auto 0 0; padding: 22px 18px 18px; display: flex; flex-direction: column; align-items: flex-start; z-index: 1; }
+.weddingDesignOverlay > span { color: #ecd0ba; font-size: 10px; font-weight: 800; letter-spacing: .09em; text-transform: uppercase; }
+.weddingDesignOverlay strong { margin: 5px 0; color: #fffaf7; font-size: 20px; letter-spacing: -.025em; }
+.weddingDesignOverlay p { max-height: 0; opacity: 0; margin: 0; color: #e5d9d7; font-size: 12px; line-height: 1.45; overflow: hidden; transition: max-height .3s ease, opacity .25s ease, margin .3s ease; }
+.weddingDesignOverlay small { display: inline-flex; gap: 5px; align-items: center; margin-top: 8px; color: #fff0e8; font-size: 11px; }
+.weddingDesignOverlay b { display: inline-flex; align-items: center; gap: 7px; margin-top: 13px; color: #f5c9aa; font-size: 11px; text-transform: uppercase; letter-spacing: .06em; }
+.weddingDesignCard:hover { border-color: #d99975; }
+.weddingDesignCard:hover img { transform: scale(1.055); }
+.weddingDesignCard:hover .weddingDesignOverlay p { max-height: 50px; margin-top: 3px; opacity: 1; }
+.weddingOrderPage { padding-top: 45px; }
+.weddingOrderHeading { margin: 25px 0 32px; }
+.weddingOrderHeading > p { max-width: 620px; margin-top: 10px; }
+.weddingOrderGrid { display: grid; grid-template-columns: minmax(270px, .78fr) minmax(390px, 1.22fr); gap: clamp(28px, 5vw, 78px); align-items: start; }
+.weddingSelectedDesign { position: sticky; top: 105px; overflow: hidden; background: #171e34; border: 1px solid #303950; }
+.weddingSelectedDesign > img { display: block; width: 100%; max-height: 555px; object-fit: cover; object-position: top; }
+.weddingSelectedDesign > div { display: grid; gap: 5px; padding: 17px; }
+.weddingSelectedDesign strong { color: #fff8f3; font-size: 19px; }
+.weddingSelectedDesign span { color: #afb2c1; font-size: 13px; line-height: 1.5; }
+.weddingSelectedDesign p { display: flex; align-items: center; gap: 7px; margin: 7px 0 0; color: #e9b692; font-size: 12px; }
+.weddingOrderForm { background: #11182d; }
+@media (max-width: 900px) { .weddingStudioHero { grid-template-columns: 1fr; gap: 35px; } .weddingHeroPromise { max-width: 430px; } .weddingDesignGrid { grid-template-columns: repeat(2, minmax(0, 1fr)); } .weddingOrderGrid { grid-template-columns: 1fr; } .weddingSelectedDesign { position: static; display: grid; grid-template-columns: 150px 1fr; } .weddingSelectedDesign > img { height: 100%; max-height: 260px; } }
+@media (max-width: 560px) { .weddingStudioHero { min-height: 560px; padding: 56px 22px; background-position: 63% center; } .weddingStudioHero h1 { font-size: 45px; } .weddingSectionHeading { align-items: start; flex-direction: column; gap: 12px; } .weddingDesignGrid { gap: 11px; } .weddingDesignCard { min-height: 315px; } .weddingDesignOverlay { padding: 14px 12px; } .weddingDesignOverlay strong { font-size: 16px; } .weddingDesignOverlay b { font-size: 9px; } .weddingDesignOverlay p { display: none; } .weddingSelectedDesign { grid-template-columns: 115px 1fr; } }

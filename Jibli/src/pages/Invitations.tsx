@@ -1,6 +1,6 @@
 import { useMemo, useState } from "react";
 import { Check, ChevronLeft, Heart, MapPin, Palette, PartyPopper, Send, Sparkles, Store, Users, WandSparkles } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import ProfileNavLink from "../components/ProfileNavLink";
@@ -47,6 +47,7 @@ function invitationWhatsappUrl(template: InvitationTemplate, details: Record<str
 }
 
 function Invitations() {
+  const navigate = useNavigate();
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [activeCategory, setActiveCategory] = useState<(typeof CATEGORIES)[number]>("All");
   const [details, setDetails] = useState({
@@ -109,7 +110,7 @@ function Invitations() {
                 {visibleTemplates.map((template) => {
                   const Icon = template.icon;
                   return (
-                    <button key={template.id} type="button" className={`invitationTemplate ${template.accent}`} onClick={() => setSelectedId(template.id)}>
+                    <button key={template.id} type="button" className={`invitationTemplate ${template.accent}`} onClick={() => template.id === "wedding-bloom" ? navigate("/invitations/weddings") : setSelectedId(template.id)}>
                       <div className="invitationTemplateIcon"><Icon size={25} /></div>
                       <div className="invitationTemplateGlow" />
                       <span>{template.event}</span>
