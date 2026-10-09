@@ -77,26 +77,15 @@ function Invitations() {
       <main className="invitationsPage">
         {!selected ? (
           <>
-            <section className="invitationHero">
-              <div>
+            <section className="invitationHero invitationHeroEditorial">
+              <div className="invitationHeroContent">
                 <span className="invitationEyebrow"><Sparkles size={15} /> Jibli celebrations</span>
-                <h1>Invite beautifully.<br /><em>Celebrate freely.</em></h1>
-                <p>Personalised digital invitations for the moments people remember: weddings, birthdays, business openings, parties and more.</p>
+                <h1>Online invitations<br />and cards for all<br /><em>moments that matter.</em></h1>
+                <p>Personalised invitations, made to be shared beautifully on WhatsApp.</p>
                 <div className="invitationHeroActions">
-                  <a className="primaryBtn" href="#templates"><Palette size={17} /> Choose a design</a>
+                  <a className="invitationBrowseBtn" href="#templates"><Palette size={17} /> Browse invitations</a>
                   <span><WandSparkles size={15} /> Made around your story</span>
                 </div>
-              </div>
-              <div className="invitationHeroArt" aria-hidden="true">
-                <i className="invitationOrb orbOne" /><i className="invitationOrb orbTwo" /><i className="invitationOrb orbThree" />
-                <div className="invitationHeroCard">
-                  <Heart size={38} fill="currentColor" />
-                  <span>You are warmly invited</span>
-                  <strong>Our special day</strong>
-                  <small>Made with Jibli</small>
-                </div>
-                <div className="invitationFloatingTag tagTop"><Sparkles size={14} /> Digital & shareable</div>
-                <div className="invitationFloatingTag tagBottom"><Check size={14} /> Your details, your style</div>
               </div>
             </section>
 
