@@ -1,6 +1,6 @@
 import { useMemo, useState } from "react";
 import { Check, ChevronLeft, Heart, MapPin, Palette, PartyPopper, Send, Sparkles, Store, Users, WandSparkles } from "lucide-react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import ProfileNavLink from "../components/ProfileNavLink";
@@ -48,8 +48,11 @@ function invitationWhatsappUrl(template: InvitationTemplate, details: Record<str
 
 function Invitations() {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const [selectedId, setSelectedId] = useState<string | null>(null);
-  const [activeCategory, setActiveCategory] = useState<(typeof CATEGORIES)[number]>("All");
+  const requestedCategory = searchParams.get("category");
+  const initialCategory = CATEGORIES.includes(requestedCategory as (typeof CATEGORIES)[number]) ? requestedCategory as (typeof CATEGORIES)[number] : "All";
+  const [activeCategory, setActiveCategory] = useState<(typeof CATEGORIES)[number]>(initialCategory);
   const [details, setDetails] = useState({
     hosts: "",
     date: "",
@@ -94,6 +97,16 @@ function Invitations() {
               <article className="invitationStep stepChoose"><span>01</span><div><strong>Choose a style</strong><p>Pick a template made for your occasion.</p></div><small>Start here <span>→</span></small></article>
               <article className="invitationStep stepDetails"><span>02</span><div><strong>Add the details</strong><p>Names, date, place and your special message.</p></div><small>Make it yours <span>→</span></small></article>
               <article className="invitationStep stepShare"><span>03</span><div><strong>Share the joy</strong><p>Receive a polished invitation ready for WhatsApp.</p></div><small>Send the love <span>→</span></small></article>
+            </section>
+
+            <section className="occasionChooser" id="occasion-types" aria-label="Choose an occasion">
+              <div className="occasionChooserHeading"><span className="eyebrow">Start here</span><h2>What are you celebrating?</h2><p>Choose an occasion to see the right invitation styles.</p></div>
+              <div className="occasionChooserGrid">
+                <Link to="/invitations/weddings" className="occasionChoice wedding"><Heart size={22} /><strong>Wedding</strong><span>View wedding designs</span></Link>
+                <Link to="/invitations?category=Celebration#templates" className="occasionChoice birthday"><PartyPopper size={22} /><strong>Birthday</strong><span>Choose a birthday style</span></Link>
+                <Link to="/invitations?category=Celebration#templates" className="occasionChoice party"><Sparkles size={22} /><strong>Party</strong><span>Make it unforgettable</span></Link>
+                <Link to="/invitations?category=Business#templates" className="occasionChoice opening"><Store size={22} /><strong>Shop opening</strong><span>Announce your launch</span></Link>
+              </div>
             </section>
 
             <section className="invitationCatalog" id="templates">

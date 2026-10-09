@@ -62,7 +62,7 @@ function WeddingInvitations() {
           <>
             <section className="weddingStudioHero">
               <div>
-                <Link to="/invitations" className="weddingAllTypesLink"><ChevronLeft size={16} /> All invitation types</Link>
+                <Link to="/invitations#occasion-types" className="weddingAllTypesLink"><ChevronLeft size={16} /> Change occasion: wedding, birthday, party...</Link>
                 <span className="weddingStudioEyebrow"><Sparkles size={15} /> Jibli wedding invitations</span>
                 <h1>Your love story,<br /><em>beautifully announced.</em></h1>
                 <p>Choose the card that feels like you. We personalise the names, date, venue and wording, then deliver it ready to share.</p>
@@ -89,7 +89,7 @@ function WeddingInvitations() {
         ) : (
           <section className="weddingOrderPage">
             <div className="weddingOrderBackLinks">
-              <Link to="/invitations" className="weddingAllTypesLink"><ChevronLeft size={16} /> All invitation types</Link>
+              <Link to="/invitations#occasion-types" className="weddingAllTypesLink"><ChevronLeft size={16} /> Change occasion: wedding, birthday, party...</Link>
               <button type="button" className="invitationBack" onClick={() => setSelectedId(null)}><ChevronLeft size={18} /> All wedding designs</button>
             </div>
             <div className="weddingOrderHeading"><span className="eyebrow">{selected.style}</span><h1>Personalise {selected.title}</h1><p>Your selected design is below. Send the essentials and we will confirm the final wording, price and delivery time before we start.</p></div>
