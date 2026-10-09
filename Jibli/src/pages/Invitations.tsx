@@ -100,10 +100,10 @@ function Invitations() {
               </div>
             </section>
 
-            <section className="invitationSteps">
-              <div><span>01</span><strong>Choose a style</strong><p>Pick a template made for your occasion.</p></div>
-              <div><span>02</span><strong>Add the details</strong><p>Names, date, place and your special message.</p></div>
-              <div><span>03</span><strong>Share the joy</strong><p>Receive a polished invitation ready for WhatsApp.</p></div>
+            <section className="invitationSteps" aria-label="How it works">
+              <article className="invitationStep stepChoose"><span>01</span><div><strong>Choose a style</strong><p>Pick a template made for your occasion.</p></div><small>Start here <span>→</span></small></article>
+              <article className="invitationStep stepDetails"><span>02</span><div><strong>Add the details</strong><p>Names, date, place and your special message.</p></div><small>Make it yours <span>→</span></small></article>
+              <article className="invitationStep stepShare"><span>03</span><div><strong>Share the joy</strong><p>Receive a polished invitation ready for WhatsApp.</p></div><small>Send the love <span>→</span></small></article>
             </section>
 
             <section className="invitationCatalog" id="templates">
