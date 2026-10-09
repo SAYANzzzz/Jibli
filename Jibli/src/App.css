@@ -388,9 +388,9 @@ textarea {
 .invitationStep::after { position: absolute; z-index: -1; inset: 0; content: ""; border: 1px solid rgba(255,255,255,0.18); border-radius: inherit; }
 .invitationStep:hover { transform: translateY(-8px) rotate(-0.4deg); box-shadow: 0 22px 38px rgba(14, 17, 38, 0.28); }
 .invitationStep:hover::before { background: linear-gradient(180deg, rgba(10, 12, 30, 0.08) 5%, rgba(8, 10, 26, 0.84) 88%); }
-.stepChoose { background-image: url("/invitations/step-choose.jpg"); background-position: 44% center; }
+.stepChoose { background-image: url("/invitations/step-share.jpg"); background-position: center; }
 .stepDetails { background-image: url("/invitations/step-details.jpg"); background-position: center; }
-.stepShare { background-image: url("/invitations/step-share.jpg"); background-position: center; }
+.stepShare { background-image: url("/invitations/step-choose.jpg"); background-position: 44% center; }
 .invitationStep > span { position: absolute; top: 20px; left: 20px; display: grid; place-items: center; width: 34px; height: 34px; border: 1px solid rgba(255,255,255,0.38); border-radius: 50%; background: rgba(12, 13, 28, 0.36); color: #fff; font-size: 11px; font-weight: 900; backdrop-filter: blur(6px); }
 .invitationStep > div { max-width: 250px; }
 .invitationStep strong { display: block; font-size: 22px; }
