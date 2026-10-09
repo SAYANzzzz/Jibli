@@ -18,6 +18,7 @@ function Footer() {
           <strong>{t("footer.linksTitle")}</strong>
           <Link to="/">{t("footer.home")}</Link>
           <Link to="/gaming">{t("footer.gaming")}</Link>
+          <Link to="/invitations">{t("footer.invitations")}</Link>
           <Link to="/about">{t("footer.aboutUs")}</Link>
           <Link to="/contact">{t("footer.contact")}</Link>
         </div>

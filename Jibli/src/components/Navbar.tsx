@@ -92,6 +92,7 @@ function Navbar({ children, hidePrimaryNav }: { children: ReactNode; hidePrimary
           <div className="navPrimary">
             <Link to="/">{t("nav.home")}</Link>
             <Link to="/gaming">{t("nav.gaming")}</Link>
+            <Link to="/invitations">{t("nav.invitations")}</Link>
             <Link to="/about">{t("nav.aboutUs")}</Link>
             <Link to="/contact">{t("nav.contact")}</Link>
           </div>
