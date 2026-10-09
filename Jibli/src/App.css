@@ -4724,7 +4724,7 @@ td {
 .weddingStudioHero { min-height: 510px; padding: 80px clamp(24px, 8vw, 130px); display: grid; grid-template-columns: minmax(0, 1fr) minmax(255px, 350px); gap: 70px; align-items: center; position: relative; overflow: hidden; background: radial-gradient(circle at 84% 18%, rgba(178, 124, 91, .34), transparent 25%), linear-gradient(108deg, rgba(12,16,32,.96) 0%, rgba(12,16,32,.79) 47%, rgba(12,16,32,.3) 100%), url('/invitations/weddings/arabesque-burgundy.jfif') center 38% / cover; }
 .weddingStudioHero::after { content: ''; position: absolute; inset: 0; pointer-events: none; background: linear-gradient(90deg, rgba(7,9,20,.48), transparent 64%); }
 .weddingStudioHero > * { position: relative; z-index: 1; }
-.weddingAllTypesLink { display: inline-flex; align-items: center; gap: 5px; margin-bottom: 20px; color: #ead8cb; font-size: 12px; font-weight: 750; letter-spacing: .04em; text-transform: uppercase; }
+.weddingAllTypesLink { display: inline-flex; align-items: center; gap: 5px; margin-top: 15px; color: #ead8cb; font-size: 12px; font-weight: 750; letter-spacing: .04em; text-transform: uppercase; }
 .weddingAllTypesLink:hover { color: #f4be99; }
 .weddingStudioEyebrow { display: inline-flex; align-items: center; gap: 8px; color: #f6d9c7; letter-spacing: .11em; text-transform: uppercase; font-size: 11px; font-weight: 800; }
 .weddingStudioHero h1 { max-width: 730px; margin: 20px 0 18px; color: #fff9f4; font-size: clamp(44px, 6vw, 78px); line-height: .97; letter-spacing: -.055em; }

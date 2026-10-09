@@ -62,7 +62,6 @@ function WeddingInvitations() {
           <>
             <section className="weddingStudioHero">
               <div>
-                <Link to="/invitations#occasion-types" className="weddingAllTypesLink"><ChevronLeft size={16} /> Change occasion: wedding, birthday, party...</Link>
                 <span className="weddingStudioEyebrow"><Sparkles size={15} /> Jibli wedding invitations</span>
                 <h1>Your love story,<br /><em>beautifully announced.</em></h1>
                 <p>Choose the card that feels like you. We personalise the names, date, venue and wording, then deliver it ready to share.</p>
@@ -75,7 +74,7 @@ function WeddingInvitations() {
               </aside>
             </section>
             <section className="weddingDesignSection" id="wedding-designs">
-              <div className="weddingSectionHeading"><div><span className="eyebrow">Wedding collection</span><h2>Choose your starting style</h2></div><p>Every design is personalised by Jibli. Select one to begin your request.</p></div>
+              <div className="weddingSectionHeading"><div><span className="eyebrow">Wedding collection</span><h2>Choose your starting style</h2><Link to="/invitations#occasion-types" className="weddingAllTypesLink"><ChevronLeft size={16} /> Change occasion: wedding, birthday, party...</Link></div><p>Every design is personalised by Jibli. Select one to begin your request.</p></div>
               <div className="weddingDesignGrid">
                 {WEDDING_DESIGNS.map((design) => (
                   <button type="button" className="weddingDesignCard" key={design.id} onClick={() => setSelectedId(design.id)}>
