@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { Gamepad2, Zap } from "lucide-react";
+import { ArrowUpRight, Gamepad2, Zap } from "lucide-react";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import ProfileNavLink from "../components/ProfileNavLink";
@@ -217,6 +217,7 @@ function GamingStore() {
                 </div>
                 <strong>{game.name}</strong>
                 <span className="platformBadge">{categoryLabel(game.category)}</span>
+                <span className="gamingGameAction">View offers <ArrowUpRight size={15} /></span>
               </button>
             ))}
           </div>
