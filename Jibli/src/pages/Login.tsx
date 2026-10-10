@@ -4,7 +4,7 @@ import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { KeyRound, User } from "lucide-react";
 import { ensureUserProfile, getAuthErrorMessage, sendPasswordReset, signIn, signInWithProvider } from "../auth";
 import logo from "../assets/Fast-Logo.gif";
-import { useTranslation } from "../i18n/LanguageContext";
+import { useTranslation } from "../i18n/useTranslation";
 
 const googleLoginEnabled = import.meta.env.VITE_ENABLE_GOOGLE_LOGIN === "true";
 const facebookLoginEnabled = import.meta.env.VITE_ENABLE_FACEBOOK_LOGIN === "true";

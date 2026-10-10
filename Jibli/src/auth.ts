@@ -28,7 +28,7 @@ export async function getCurrentSession() {
 
 export async function signIn(email: string, password: string) {
   return supabase.auth.signInWithPassword({
-    email,
+    email: email.trim().toLowerCase(),
     password,
   });
 }
@@ -69,7 +69,7 @@ export async function signUp(
   metadata: { full_name: string; phone: string },
 ) {
   return supabase.auth.signUp({
-    email,
+    email: email.trim().toLowerCase(),
     password,
     options: {
       data: metadata,
@@ -78,11 +78,11 @@ export async function signUp(
 }
 
 export async function verifySignupOtp(email: string, token: string) {
-  return supabase.auth.verifyOtp({ email, token, type: "signup" });
+  return supabase.auth.verifyOtp({ email: email.trim().toLowerCase(), token, type: "signup" });
 }
 
 export async function resendSignupOtp(email: string) {
-  return supabase.auth.resend({ type: "signup", email });
+  return supabase.auth.resend({ type: "signup", email: email.trim().toLowerCase() });
 }
 
 export async function signInWithProvider(provider: "google" | "facebook", nextPath: string) {
@@ -99,7 +99,7 @@ export async function signInWithProvider(provider: "google" | "facebook", nextPa
 }
 
 export async function sendPasswordReset(email: string) {
-  return supabase.auth.resetPasswordForEmail(email, {
+  return supabase.auth.resetPasswordForEmail(email.trim().toLowerCase(), {
     redirectTo: `${window.location.origin}/reset-password`,
   });
 }

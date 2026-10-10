@@ -1,0 +1,43 @@
+name: Platform checks
+on: [push, pull_request]
+jobs:
+  checks:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: Jibli/package-lock.json
+      - run: npm ci
+        working-directory: Jibli
+      - run: npm run lint && npm run build
+        working-directory: Jibli
+        env:
+          VITE_SUPABASE_URL: https://example.supabase.co
+          VITE_SUPABASE_ANON_KEY: test-only
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: pip install -r requirements.txt httpx
+        working-directory: Jibli/backend
+      - run: python -m unittest discover -s tests -p 'test_*.py' -v
+        working-directory: Jibli/backend
+        env:
+          SUPABASE_URL: https://example.supabase.co
+          SUPABASE_SERVICE_ROLE_KEY: test-only
+      - run: pip install playwright && python -m playwright install --with-deps chromium
+      - name: Browser regression checks
+        env:
+          CI: 'true'
+          VITE_SUPABASE_URL: https://example.supabase.co
+          VITE_SUPABASE_ANON_KEY: test-only
+        run: |
+          npm --prefix Jibli run dev -- --host 127.0.0.1 > /tmp/jibli-vite.log 2>&1 &
+          for attempt in $(seq 1 30); do curl -fsS http://127.0.0.1:5173/ >/dev/null && break || sleep 1; done
+          cd Jibli/backend
+          python tests/platform_browser_smoke.py
+          python tests/payment_browser_smoke.py
+          python tests/invitation_browser_smoke.py
+          python tests/localisation_browser_smoke.py

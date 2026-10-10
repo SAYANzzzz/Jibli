@@ -1,4 +1,5 @@
-import { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
+import { LanguageContext } from "./context";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import type { ReactNode } from "react";
 import type { Language, TranslationKey } from "./translations";
 import { translations } from "./translations";
@@ -8,7 +9,7 @@ const STORAGE_KEY = "jibli_lang";
 function detectInitialLanguage(): Language {
   try {
     const stored = window.localStorage.getItem(STORAGE_KEY);
-    if (stored === "en" || stored === "fr") {
+    if (stored === "en" || stored === "fr" || stored === "ar") {
       return stored;
     }
   } catch {
@@ -35,19 +36,12 @@ function interpolate(template: string, vars?: Record<string, string | number>): 
   });
 }
 
-type LanguageContextValue = {
-  language: Language;
-  setLanguage: (language: Language) => void;
-  t: (key: TranslationKey, vars?: Record<string, string | number>) => string;
-};
-
-const LanguageContext = createContext<LanguageContextValue | null>(null);
-
 export function LanguageProvider({ children }: { children: ReactNode }) {
   const [language, setLanguageState] = useState<Language>(() => detectInitialLanguage());
 
   useEffect(() => {
     document.documentElement.lang = language;
+    document.documentElement.dir = language === "ar" ? "rtl" : "ltr";
   }, [language]);
 
   const setLanguage = useCallback((next: Language) => {
@@ -73,14 +67,4 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
   const contextValue = useMemo(() => ({ language, setLanguage, t }), [language, setLanguage, t]);
 
   return <LanguageContext.Provider value={contextValue}>{children}</LanguageContext.Provider>;
-}
-
-export function useTranslation() {
-  const context = useContext(LanguageContext);
-
-  if (!context) {
-    throw new Error("useTranslation must be used within a LanguageProvider");
-  }
-
-  return context;
 }

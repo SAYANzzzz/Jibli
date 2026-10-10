@@ -1,4 +1,5 @@
-import { useEffect, useMemo, useState } from "react";
+import PaymentOrders from "../components/PaymentOrders";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { CheckCircle2, ExternalLink, RefreshCw, Trash2 } from "lucide-react";
 import { deleteAdminOrder, getAdminOrders, updateAdminOrderItem, updateAdminOrderStatus } from "../api";
@@ -105,16 +106,11 @@ function buildPaymentRequestMessage(order: Order, amount: number) {
     itemBlocks.join("\n\n"),
     "",
     `Total: ${amount} TND`,
-    `Please send the payment to confirm your order, then reply here once it's done.`,
+    `Pay with D17 to 92001397. Open your order on the website, submit the exact num?ro d?autorisation from your receipt, then send it to us on WhatsApp.`,
   ].join("\n");
 }
 
-function buildConfirmNotifyMessage(order: Order) {
-  return [
-    `Hi ${order.profiles?.full_name || "there"}, this is Jibli.`,
-    `Payment received — your order #${order.id.slice(0, 8).toUpperCase()} is now confirmed!`,
-  ].join("\n");
-}
+
 
 function buildRemovalNotifyMessage(order: Order) {
   return [
@@ -143,42 +139,24 @@ function AdminDashboard() {
   const [savingItemId, setSavingItemId] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
 
-  const loadOrders = async () => {
-    setIsLoading(true);
-    setErrorMessage("");
-
-    try {
-      const response = await getAdminOrders();
-      setOrders(response.orders);
-      setOrderDrafts((currentDrafts) => {
-        const nextDrafts = { ...currentDrafts };
-
-        response.orders.forEach((order) => {
-          if (!nextDrafts[order.id]) {
-            nextDrafts[order.id] = {
-              status: order.status,
-              final_price: order.final_price?.toString() ?? "",
-              deposit_amount: order.deposit_amount?.toString() ?? "",
-              tracking_number: order.tracking_number ?? "",
-              note: "",
-            };
-          }
-        });
-
-        return nextDrafts;
-      });
-    } catch (error) {
-      console.error("Could not load admin orders", error);
-      setErrorMessage(error instanceof Error ? error.message : "Could not load orders.");
-      setOrders([]);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    loadOrders();
+  const acceptOrders = useCallback((response: { orders: Order[] }) => {
+    setOrders(response.orders); setErrorMessage(""); setIsLoading(false);
+    setOrderDrafts((current) => {
+      const next = { ...current };
+      for (const order of response.orders) if (!next[order.id]) next[order.id] = { status: order.status, final_price: order.final_price?.toString() ?? "", deposit_amount: order.deposit_amount?.toString() ?? "", tracking_number: order.tracking_number ?? "", note: "" };
+      return next;
+    });
   }, []);
+  const loadOrders = useCallback(async () => {
+    try { acceptOrders(await getAdminOrders()); }
+    catch (error) { setErrorMessage(error instanceof Error ? error.message : "Could not load orders."); setIsLoading(false); }
+  }, [acceptOrders]);
+  useEffect(() => {
+    let active = true;
+    getAdminOrders().then((response) => { if (active) acceptOrders(response); })
+      .catch((error) => { if (active) { setErrorMessage(error instanceof Error ? error.message : "Could not load orders."); setIsLoading(false); } });
+    return () => { active = false; };
+  }, [acceptOrders]);
 
   const newRequests = useMemo(
     () => orders.filter((order) => order.status === "new_request"),
@@ -257,26 +235,7 @@ function AdminDashboard() {
     }
   };
 
-  const handleConfirm = async (order: Order) => {
-    setUpdatingOrderId(order.id);
-    setErrorMessage("");
 
-    try {
-      const note = orderNotes[order.id]?.trim() || "Payment received, order confirmed.";
-      await updateAdminOrderStatus(order.id, {
-        status: "price_confirmed",
-        note,
-      });
-      setOrderNotes((currentNotes) => ({ ...currentNotes, [order.id]: "" }));
-      notifyCustomer(order, buildConfirmNotifyMessage(order));
-      await loadOrders();
-    } catch (error) {
-      console.error("Could not confirm order", error);
-      setErrorMessage(error instanceof Error ? error.message : "Could not confirm order.");
-    } finally {
-      setUpdatingOrderId("");
-    }
-  };
 
   const handleRemove = async (order: Order) => {
     const shouldRemove = window.confirm("Remove this order request? This cannot be undone.");
@@ -398,10 +357,11 @@ function AdminDashboard() {
       </Navbar>
 
       <main className="simpleAdminMain">
+        <PaymentOrders admin />
         <section className="simpleAdminHeader">
           <span className="eyebrow">Admin only</span>
           <h1>Order requests</h1>
-          <p>Every request saved before WhatsApp opens appears here. Confirm it when you are ready.</p>
+          <p>Review product requests here. Check D17 references in the payment section before confirming payment.</p>
         </section>
 
         <label className="adminOrderSearch">
@@ -631,15 +591,7 @@ function AdminDashboard() {
                   )}
 
                   <div className="adminOrderActions">
-                    <button
-                      className="confirmOrderBtn"
-                      type="button"
-                      disabled={updatingOrderId === order.id || removingOrderId === order.id}
-                      onClick={() => handleConfirm(order)}
-                    >
-                      <CheckCircle2 size={18} />
-                      {updatingOrderId === order.id ? "Confirming..." : "Confirm order (payment received)"}
-                    </button>
+                    <a className="outlineBtn" href="#d17-review">Review D17 payment above</a>
                     <button
                       className="removeOrderBtn"
                       type="button"

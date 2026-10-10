@@ -1,5 +1,9 @@
-import { useMemo, useState } from "react";
-import { ArrowRight, Check, ChevronLeft, ImagePlus, MapPin, Send, Sparkles } from "lucide-react";
+import { useCommerceCopy } from "../i18n/commerceCopy";
+import { usePersistentState } from "../usePersistentState";
+import AnimatedInvitation from "../components/AnimatedInvitation";
+import PaymentButton from "../components/PaymentButton";
+import { useMemo } from "react";
+import { ArrowRight, Check, ChevronLeft, ImagePlus, MapPin, Sparkles } from "lucide-react";
 import { Link } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
@@ -46,15 +50,16 @@ function weddingWhatsappUrl(design: WeddingDesign, details: Record<string, strin
 }
 
 function WeddingInvitations() {
-  const [selectedId, setSelectedId] = useState<string | null>(null);
-  const [details, setDetails] = useState({ couple: "", date: "", time: "", venue: "", language: "Arabic / French", rsvp: "", note: "" });
+  const copy = useCommerceCopy();
+  const [selectedId, setSelectedId] = usePersistentState<string | null>("jibli-design-weddings", null);
+  const [details, setDetails] = usePersistentState("jibli-details-weddings", { mood: "", couple: "", date: "", time: "", venue: "", language: "Arabic / French", rsvp: "", note: "" });
   const selected = useMemo(() => WEDDING_DESIGNS.find((design) => design.id === selectedId) ?? null, [selectedId]);
   const updateDetail = (field: keyof typeof details, value: string) => setDetails((current) => ({ ...current, [field]: value }));
 
   return (
     <div>
       <Navbar>
-        <Link to="/request" className="outlineBtn">Order from AliExpress</Link>
+        <Link to="/request" className="outlineBtn">{copy("Order from AliExpress")} </Link>
         <ProfileNavLink />
       </Navbar>
       <main className="weddingStudioPage">
@@ -62,24 +67,24 @@ function WeddingInvitations() {
           <>
             <section className="weddingStudioHero">
               <div>
-                <span className="weddingStudioEyebrow"><Sparkles size={15} /> Jibli wedding invitations</span>
-                <h1>Your love story,<br /><em>beautifully announced.</em></h1>
-                <p>Choose the card that feels like you. We personalise the names, date, venue and wording, then deliver it ready to share.</p>
-                <a href="#wedding-designs" className="weddingHeroButton">Choose your design <ArrowRight size={17} /></a>
+                <span className="weddingStudioEyebrow"><Sparkles size={15} />{copy("Jibli wedding invitations")} </span>
+                <h1>{copy("Your love story,")} <br /><em>{copy("beautifully announced.")} </em></h1>
+                <p>{copy("Choose the card that feels like you. We personalise the names, date, venue and wording, then deliver it ready to share.")} </p>
+                <a href="#wedding-designs" className="weddingHeroButton">{copy("Choose your design")} <ArrowRight size={17} /></a>
               </div>
               <aside className="weddingHeroPromise">
-                <span>01</span><strong>Pick a design</strong><p>Eight curated directions to start from.</p>
-                <span>02</span><strong>Tell us the details</strong><p>Arabic, French, English—or a mix of all three.</p>
-                <span>03</span><strong>Share the moment</strong><p>Your final invitation arrives on WhatsApp.</p>
+                <span>01</span><strong>{copy("Pick a design")} </strong><p>{copy("Eight curated directions to start from.")} </p>
+                <span>02</span><strong>{copy("Tell us the details")} </strong><p>{copy("Arabic, French, English—or a mix of all three.")} </p>
+                <span>03</span><strong>{copy("Share the moment")} </strong><p>{copy("Your final invitation arrives on WhatsApp.")} </p>
               </aside>
             </section>
             <section className="weddingDesignSection" id="wedding-designs">
-              <div className="weddingSectionHeading"><div><span className="eyebrow">Wedding collection</span><h2>Choose your starting style</h2><Link to="/invitations#occasion-types" className="weddingAllTypesLink"><ChevronLeft size={16} /> Choose another occasion</Link></div><p>Every design is personalised by Jibli. Select one to begin your request.</p></div>
+              <div className="weddingSectionHeading"><div><span className="eyebrow">{copy("Wedding collection")} </span><h2>{copy("Choose your starting style")} </h2><Link to="/invitations#templates" className="weddingAllTypesLink"><ChevronLeft size={16} />{copy("Choose another occasion")} </Link></div><p>{copy("Every design is personalised by Jibli. Select one to begin your request.")} </p></div>
               <div className="weddingDesignGrid">
                 {WEDDING_DESIGNS.map((design) => (
                   <button type="button" className="weddingDesignCard" key={design.id} onClick={() => setSelectedId(design.id)}>
-                    <img src={design.image} alt={`${design.title} wedding invitation example`} />
-                    <div className="weddingDesignOverlay"><span>{design.style}</span><strong>{design.title}</strong><p>{design.description}</p>{design.needsPhotos && <small><ImagePlus size={14} /> Couple photos needed</small>}<b>15 TND · Personalise this design <ArrowRight size={15} /></b></div>
+                    <img src={design.image} alt={`${design.title} wedding invitation example`} loading="lazy" decoding="async" />
+                    <div className="weddingDesignOverlay"><span>{design.style}</span><strong>{design.title}</strong><p>{design.description}</p>{design.needsPhotos && <small><ImagePlus size={14} />{copy("Couple photos needed")} </small>}<span className="invitationCardPrice">{copy("15 TND")} </span><b>{copy("Choose design")} <ArrowRight size={15} /></b></div>
                   </button>
                 ))}
               </div>
@@ -88,20 +93,20 @@ function WeddingInvitations() {
         ) : (
           <section className="weddingOrderPage">
             <div className="weddingOrderBackLinks">
-              <Link to="/invitations#occasion-types" className="weddingAllTypesLink"><ChevronLeft size={16} /> Choose another occasion</Link>
-              <button type="button" className="invitationBack" onClick={() => setSelectedId(null)}><ChevronLeft size={18} /> All wedding designs</button>
+              <Link to="/invitations#templates" className="weddingAllTypesLink"><ChevronLeft size={16} />{copy("Choose another occasion")} </Link>
+              <button type="button" className="invitationBack" onClick={() => setSelectedId(null)}><ChevronLeft size={18} />{copy("All wedding designs")} </button>
             </div>
-            <div className="weddingOrderHeading"><span className="eyebrow">{selected.style}</span><h1>Personalise {selected.title}</h1><strong className="invitationPrice">15 TND</strong><p>Your selected design is below. Send the essentials and we will confirm the final wording and delivery time before we start.</p></div>
+            <div className="weddingOrderHeading"><span className="eyebrow">{selected.style}</span><h1>{copy("Personalise")} {selected.title}</h1><strong className="invitationPrice">{copy("15 TND")} </strong><p>{copy("Your selected design is below. Send the essentials and we will confirm the final wording and delivery time before we start.")} </p></div>
             <div className="weddingOrderGrid">
-              <div className="weddingSelectedDesign"><img src={selected.image} alt={`${selected.title} wedding invitation`} /><div><strong>{selected.title}</strong><span>{selected.description}</span>{selected.needsPhotos && <p><ImagePlus size={15} /> Send your photos in the WhatsApp chat after submitting.</p>}</div></div>
+              <div className="weddingSelectedDesign"><AnimatedInvitation key={selected.id} image={selected.image} title={selected.title} details={details} onMoodChange={(mood) => setDetails((current) => ({ ...current, mood }))} /><div><strong>{selected.title}</strong><span>{selected.description}</span>{selected.needsPhotos && <p><ImagePlus size={15} />{copy("Send your photos in the WhatsApp chat after submitting.")} </p>}</div></div>
               <form className="invitationForm weddingOrderForm" onSubmit={(event) => event.preventDefault()}>
-                <label>Couple's names<input value={details.couple} onChange={(event) => updateDetail("couple", event.target.value)} placeholder="Example: Ahmed & Sara" /></label>
-                <div className="invitationFormRow"><label>Date<input type="date" value={details.date} onChange={(event) => updateDetail("date", event.target.value)} /></label><label>Time<input type="time" value={details.time} onChange={(event) => updateDetail("time", event.target.value)} /></label></div>
-                <label><MapPin size={15} /> Venue and city<input value={details.venue} onChange={(event) => updateDetail("venue", event.target.value)} placeholder="Example: Salle des fêtes, Tunis" /></label>
-                <div className="invitationFormRow"><label>Invitation language<select value={details.language} onChange={(event) => updateDetail("language", event.target.value)}><option>Arabic / French</option><option>Arabic</option><option>French</option><option>English</option><option>Arabic / English</option></select></label><label>RSVP / contact<input value={details.rsvp} onChange={(event) => updateDetail("rsvp", event.target.value)} placeholder="Phone number or name" /></label></div>
-                <label>Special wording or changes<textarea value={details.note} onChange={(event) => updateDetail("note", event.target.value)} placeholder="Quran verse, family names, dress code, colour changes..." /></label>
-                <a className="primaryBtn invitationWhatsappBtn" href={weddingWhatsappUrl(selected, details)} target="_blank" rel="noreferrer"><Send size={17} /> Send wedding request on WhatsApp</a>
-                <p><Check size={15} /> You approve the final proof before it is delivered.</p>
+                <label>{copy("Couple's names")} <input required maxLength={160} value={details.couple} onChange={(event) => updateDetail("couple", event.target.value)} placeholder={copy("Example: Ahmed & Sara")} /></label>
+                <div className="invitationFormRow"><label>{copy("Date")} <input type="date" value={details.date} onChange={(event) => updateDetail("date", event.target.value)} /></label><label>{copy("Time")} <input type="time" value={details.time} onChange={(event) => updateDetail("time", event.target.value)} /></label></div>
+                <label><MapPin size={15} />{copy("Venue and city")} <input value={details.venue} onChange={(event) => updateDetail("venue", event.target.value)} placeholder={copy("Example: Salle des fêtes, Tunis")} /></label>
+                <div className="invitationFormRow"><label>{copy("Invitation language")} <select value={details.language} onChange={(event) => updateDetail("language", event.target.value)}><option value="Arabic / French">{copy("Arabic / French")}</option><option value="Arabic">{copy("Arabic")}</option><option value="French">{copy("French")}</option><option value="English">{copy("English")}</option><option value="Arabic / English">{copy("Arabic / English")}</option></select></label><label>{copy("RSVP / contact")} <input value={details.rsvp} onChange={(event) => updateDetail("rsvp", event.target.value)} placeholder={copy("Phone number or name")} /></label></div>
+                <label>{copy("Special wording or changes")} <textarea value={details.note} onChange={(event) => updateDetail("note", event.target.value)} placeholder={copy("Quran verse, family names, dress code, colour changes...")} /></label>
+                <PaymentButton productKey={`invitation:weddings:${selected.id}`} requestUrl={weddingWhatsappUrl(selected, details)} invitation={{ image: selected.image, title: selected.title, mood: details.mood, details, certificate: selected.id.includes("certificate") || selected.id.includes("weekly-star") }} />
+                <p><Check size={15} />{copy("You approve the final proof before it is delivered.")} </p>
               </form>
             </div>
           </section>

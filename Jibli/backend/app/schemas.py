@@ -16,9 +16,9 @@ class QuickPreviewIn(BaseModel):
 
 class QuickOrderPriceIn(BaseModel):
   shop: Shop
-  amount: float = Field(gt=0)
+  amount: float = Field(gt=0, allow_inf_nan=False)
   currency: Currency = "usd"
-  quantity: int = Field(default=1, ge=1)
+  quantity: int = Field(default=1, ge=1, le=100)
 
 
 class CartItemIn(BaseModel):
@@ -31,12 +31,12 @@ class CartItemIn(BaseModel):
   shop: Shop
   product_name: str | None = None
   selected_options: dict[str, Any] = Field(default_factory=dict)
-  quantity: int = Field(default=1, ge=1)
-  estimated_price: float | None = None
+  quantity: int = Field(default=1, ge=1, le=100)
+  estimated_price: float | None = Field(default=None, ge=0, allow_inf_nan=False)
 
 
 class CartRequestIn(BaseModel):
-  items: list[CartItemIn] = Field(min_length=1)
+  items: list[CartItemIn] = Field(min_length=1, max_length=50)
   notes: str | None = None
 
 
@@ -51,7 +51,7 @@ class ProfileUpdateIn(BaseModel):
 
 class AdminOrderUpdateIn(BaseModel):
   status: Literal["new_request", "waiting_confirmation", "price_confirmed", "deposit_paid", "ordered", "preparing", "collected_by_carrier", "at_origin_sorting", "left_origin_sorting", "at_origin_airport", "awaiting_flight", "leaving_origin_country", "arrived_transit_country", "left_transit_country", "arrived_local_airport", "arrived_tunisia", "out_for_delivery", "delivered", "cancelled"]
-  final_price: float | None = Field(default=None, ge=0)
-  deposit_amount: float | None = Field(default=None, ge=0)
+  final_price: float | None = Field(default=None, ge=0, allow_inf_nan=False)
+  deposit_amount: float | None = Field(default=None, ge=0, allow_inf_nan=False)
   tracking_number: str | None = Field(default=None, max_length=200)
   note: str | None = Field(default=None, max_length=2_000)

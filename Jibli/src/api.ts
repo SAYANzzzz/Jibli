@@ -1,6 +1,6 @@
 import { supabase } from "./supabase";
 
-const API_URL = import.meta.env.VITE_API_URL ?? "/api";
+export const API_URL = import.meta.env.VITE_API_URL ?? "/api";
 const API_FALLBACK_URL =
   API_URL === "/api" || API_URL === "http://localhost:8000"
     ? "http://127.0.0.1:8000"
@@ -30,8 +30,8 @@ async function fetchWithWakeupRetry(path: string, requestOptions: RequestInit): 
     if (import.meta.env.DEV) {
       try {
         return await fetch(`${API_FALLBACK_URL}${path}`, requestOptions);
-      } catch {
-        throw new Error("Cannot reach the backend. Start FastAPI, then refresh this page.");
+      } catch (error) {
+        throw new Error("Cannot reach the backend. Start FastAPI, then refresh this page.", { cause: error });
       }
     }
 
@@ -48,11 +48,11 @@ async function fetchWithWakeupRetry(path: string, requestOptions: RequestInit): 
     }
 
     console.error("Backend unreachable after wakeup retries", lastError);
-    throw new Error("We couldn't reach the server after several tries. Please wait about a minute and try again.");
+    throw new Error("We couldn't reach the server after several tries. Please wait about a minute and try again.", { cause: firstError });
   }
 }
 
-async function apiFetch(path: string, options: RequestInit = {}) {
+export async function apiFetch(path: string, options: RequestInit = {}) {
   const token = await getAccessToken();
   const isFormData = typeof FormData !== "undefined" && options.body instanceof FormData;
   const requestOptions: RequestInit = {
@@ -71,6 +71,8 @@ async function apiFetch(path: string, options: RequestInit = {}) {
     const detail =
       typeof data.detail === "string"
         ? data.detail
+        : Array.isArray(data.detail)
+          ? data.detail.slice(0, 3).map((issue: { loc?: (string | number)[]; msg?: string }) => `${issue.loc?.filter((part) => part !== "body").join(" / ") || "Form"}: ${issue.msg || "Check this field."}`).join("; ")
         : typeof data.message === "string"
           ? data.message
           : typeof data.error === "string"

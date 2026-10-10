@@ -23,6 +23,20 @@ def arrondi(value: float) -> int:
   return math.ceil(value)
 
 
+def calculate_cart_total(items: list[dict]) -> int | None:
+  """Recalculate checkout from source USD prices; never trust browser totals."""
+  total = 0
+  for item in items:
+    raw = (item.get("selected_options") or {}).get("usd_price")
+    if raw is None:
+      return None  # Older requests still need an admin quote.
+    amount = float(raw)
+    if not math.isfinite(amount) or amount <= 0:
+      raise ValueError("Each product needs a valid USD price.")
+    total += calculate_price(item["shop"], amount, item["quantity"])["total_price_tnd"]
+  return total if items else None
+
+
 def calculate_price(shop: str, amount: float, quantity: int = 1, currency: Currency = "usd") -> dict:
   if shop not in MULTIPLIERS:
     raise ValueError(f"Unsupported shop: {shop}")

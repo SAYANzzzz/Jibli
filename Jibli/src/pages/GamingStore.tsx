@@ -1,10 +1,11 @@
+import PaymentButton from "../components/PaymentButton";
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { ArrowUpRight, Gamepad2, Zap } from "lucide-react";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import ProfileNavLink from "../components/ProfileNavLink";
-import { useTranslation } from "../i18n/LanguageContext";
+import { useTranslation } from "../i18n/useTranslation";
 
 const ADMIN_WHATSAPP_NUMBER = "21692001397";
 
@@ -192,7 +193,7 @@ function GamingStore() {
       <main className="requestPage gamingStorePage">
         <section className="gamingEditorialHero">
           <div className="gamingEditorialContent">
-            <span className="gamingEditorialEyebrow"><Zap size={15} /> Instant digital delivery</span>
+            <span className="gamingEditorialEyebrow"><Zap size={15} /> Digital delivery after payment verification</span>
             <h1>{t("gaming.title")}</h1>
             <p>{t("gaming.subtitle")}</p>
             <a className="gamingBrowseBtn" href="#gaming-catalog"><Gamepad2 size={17} /> Explore top-ups</a>
@@ -277,14 +278,7 @@ function GamingStore() {
                   {selectedTier.priceTnd !== null && (
                     <span className="gamingTierPrice">{selectedTier.priceTnd} TND</span>
                   )}
-                  <a
-                    href={buildWhatsappUrl(selectedGame.name, selectedTier.label, selectedTier.priceTnd)}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="primaryBtn wideBtn"
-                  >
-                    {t("gaming.orderOnWhatsapp")}
-                  </a>
+                  {selectedTier.priceTnd !== null ? <PaymentButton productKey={`gaming:${selectedGame.id}:${selectedTierIndex}`} requestUrl={buildWhatsappUrl(selectedGame.name, selectedTier.label, selectedTier.priceTnd)} /> : <a className="primaryBtn" href={buildWhatsappUrl(selectedGame.name, selectedTier.label, null)} target="_blank" rel="noreferrer">Ask for a price on WhatsApp</a>}
                 </div>
               )}
             </div>

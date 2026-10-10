@@ -4,7 +4,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { LogOut, PackageSearch, PlusCircle, Shield } from "lucide-react";
 import { supabase } from "../supabase";
 import Navbar from "../components/Navbar";
-import { useTranslation } from "../i18n/LanguageContext";
+import { useTranslation } from "../i18n/useTranslation";
 
 const tunisianGovernorates = [
   "Ariana",

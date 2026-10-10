@@ -6,7 +6,7 @@ import Navbar from "../components/Navbar";
 import ProfileNavLink from "../components/ProfileNavLink";
 import Footer from "../components/Footer";
 import { supabase } from "../supabase";
-import { useTranslation } from "../i18n/LanguageContext";
+import { useTranslation } from "../i18n/useTranslation";
 
 const ADMIN_WHATSAPP_NUMBER = "21692001397";
 const CONTACT_EMAIL = "jiblitunisia@gmail.com";

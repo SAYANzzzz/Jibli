@@ -3,13 +3,14 @@ import type { FormEvent } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 import { ShoppingCart } from "lucide-react";
 import { saveCartItems, submitOrder } from "../api";
+
 import type { Shop } from "../api";
 import { OrderItemCard } from "../components/OrderItemCard";
 import { SHOP_LABELS, clearItemDrafts, createId, loadDraftItemIds, saveDraftItemIds } from "../orderItem";
 import type { ItemSnapshot } from "../orderItem";
 import Navbar from "../components/Navbar";
 import ProfileNavLink from "../components/ProfileNavLink";
-import { useTranslation } from "../i18n/LanguageContext";
+import { useTranslation } from "../i18n/useTranslation";
 
 const ADMIN_WHATSAPP_NUMBER = "21692001397";
 
@@ -118,23 +119,17 @@ function ProductRequest() {
             color: item.color,
             model: item.model,
             ...Object.fromEntries(item.extraOptions.map((option) => [option.label, option.value])),
+            usd_price: String(item.priceResult?.usd_price ?? ""),
           },
           quantity: item.quantity,
           estimated_price: item.priceResult?.total_price_tnd ?? undefined,
         })),
       });
 
-      await submitOrder();
+      const { order } = await submitOrder();
       clearItemDrafts(itemRefs.map((item) => item.id));
 
-      // Navigate the current tab directly instead of pre-opening a blank tab
-      // and redirecting it later: on mobile (especially iOS Safari) that
-      // pattern reliably leaves the new tab stuck on about:blank once real
-      // network time has passed between opening it and setting its
-      // location. A same-tab redirect is a normal top-level navigation, so
-      // it isn't subject to popup-blocking on any platform.
-      setShowWhatsappFallback(true);
-      window.location.href = whatsappUrl;
+      window.location.assign(`/tracking?order=${order.id}`);
     } catch (error) {
       console.error("Could not save request before WhatsApp handoff", error);
       // Show the actual error when it's a real, readable message (e.g. the

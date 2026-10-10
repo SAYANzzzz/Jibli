@@ -1,0 +1,347 @@
+{
+  "gaming:riot-points:0": {
+    "title": "League of Legends — Riot Gift Card / 5 USD Riot Key",
+    "amount": 22,
+    "kind": "Gift card"
+  },
+  "gaming:riot-points:1": {
+    "title": "League of Legends — Riot Gift Card / 10 USD Riot Key",
+    "amount": 40,
+    "kind": "Gift card"
+  },
+  "gaming:riot-points:2": {
+    "title": "League of Legends — Riot Gift Card / 25 USD Riot Key",
+    "amount": 90,
+    "kind": "Gift card"
+  },
+  "gaming:riot-points:3": {
+    "title": "League of Legends — Riot Gift Card / 80 USD Riot Key",
+    "amount": 280,
+    "kind": "Gift card"
+  },
+  "gaming:valorant-vp:0": {
+    "title": "Valorant — VP / 475 VP Key",
+    "amount": 22,
+    "kind": "Game top-up"
+  },
+  "gaming:free-fire:0": {
+    "title": "Free Fire — Diamonds / 110 Diamonds",
+    "amount": 5,
+    "kind": "Game top-up"
+  },
+  "gaming:free-fire:1": {
+    "title": "Free Fire — Diamonds / 231 Diamonds",
+    "amount": 10,
+    "kind": "Game top-up"
+  },
+  "gaming:free-fire:2": {
+    "title": "Free Fire — Diamonds / 583 Diamonds",
+    "amount": 24,
+    "kind": "Game top-up"
+  },
+  "gaming:free-fire:3": {
+    "title": "Free Fire — Diamonds / 1188 Diamonds",
+    "amount": 45,
+    "kind": "Game top-up"
+  },
+  "gaming:free-fire:4": {
+    "title": "Free Fire — Diamonds / 2420 Diamonds",
+    "amount": 82,
+    "kind": "Game top-up"
+  },
+  "gaming:robux:0": {
+    "title": "Roblox — Robux / 100 Robux",
+    "amount": 12,
+    "kind": "Game top-up"
+  },
+  "gaming:robux:1": {
+    "title": "Roblox — Robux / 200 Robux",
+    "amount": 18,
+    "kind": "Game top-up"
+  },
+  "gaming:robux:2": {
+    "title": "Roblox — Robux / 500 Robux",
+    "amount": 38,
+    "kind": "Game top-up"
+  },
+  "gaming:robux:3": {
+    "title": "Roblox — Robux / 800 Robux",
+    "amount": 50,
+    "kind": "Game top-up"
+  },
+  "gaming:efootball:0": {
+    "title": "eFootball — Coins / Message us for current packages & pricing",
+    "amount": null,
+    "kind": "Game top-up"
+  },
+  "gaming:chess-premium:0": {
+    "title": "Chess.com Premium (1 month) / Gold",
+    "amount": 30,
+    "kind": "Subscription"
+  },
+  "gaming:chess-premium:1": {
+    "title": "Chess.com Premium (1 month) / Platinum",
+    "amount": 42,
+    "kind": "Subscription"
+  },
+  "gaming:chess-premium:2": {
+    "title": "Chess.com Premium (1 month) / Diamond",
+    "amount": 60,
+    "kind": "Subscription"
+  },
+  "gaming:spotify-premium:0": {
+    "title": "Spotify Premium (1 month) / Personnel",
+    "amount": 15,
+    "kind": "Subscription"
+  },
+  "gaming:spotify-premium:1": {
+    "title": "Spotify Premium (1 month) / Étudiants",
+    "amount": 10,
+    "kind": "Subscription"
+  },
+  "gaming:spotify-premium:2": {
+    "title": "Spotify Premium (1 month) / Duo",
+    "amount": 20,
+    "kind": "Subscription"
+  },
+  "gaming:spotify-premium:3": {
+    "title": "Spotify Premium (1 month) / Familier",
+    "amount": 25,
+    "kind": "Subscription"
+  },
+  "gaming:netflix:0": {
+    "title": "Netflix / Message us for current plans & pricing",
+    "amount": null,
+    "kind": "Subscription"
+  },
+  "gaming:minecraft:0": {
+    "title": "Minecraft — Java & Bedrock Edition (PC) / Full game",
+    "amount": 90,
+    "kind": "Game code"
+  },
+  "gaming:steam-gift-cards:0": {
+    "title": "Steam Wallet Gift Card / 15 USD Steam Key",
+    "amount": 65,
+    "kind": "Gift card"
+  },
+  "gaming:steam-gift-cards:1": {
+    "title": "Steam Wallet Gift Card / 20 USD Steam Key",
+    "amount": 85,
+    "kind": "Gift card"
+  },
+  "gaming:steam-gift-cards:2": {
+    "title": "Steam Wallet Gift Card / 30 USD Steam Key",
+    "amount": 130,
+    "kind": "Gift card"
+  },
+  "gaming:steam-gift-cards:3": {
+    "title": "Steam Wallet Gift Card / 50 USD Steam Key",
+    "amount": 220,
+    "kind": "Gift card"
+  },
+  "invitation:weddings:arabesque-burgundy": {
+    "title": "Arabesque burgundy / weddings",
+    "amount": 15,
+    "kind": "invitation"
+  },
+  "invitation:weddings:arabic-satin": {
+    "title": "Satin ribbons / weddings",
+    "amount": 15,
+    "kind": "invitation"
+  },
+  "invitation:weddings:blush-embossed": {
+    "title": "Blush embossed / weddings",
+    "amount": 15,
+    "kind": "invitation"
+  },
+  "invitation:weddings:garden-couple": {
+    "title": "Garden couple / weddings",
+    "amount": 15,
+    "kind": "invitation"
+  },
+  "invitation:weddings:classic-ivory": {
+    "title": "Classic ivory / weddings",
+    "amount": 15,
+    "kind": "invitation"
+  },
+  "invitation:weddings:photo-frame": {
+    "title": "Childhood story / weddings",
+    "amount": 15,
+    "kind": "invitation"
+  },
+  "invitation:weddings:illustrated-photo": {
+    "title": "Illustrated love / weddings",
+    "amount": 15,
+    "kind": "invitation"
+  },
+  "invitation:weddings:teal-love": {
+    "title": "Teal celebration / weddings",
+    "amount": 15,
+    "kind": "invitation"
+  },
+  "invitation:engagements:garden-hands": {
+    "title": "Garden hands / engagements",
+    "amount": 10,
+    "kind": "invitation"
+  },
+  "invitation:engagements:ring-promise": {
+    "title": "Ring promise / engagements",
+    "amount": 10,
+    "kind": "invitation"
+  },
+  "invitation:engagements:intimate-vows": {
+    "title": "Intimate vows / engagements",
+    "amount": 10,
+    "kind": "invitation"
+  },
+  "invitation:engagements:childhood-love": {
+    "title": "Childhood love / engagements",
+    "amount": 10,
+    "kind": "invitation"
+  },
+  "invitation:birthdays:disco-eighteen": {
+    "title": "Disco eighteen / birthdays",
+    "amount": 10,
+    "kind": "invitation"
+  },
+  "invitation:birthdays:blue-cake": {
+    "title": "Blue cake / birthdays",
+    "amount": 10,
+    "kind": "invitation"
+  },
+  "invitation:birthdays:pink-night": {
+    "title": "Pink night / birthdays",
+    "amount": 10,
+    "kind": "invitation"
+  },
+  "invitation:birthdays:tiffs-party": {
+    "title": "Vintage birthday / birthdays",
+    "amount": 10,
+    "kind": "invitation"
+  },
+  "invitation:birthdays:pink-sparkle": {
+    "title": "Pink sparkle / birthdays",
+    "amount": 10,
+    "kind": "invitation"
+  },
+  "invitation:birthdays:cool-kid": {
+    "title": "Cool kid / birthdays",
+    "amount": 10,
+    "kind": "invitation"
+  },
+  "invitation:birthdays:birthday-disco": {
+    "title": "Birthday disco / birthdays",
+    "amount": 10,
+    "kind": "invitation"
+  },
+  "invitation:birthdays:silver-fourteen": {
+    "title": "Silver fourteen / birthdays",
+    "amount": 10,
+    "kind": "invitation"
+  },
+  "invitation:openings:bold-coffee": {
+    "title": "Bold coffee / openings",
+    "amount": 10,
+    "kind": "invitation"
+  },
+  "invitation:openings:red-ribbon": {
+    "title": "Ribbon reveal / openings",
+    "amount": 10,
+    "kind": "invitation"
+  },
+  "invitation:openings:burgundy-bow": {
+    "title": "Burgundy bow / openings",
+    "amount": 10,
+    "kind": "invitation"
+  },
+  "invitation:openings:popup-party": {
+    "title": "Popup opening / openings",
+    "amount": 10,
+    "kind": "invitation"
+  },
+  "invitation:graduations:midnight-silver": {
+    "title": "Midnight silver / graduations",
+    "amount": 10,
+    "kind": "invitation"
+  },
+  "invitation:graduations:red-tassel": {
+    "title": "Red tassel / graduations",
+    "amount": 10,
+    "kind": "invitation"
+  },
+  "invitation:graduations:velvet-bow": {
+    "title": "Velvet bow / graduations",
+    "amount": 10,
+    "kind": "invitation"
+  },
+  "invitation:graduations:blue-florals": {
+    "title": "Blue florals / graduations",
+    "amount": 10,
+    "kind": "invitation"
+  },
+  "invitation:graduations:disco-graduate": {
+    "title": "Disco graduate / graduations",
+    "amount": 10,
+    "kind": "invitation"
+  },
+  "invitation:graduations:classic-mortarboard": {
+    "title": "Classic mortarboard / graduations",
+    "amount": 10,
+    "kind": "invitation"
+  },
+  "invitation:family:nouveau-florals": {
+    "title": "Nouveau florals / family",
+    "amount": 10,
+    "kind": "invitation"
+  },
+  "invitation:family:green-tradition": {
+    "title": "Green tradition / family",
+    "amount": 10,
+    "kind": "invitation"
+  },
+  "invitation:family:family-roots": {
+    "title": "Family roots / family",
+    "amount": 10,
+    "kind": "invitation"
+  },
+  "invitation:family:gathering-brunch": {
+    "title": "Gathering brunch / family",
+    "amount": 10,
+    "kind": "invitation"
+  },
+  "invitation:others:kindergarten-welcome": {
+    "title": "Kindergarten welcome / others",
+    "amount": 10,
+    "kind": "invitation"
+  },
+  "invitation:others:school-registration": {
+    "title": "School registration / others",
+    "amount": 10,
+    "kind": "invitation"
+  },
+  "invitation:others:eid-school-welcome": {
+    "title": "Welcome after Eid / others",
+    "amount": 10,
+    "kind": "invitation"
+  },
+  "invitation:others:weekly-star-blue": {
+    "title": "Weekly star blue / others",
+    "amount": 10,
+    "kind": "invitation"
+  },
+  "invitation:others:weekly-star-pink": {
+    "title": "Weekly star pink / others",
+    "amount": 10,
+    "kind": "invitation"
+  },
+  "invitation:others:quran-certificate-blue": {
+    "title": "Quran achievement blue / others",
+    "amount": 10,
+    "kind": "invitation"
+  },
+  "invitation:others:quran-certificate-pink": {
+    "title": "Quran achievement pink / others",
+    "amount": 10,
+    "kind": "invitation"
+  }
+}

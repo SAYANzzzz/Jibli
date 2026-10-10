@@ -1,66 +1,13 @@
-import { useEffect, useRef, useState } from "react";
+import { useState } from "react";
 import type { ReactNode } from "react";
 import { Link } from "react-router-dom";
-import { ChevronDown, Menu, X } from "lucide-react";
-import { useTranslation } from "../i18n/LanguageContext";
+import { Menu, X } from "lucide-react";
+import { useTranslation } from "../i18n/useTranslation";
 import { LANGUAGES } from "../i18n/translations";
 
 function LanguageSwitcher() {
   const { language, setLanguage } = useTranslation();
-  const [isOpen, setIsOpen] = useState(false);
-  const wrapRef = useRef<HTMLDivElement>(null);
-  const current = LANGUAGES.find((option) => option.value === language) ?? LANGUAGES[0];
-
-  useEffect(() => {
-    if (!isOpen) return;
-
-    const handleClickOutside = (event: MouseEvent) => {
-      if (wrapRef.current && !wrapRef.current.contains(event.target as Node)) {
-        setIsOpen(false);
-      }
-    };
-
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, [isOpen]);
-
-  return (
-    <div className="langSwitcher" ref={wrapRef} onClick={(event) => event.stopPropagation()}>
-      <button
-        type="button"
-        className="langSwitcherToggle"
-        aria-haspopup="listbox"
-        aria-expanded={isOpen}
-        onClick={() => setIsOpen((current) => !current)}
-      >
-        <img src={current.flag} alt="" className="langFlag" />
-        <span>{current.label}</span>
-        <ChevronDown size={14} />
-      </button>
-
-      {isOpen && (
-        <ul className="langSwitcherMenu" role="listbox">
-          {LANGUAGES.map((option) => (
-            <li key={option.value}>
-              <button
-                type="button"
-                role="option"
-                aria-selected={option.value === language}
-                className={option.value === language ? "langSwitcherOption active" : "langSwitcherOption"}
-                onClick={() => {
-                  setLanguage(option.value);
-                  setIsOpen(false);
-                }}
-              >
-                <img src={option.flag} alt="" className="langFlag" />
-                <span>{option.name}</span>
-              </button>
-            </li>
-          ))}
-        </ul>
-      )}
-    </div>
-  );
+  return <label className="languageSelect"><span className="srOnly">Language</span><select aria-label="Language" value={language} onChange={(e) => setLanguage(e.target.value as typeof language)}>{LANGUAGES.map((option) => <option key={option.value} value={option.value}>{option.name}</option>)}</select></label>;
 }
 
 function Navbar({ children, hidePrimaryNav }: { children: ReactNode; hidePrimaryNav?: boolean }) {

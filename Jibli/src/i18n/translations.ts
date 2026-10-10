@@ -1,6 +1,9 @@
-export type Language = "en" | "fr";
+import { arabic } from "./arabic";
+import { arabicLegal } from "./arabicLegal";
+export type Language = "en" | "fr" | "ar";
 
 export const LANGUAGES: { value: Language; label: string; flag: string; name: string }[] = [
+  { value: "ar", label: "AR", flag: "/flags/tn.svg", name: "العربية" },
   { value: "en", label: "EN", flag: "/flags/us.png", name: "English" },
   { value: "fr", label: "FR", flag: "/flags/fr.webp", name: "Français" },
 ];
@@ -38,7 +41,7 @@ const en = {
     step2Title: "Get price",
     step2Text: "We calculate product price, shipping, customs estimate and fee.",
     step3Title: "Confirm order",
-    step3Text: "You confirm the price and pay a small deposit.",
+    step3Text: "Review the verified price and pay through D17.",
     step4Title: "Receive product",
     step4Text: "We order it and you track the package until delivery.",
     gamingSectionTitle: "Gaming top-ups & subscriptions",
@@ -75,7 +78,7 @@ const en = {
     shippingFee: "Shipping fee",
     grandTotal: "Grand total",
     sending: "Saving request...",
-    sendRequest: "Send request on WhatsApp",
+    sendRequest: "Submit request for price review",
     freeNotice: "Your request is free. You only pay after we confirm the final price.",
     submitError: "Could not save your request yet. Please try again before sending it on WhatsApp.",
     takingLong: "Still working — this can take up to a minute if our server was asleep. Please don't close this page.",
@@ -203,7 +206,7 @@ const en = {
     verifyTitle: "Verify your email",
     verifySubtitle: "Enter the code we sent to {{email}}",
     verifyNotice: "The code comes from verify@jiblitunisia.com — check your spam folder if you don't see it. If you already have an account with this email, no new code will be sent — log in instead.",
-    resumeNotice: "You already started creating this account but never finished verifying it. We just sent a fresh code to your email — check your spam folder if you don't see it.",
+    resumeNotice: "This account still needs email verification. Enter your existing code, or request a new code below.",
     codePlaceholder: "Verification code",
     verifying: "Verifying...",
     verifySubmit: "Verify & create account",
@@ -435,7 +438,7 @@ const fr: typeof en = {
     step2Title: "Obtenez le prix",
     step2Text: "Nous calculons le prix du produit, la livraison, l'estimation douanière et les frais.",
     step3Title: "Confirmez la commande",
-    step3Text: "Vous confirmez le prix et payez un petit acompte.",
+    step3Text: "Vérifiez le prix confirmé et payez via D17.",
     step4Title: "Recevez le produit",
     step4Text: "Nous le commandons et vous suivez le colis jusqu'à la livraison.",
     gamingSectionTitle: "Recharges gaming & abonnements",
@@ -472,7 +475,7 @@ const fr: typeof en = {
     shippingFee: "Frais de livraison",
     grandTotal: "Total général",
     sending: "Enregistrement de la demande...",
-    sendRequest: "Envoyer la demande sur WhatsApp",
+    sendRequest: "Envoyer pour vérification du prix",
     freeNotice: "Votre demande est gratuite. Vous ne payez qu'après confirmation du prix final.",
     submitError: "Impossible d'enregistrer votre demande pour le moment. Réessayez avant de l'envoyer sur WhatsApp.",
     takingLong: "Toujours en cours — cela peut prendre jusqu'à une minute si notre serveur était en veille. Merci de ne pas fermer cette page.",
@@ -600,7 +603,7 @@ const fr: typeof en = {
     verifyTitle: "Vérifiez votre email",
     verifySubtitle: "Entrez le code envoyé à {{email}}",
     verifyNotice: "Le code provient de verify@jiblitunisia.com — vérifiez vos spams si vous ne le voyez pas. Si vous avez déjà un compte avec cet email, aucun nouveau code ne sera envoyé — connectez-vous plutôt.",
-    resumeNotice: "Vous aviez déjà commencé à créer ce compte mais ne l'avez jamais vérifié. Nous venons d'envoyer un nouveau code à votre email — vérifiez vos spams si vous ne le voyez pas.",
+    resumeNotice: "Ce compte doit encore être vérifié. Saisissez votre code existant ou demandez-en un nouveau ci-dessous.",
     codePlaceholder: "Code de vérification",
     verifying: "Vérification en cours...",
     verifySubmit: "Vérifier et créer le compte",
@@ -799,7 +802,8 @@ const fr: typeof en = {
   },
 };
 
-export const translations = { en, fr };
+const ar = { ...en, ...arabic, ...arabicLegal, orderItem: { ...en.orderItem, ...arabic.orderItem }, login: { ...en.login, ...arabic.login }, register: { ...en.register, ...arabic.register } };
+export const translations = { en, fr, ar };
 
 export type TranslationKey = {
   [K in keyof typeof en]: `${K & string}.${keyof (typeof en)[K] & string}`;

@@ -6,7 +6,7 @@ import Navbar from "../components/Navbar";
 import ProfileNavLink from "../components/ProfileNavLink";
 import Footer from "../components/Footer";
 import { supabase } from "../supabase";
-import { useTranslation } from "../i18n/LanguageContext";
+import { useTranslation } from "../i18n/useTranslation";
 
 function AboutUs() {
   const { t } = useTranslation();

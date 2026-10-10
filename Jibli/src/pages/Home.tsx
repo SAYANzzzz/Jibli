@@ -18,7 +18,7 @@ import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import ProfileNavLink from "../components/ProfileNavLink";
 import { supabase } from "../supabase";
-import { useTranslation } from "../i18n/LanguageContext";
+import { useTranslation } from "../i18n/useTranslation";
 
 function Home() {
   const { t } = useTranslation();

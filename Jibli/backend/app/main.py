@@ -6,10 +6,13 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from .auth import get_current_profile, get_current_user, require_admin
 from .config import get_settings
-from .pricing import calculate_price
+from .pricing import calculate_price, calculate_cart_total
 from .product_preview import preview_product
+from .payments import router as payments_router
+from .invitations import router as invitations_router
 from .schemas import AdminOrderUpdateIn, CartRequestIn, PreviewRequest, ProfileUpdateIn, QuickOrderPriceIn, QuickPreviewIn
 from .supabase_client import get_supabase_admin
+from .quotes import quote_marker
 
 settings = get_settings()
 
@@ -17,6 +20,9 @@ MAX_IMAGE_BYTES = 5 * 1024 * 1024
 ALLOWED_IMAGE_TYPES = {"image/jpeg", "image/png", "image/webp"}
 
 app = FastAPI(title="Jibli API")
+
+app.include_router(payments_router)
+app.include_router(invitations_router)
 
 app.add_middleware(
   CORSMiddleware,
@@ -90,7 +96,7 @@ def update_profile(payload: ProfileUpdateIn, user: dict = Depends(get_current_us
   supabase = get_supabase_admin()
   existing = supabase.table("profiles").select("id").eq("id", user["id"]).maybe_single().execute()
 
-  if existing.data:
+  if existing and existing.data:
     response = supabase.table("profiles").update(data).eq("id", user["id"]).execute()
   else:
     response = supabase.table("profiles").insert({"id": user["id"], **data}).execute()
@@ -109,7 +115,7 @@ def get_or_create_active_cart(user_id: str) -> dict:
     .execute()
   )
 
-  if existing.data:
+  if existing and existing.data:
     return existing.data[0]
 
   created = supabase.table("carts").insert({"user_id": user_id, "status": "active"}).execute()
@@ -165,7 +171,7 @@ def add_cart_items(payload: CartRequestIn, user: dict = Depends(get_current_user
 def submit_order(user: dict = Depends(get_current_user)) -> dict:
   supabase = get_supabase_admin()
   cart = get_or_create_active_cart(user["id"])
-  items = supabase.table("cart_items").select("id, shop").eq("cart_id", cart["id"]).execute()
+  items = supabase.table("cart_items").select("id, shop, quantity, selected_options").eq("cart_id", cart["id"]).execute()
 
   if not items.data:
     raise HTTPException(
@@ -179,9 +185,14 @@ def submit_order(user: dict = Depends(get_current_user)) -> dict:
       detail="Only AliExpress products can be submitted.",
     )
 
+  try:
+    total = calculate_cart_total(items.data)
+  except (ValueError, TypeError) as error:
+    raise HTTPException(400, "Check each product's USD price before continuing to payment.") from error
+  initial_status = "new_request"  # Customer-entered USD amounts are estimates until an admin verifies them.
   order = (
     supabase.table("orders")
-    .insert({"user_id": user["id"], "cart_id": cart["id"], "status": "new_request"})
+    .insert({"user_id": user["id"], "cart_id": cart["id"], "status": initial_status, "final_price": None})
     .execute()
   )
   supabase.table("carts").update({"status": "submitted"}).eq("id", cart["id"]).execute()
@@ -191,8 +202,8 @@ def submit_order(user: dict = Depends(get_current_user)) -> dict:
     {
       "order_id": created_order["id"],
       "user_id": user["id"],
-      "status": "new_request",
-      "note": "Order request submitted.",
+      "status": initial_status,
+      "note": f"Order request submitted. Customer estimate: {total} TND; awaiting admin price verification." if total else "Order request submitted; awaiting admin price verification.",
     }
   ).execute()
 
@@ -337,6 +348,14 @@ def update_order_status(
   status_value = payload.status
 
   supabase = get_supabase_admin()
+  payments = supabase.table("d17_orders").select("amount,status").eq("order_id", order_id).execute().data
+  if payments:
+    payment = payments[0]
+    if payload.final_price is not None and float(payload.final_price) != float(payment["amount"]):
+      raise HTTPException(409, "A D17 checkout already exists. Its quoted amount cannot be changed.")
+    unpaid = payment["status"] not in ("confirmed", "processing", "delivered")
+    if unpaid and status_value not in ("new_request", "waiting_confirmation", "price_confirmed", "cancelled"):
+      raise HTTPException(409, "Verify and confirm the D17 reference in the payment panel before processing this order.")
   update_data = {"status": status_value}
 
   for field in ["tracking_number", "final_price", "deposit_amount"]:
@@ -355,12 +374,15 @@ def update_order_status(
     raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Order not found.")
 
   order = updated.data[0]
+  note = payload.note or f"Updated by admin {admin_profile.get('full_name') or ''}".strip()
+  if status_value in ("price_confirmed", "waiting_confirmation") and payload.final_price and payload.final_price > 0:
+    note = f"{note}\n{quote_marker(order)}"
   supabase.table("order_events").insert(
     {
       "order_id": order_id,
       "user_id": order["user_id"],
       "status": status_value,
-      "note": payload.note or f"Updated by admin {admin_profile.get('full_name') or ''}".strip(),
+      "note": note,
     }
   ).execute()
 
@@ -404,7 +426,7 @@ def delete_order(order_id: str, _: dict = Depends(require_admin)) -> dict:
   supabase = get_supabase_admin()
   existing = supabase.table("orders").select("id").eq("id", order_id).maybe_single().execute()
 
-  if not existing.data:
+  if not existing or not existing.data:
     raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Order not found.")
 
   supabase.table("orders").delete().eq("id", order_id).execute()

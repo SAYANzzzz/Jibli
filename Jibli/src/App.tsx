@@ -1,29 +1,32 @@
-import { useEffect, useState } from "react";
+const GuestInvitation = lazy(() => import("./pages/GuestInvitation"));
+const OtherInvitations = lazy(() => import("./pages/OtherInvitations"));
+const Payment = lazy(() => import("./pages/Payment"));
+import { lazy, Suspense, useEffect, useState } from "react";
 import type { ReactElement } from "react";
 import { BrowserRouter, Navigate, Route, Routes, useLocation } from "react-router-dom";
-import Home from "./pages/Home.tsx";
-import Login from "./pages/Login.tsx";
-import Register from "./pages/Register.tsx";
-import AuthCallback from "./pages/AuthCallback.tsx";
-import ResetPassword from "./pages/ResetPassword.tsx";
-import Account from "./pages/Account.tsx";
-import ProductRequest from "./pages/ProductRequest.tsx";
-import OrderTracking from "./pages/OrderTracking.tsx";
-import GamingStore from "./pages/GamingStore.tsx";
-import Invitations from "./pages/Invitations.tsx";
-import WeddingInvitations from "./pages/WeddingInvitations.tsx";
-import EngagementInvitations from "./pages/EngagementInvitations.tsx";
-import BirthdayInvitations from "./pages/BirthdayInvitations.tsx";
-import BusinessOpeningInvitations from "./pages/BusinessOpeningInvitations.tsx";
-import GraduationInvitations from "./pages/GraduationInvitations.tsx";
-import FamilyGatheringInvitations from "./pages/FamilyGatheringInvitations.tsx";
-import AboutUs from "./pages/AboutUs.tsx";
-import Contact from "./pages/Contact.tsx";
-import TermsOfService from "./pages/TermsOfService.tsx";
-import PrivacyPolicy from "./pages/PrivacyPolicy.tsx";
-import RefundPolicy from "./pages/RefundPolicy.tsx";
-import NotFound from "./pages/NotFound.tsx";
-import AdminDashboard from "./pages/AdminDashboard";
+const Home = lazy(() => import("./pages/Home.tsx"));
+const Login = lazy(() => import("./pages/Login.tsx"));
+const Register = lazy(() => import("./pages/Register.tsx"));
+const AuthCallback = lazy(() => import("./pages/AuthCallback.tsx"));
+const ResetPassword = lazy(() => import("./pages/ResetPassword.tsx"));
+const Account = lazy(() => import("./pages/Account.tsx"));
+const ProductRequest = lazy(() => import("./pages/ProductRequest.tsx"));
+const OrderTracking = lazy(() => import("./pages/OrderTracking.tsx"));
+const GamingStore = lazy(() => import("./pages/GamingStore.tsx"));
+const Invitations = lazy(() => import("./pages/Invitations.tsx"));
+const WeddingInvitations = lazy(() => import("./pages/WeddingInvitations.tsx"));
+const EngagementInvitations = lazy(() => import("./pages/EngagementInvitations.tsx"));
+const BirthdayInvitations = lazy(() => import("./pages/BirthdayInvitations.tsx"));
+const BusinessOpeningInvitations = lazy(() => import("./pages/BusinessOpeningInvitations.tsx"));
+const GraduationInvitations = lazy(() => import("./pages/GraduationInvitations.tsx"));
+const FamilyGatheringInvitations = lazy(() => import("./pages/FamilyGatheringInvitations.tsx"));
+const AboutUs = lazy(() => import("./pages/AboutUs.tsx"));
+const Contact = lazy(() => import("./pages/Contact.tsx"));
+const TermsOfService = lazy(() => import("./pages/TermsOfService.tsx"));
+const PrivacyPolicy = lazy(() => import("./pages/PrivacyPolicy.tsx"));
+const RefundPolicy = lazy(() => import("./pages/RefundPolicy.tsx"));
+const NotFound = lazy(() => import("./pages/NotFound.tsx"));
+const AdminDashboard = lazy(() => import("./pages/AdminDashboard"));
 import { getProfile } from "./api";
 import { getCurrentSession } from "./auth";
 import "./App.css";
@@ -187,8 +190,9 @@ function AdminRoute({ children }: { children: ReactElement }) {
 function App() {
   return (
     <BrowserRouter>
-      <Routes>
+      <Suspense fallback={<div className="routeLoading">Loading?</div>}><Routes>
         <Route path="/" element={<Home />} />
+        <Route path="/invite/:token" element={<GuestInvitation />} />
         <Route path="/auth/callback" element={<AuthCallback />} />
         <Route path="/reset-password" element={<ResetPassword />} />
         <Route
@@ -223,6 +227,7 @@ function App() {
             </ProtectedRoute>
           }
         />
+        <Route path="/payment" element={<ProtectedRoute><Payment /></ProtectedRoute>} />
         <Route path="/order" element={<OrderRedirect />} />
         <Route path="/gaming" element={<GamingStore />} />
         <Route path="/invitations" element={<Invitations />} />
@@ -231,6 +236,7 @@ function App() {
         <Route path="/invitations/birthdays" element={<BirthdayInvitations />} />
         <Route path="/invitations/openings" element={<BusinessOpeningInvitations />} />
         <Route path="/invitations/graduations" element={<GraduationInvitations />} />
+        <Route path="/invitations/others" element={<OtherInvitations />} />
         <Route path="/invitations/family" element={<FamilyGatheringInvitations />} />
         <Route path="/about" element={<AboutUs />} />
         <Route path="/contact" element={<Contact />} />
@@ -254,7 +260,7 @@ function App() {
           }
         />
         <Route path="*" element={<NotFound />} />
-      </Routes>
+      </Routes></Suspense>
     </BrowserRouter>
   );
 }

@@ -1,3 +1,5 @@
+import PaymentOrders from "../components/PaymentOrders";
+import PaymentButton from "../components/PaymentButton";
 import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { MessageCircle, Package, PlusCircle } from "lucide-react";
@@ -5,7 +7,7 @@ import { getOrders } from "../api";
 import type { Order } from "../api";
 import Navbar from "../components/Navbar";
 import ProfileNavLink from "../components/ProfileNavLink";
-import { useTranslation } from "../i18n/LanguageContext";
+import { useTranslation } from "../i18n/useTranslation";
 import type { TranslationKey } from "../i18n/translations";
 
 function formatDate(value: string) {
@@ -58,17 +60,19 @@ function OrderTracking() {
   const [orders, setOrders] = useState<Order[]>([]);
   const [selectedOrderId, setSelectedOrderId] = useState("");
   const [isLoading, setIsLoading] = useState(true);
+  const [loadError, setLoadError] = useState("");
   const [copiedTrackingId, setCopiedTrackingId] = useState("");
 
   useEffect(() => {
     getOrders()
       .then(({ orders: nextOrders }) => {
-        const confirmedOrders = nextOrders.filter((order) => order.status !== "new_request");
-        setOrders(confirmedOrders);
-        setSelectedOrderId(confirmedOrders[0]?.id ?? "");
+        setOrders(nextOrders);
+        const requested = new URLSearchParams(window.location.search).get("order");
+        setSelectedOrderId(nextOrders.find((order) => order.id === requested)?.id ?? nextOrders[0]?.id ?? "");
       })
       .catch((error) => {
         console.error("Could not load orders", error);
+        setLoadError(error instanceof Error ? error.message : "Could not load orders. Refresh to try again.");
         setOrders([]);
       })
       .finally(() => setIsLoading(false));
@@ -102,6 +106,8 @@ function OrderTracking() {
       </Navbar>
 
       <main className="page">
+        {loadError && <p className="d17Error" role="alert">{loadError}</p>}
+        <PaymentOrders />
         <section className="tableCard panierTrackingSection" id="panier">
           <div className="tableTop">
             <div>
@@ -188,6 +194,7 @@ function OrderTracking() {
                       </div>
                     </div>
 
+                    {["price_confirmed", "waiting_confirmation"].includes(selectedOrder.status) && selectedOrder.final_price && <PaymentButton productKey="aliexpress" orderId={selectedOrder.id} />}
                     <div className="trackedItemsList">
                       {selectedOrder.items.map((item) => (
                         <a
@@ -233,7 +240,7 @@ function OrderTracking() {
                           </div>
                           <div className="otlBody">
                             <strong>{statusLabel(event.status, t)}</strong>
-                            {event.note && <p>{event.note}</p>}
+                            {event.note && <p>{event.note.replace(/\n?\[Jibli verified quote: [a-f0-9]{64}\]/g, "")}</p>}
                             <span className="otlDate">{formatTrackingDate(event.created_at)}</span>
                           </div>
                         </div>

@@ -1,6 +1,8 @@
 from typing import Annotated
 
 from fastapi import Depends, Header, HTTPException, status
+from gotrue.errors import AuthApiError, AuthRetryableError
+from httpx import RequestError
 
 from .supabase_client import get_supabase_admin
 
@@ -12,7 +14,14 @@ def get_current_user(authorization: Annotated[str | None, Header()] = None) -> d
     )
 
   token = authorization.removeprefix("Bearer ").strip()
-  response = get_supabase_admin().auth.get_user(token)
+  try:
+    response = get_supabase_admin().auth.get_user(token)
+  except (AuthRetryableError, RequestError) as error:
+    raise HTTPException(status_code=503, detail="Cannot reach account verification. Please try again shortly.") from error
+  except AuthApiError as error:
+    if error.status >= 500:
+      raise HTTPException(status_code=503, detail="Account verification is temporarily unavailable.") from error
+    raise HTTPException(status_code=401, detail="Your session has expired. Please sign in again.") from error
 
   if not response.user:
     raise HTTPException(
@@ -37,7 +46,7 @@ def get_current_profile(user: dict = Depends(get_current_user)) -> dict:
     .execute()
   )
 
-  if response.data:
+  if response and response.data:
     return response.data
 
   metadata = user.get("metadata", {})

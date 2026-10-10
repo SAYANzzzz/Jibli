@@ -1,10 +1,10 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import type { FormEvent } from "react";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { KeyRound, Mail, Phone, ShieldCheck, User } from "lucide-react";
 import { ensureUserProfile, getAuthErrorMessage, resendSignupOtp, signUp, verifySignupOtp } from "../auth";
 import logo from "../assets/Fast-Logo.gif";
-import { useTranslation } from "../i18n/LanguageContext";
+import { useTranslation } from "../i18n/useTranslation";
 
 function Register() {
   const { t } = useTranslation();
@@ -35,32 +35,11 @@ function Register() {
     email: string;
     fullName?: string;
     phone?: string;
-  } | null>(null);
+  } | null>(resumeEmail ? { email: resumeEmail } : null);
   const [code, setCode] = useState("");
   const [isVerifying, setIsVerifying] = useState(false);
   const [isResending, setIsResending] = useState(false);
   const [resendNotice, setResendNotice] = useState("");
-
-  useEffect(() => {
-    if (!resumeEmail) {
-      return;
-    }
-
-    setPendingAccount({ email: resumeEmail });
-    setIsResending(true);
-
-    resendSignupOtp(resumeEmail).then(({ error }) => {
-      setIsResending(false);
-
-      if (error) {
-        setErrorMessage(getAuthErrorMessage(error, t("register.resendFailed")));
-      } else {
-        setResendNotice(t("register.resendSuccess"));
-      }
-    });
-    // Only meant to fire once, when landing here from the login redirect.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [resumeEmail]);
 
   const handleRegister = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();

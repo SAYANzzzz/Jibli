@@ -14,7 +14,7 @@ import {
   saveItemDraft,
 } from "../orderItem";
 import type { ExtraOption, ItemSnapshot } from "../orderItem";
-import { useTranslation } from "../i18n/LanguageContext";
+import { useTranslation } from "../i18n/useTranslation";
 
 type OrderItemCardProps = {
   id: string;
@@ -65,63 +65,36 @@ export function OrderItemCard({ id, index, initialLink, onUpdate, onRemove, canR
   const [calcError, setCalcError] = useState("");
 
   useEffect(() => {
-    const trimmed = link.trim();
-    setPreview(null);
-    setPreviewNotice("");
-
-    if (!trimmed || !shop || isBlocked) {
-      return;
-    }
-
-    const timeoutId = setTimeout(() => {
+    let active = true;
+    const timer = window.setTimeout(async () => {
+      setPreview(null); setPreviewNotice("");
+      if (!link.trim() || !shop || isBlocked) { setIsPreviewLoading(false); return; }
       setIsPreviewLoading(true);
-      quickOrderPreview(normalizeLink(trimmed))
-        .then((result) => {
-          setPreview(result);
-
-          if (result.price) {
-            const numeric = parseFloat(result.price.replace(/[^0-9.]/g, ""));
-
-            if (!Number.isNaN(numeric) && numeric > 0) {
-              setAmount((current) => current || String(numeric));
-            } else {
-              setPreviewNotice(t("orderItem.couldNotReadPrice"));
-            }
-          } else {
-            setPreviewNotice(t("orderItem.couldNotReadPrice"));
-          }
-        })
-        .catch((error) => {
-          console.error("Could not preview product link", error);
-          setPreviewNotice(t("orderItem.couldNotAutoFetch"));
-        })
-        .finally(() => setIsPreviewLoading(false));
+      try {
+        const result = await quickOrderPreview(normalizeLink(link.trim()));
+        if (!active) return;
+        setPreview(result);
+        const numeric = parseFloat((result.price || "").replace(/[^0-9.]/g, ""));
+        if (Number.isFinite(numeric) && numeric > 0) setAmount((current) => current || String(numeric));
+        else setPreviewNotice(t("orderItem.couldNotReadPrice"));
+      } catch { if (active) setPreviewNotice(t("orderItem.couldNotAutoFetch")); }
+      finally { if (active) setIsPreviewLoading(false); }
     }, 700);
-
-    return () => clearTimeout(timeoutId);
-  }, [link, shop, isBlocked]);
+    return () => { active = false; clearTimeout(timer); };
+  }, [link, shop, isBlocked, t]);
 
   useEffect(() => {
-    setPriceResult(null);
-    setCalcError("");
-
-    if (!shop || !link.trim() || currencyTotal <= 0 || quantity < 1 || isBlocked) {
-      return;
-    }
-
-    const timeoutId = setTimeout(() => {
+    let active = true;
+    const timer = window.setTimeout(async () => {
+      setPriceResult(null); setCalcError("");
+      if (!shop || !link.trim() || currencyTotal <= 0 || quantity < 1 || isBlocked) { setIsCalculating(false); return; }
       setIsCalculating(true);
-      quickOrderPrice(shop, currencyTotal, quantity, currency)
-        .then((result) => setPriceResult(result))
-        .catch((error) => {
-          console.error("Could not calculate price", error);
-          setCalcError(error instanceof Error ? error.message : t("common.calcErrorFallback"));
-        })
-        .finally(() => setIsCalculating(false));
+      try { const result = await quickOrderPrice(shop, currencyTotal, quantity, currency); if (active) setPriceResult(result); }
+      catch (error) { if (active) setCalcError(error instanceof Error ? error.message : t("common.calcErrorFallback")); }
+      finally { if (active) setIsCalculating(false); }
     }, 500);
-
-    return () => clearTimeout(timeoutId);
-  }, [shop, link, currencyTotal, currency, quantity, isBlocked]);
+    return () => { active = false; clearTimeout(timer); };
+  }, [shop, link, currencyTotal, currency, quantity, isBlocked, t]);
 
   const filledExtraOptions = useMemo(
     () => extraOptions.filter((option) => option.label.trim() && option.value.trim()),
