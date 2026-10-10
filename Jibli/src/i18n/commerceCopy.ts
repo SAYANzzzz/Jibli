@@ -1,16 +1,19 @@
 import { useTranslation } from "./useTranslation";
 
 const copy: Record<string, [string, string]> = {
-  "Example: Amira": ["Exemple : Amira", "مثال: أميرة"], "Example: 18": ["Exemple : 18", "مثال: 18"], "Example: Home, Sousse": ["Exemple : maison, Sousse", "مثال: المنزل، سوسة"],
+  "Pause animation": ["Mettre en pause", "إيقاف الحركة"],
+  "Resume animation": ["Reprendre l’animation", "استئناف الحركة"],
+  "Example: Aymen & Balkis": ["Exemple : Aymen & Balkis", "\u0645\u062b\u0627\u0644: Aymen & Balkis"],
+  "Example: 18": ["Exemple : 18", "مثال: 18"], "Example: Home, Sousse": ["Exemple : maison, Sousse", "مثال: المنزل، سوسة"],
   "Phone number or name": ["Téléphone ou nom", "رقم الهاتف أو الاسم"], "Dress code, colours, birthday message...": ["Tenue, couleurs, message d'anniversaire…", "اللباس والألوان ورسالة عيد الميلاد…"],
   "Your business name": ["Nom de votre entreprise", "اسم مشروعك"], "Café, salon, boutique...": ["Café, salon, boutique…", "مقهى، صالون، متجر…"], "Street address, city": ["Adresse, ville", "العنوان والمدينة"],
   "Phone, website or social handle": ["Téléphone, site ou réseau social", "الهاتف أو الموقع أو حساب التواصل"], "Brand colours, opening offers, event programme, closing time...": ["Couleurs, offres, programme, heure de fin…", "الألوان والعروض والبرنامج وموعد الختام…"],
-  "Example: Ahmed & Sara": ["Exemple : Ahmed et Sara", "مثال: أحمد وسارة"], "Example: Salle des fêtes, Tunis": ["Exemple : salle des fêtes, Tunis", "مثال: قاعة أفراح، تونس"], "Family names, dress code, colour changes...": ["Noms de famille, tenue, couleurs…", "أسماء العائلات واللباس والألوان…"],
+  "Example: Salle des fêtes, Tunis": ["Exemple : salle des fêtes, Tunis", "مثال: قاعة أفراح، تونس"], "Family names, dress code, colour changes...": ["Noms de famille, tenue, couleurs…", "أسماء العائلات واللباس والألوان…"],
   "Names of the hosts": ["Noms des organisateurs", "أسماء المضيفين"], "Colours, special wording, meal plans, dress code...": ["Couleurs, texte, repas, tenue…", "الألوان والنص والوجبات واللباس…"],
   "School, university or degree": ["École, université ou diplôme", "المدرسة أو الجامعة أو الشهادة"], "Graduation year, colours, special wording, event programme...": ["Année, couleurs, texte, programme…", "سنة التخرج والألوان والنص والبرنامج…"],
   "Tell us the essentials. We will turn this into a share-ready invitation.": ["Donnez-nous les détails pour une invitation prête à partager.", "أخبرنا بالتفاصيل لتجهيز دعوة للمشاركة."], "Live preview": ["Aperçu en direct", "معاينة مباشرة"],
   "This is a preview concept. Your final invitation is personalised by Jibli.": ["Ceci est un aperçu. Jibli personnalise votre invitation finale.", "هذه معاينة. جبلي يخصص دعوتك النهائية."],
-  "Hosts, celebrant or business name": ["Organisateurs, personne fêtée ou entreprise", "المضيف أو صاحب المناسبة أو المشروع"], "Example: Amira & Youssef": ["Exemple : Amira et Youssef", "مثال: أميرة ويوسف"], "Location / venue": ["Lieu", "مكان المناسبة"], "Example: Deguach, Tunisia": ["Exemple : Deguach, Tunisie", "مثال: دقاش، تونس"],
+  "Hosts, celebrant or business name": ["Organisateurs, personne fêtée ou entreprise", "المضيف أو صاحب المناسبة أو المشروع"], "Location / venue": ["Lieu", "مكان المناسبة"], "Example: Deguach, Tunisia": ["Exemple : Deguach, Tunisie", "مثال: دقاش، تونس"],
   "Anything else you want us to know?": ["Autre chose à préciser ?", "هل تريد إضافة تفاصيل أخرى؟"], "Colours, dress code, RSVP details, special wording...": ["Couleurs, tenue, contact, texte…", "الألوان واللباس والتواصل والنص…"], "Request on WhatsApp": ["Demander sur WhatsApp", "اطلب عبر واتساب"],
   "Invitations cost 10 TND; weddings cost 15 TND. We will confirm the final design before starting.": ["Invitations à 10 TND, mariages à 15 TND. Nous confirmons le modèle avant de commencer.", "الدعوات بـ10 دنانير والزفاف بـ15 ديناراً. نؤكد التصميم قبل البدء."],
   "School or teacher name": ["Nom de l'école ou de l'enseignant", "اسم المدرسة أو المعلم"], "Certificate wording, achievements, registration details, colours...": ["Texte du certificat, réussite, inscription, couleurs…", "نص الشهادة والإنجاز وتفاصيل التسجيل والألوان…"],

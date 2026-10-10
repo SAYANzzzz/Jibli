@@ -4942,6 +4942,44 @@ td {
 
 /* Invitation atelier: four palettes, layered stationery and a cinematic welcome. */
 .animatedInvite { --paper:#fcf6e9; --paper-deep:#e6d6b7; --ink:#59452b; --foil:#a8803c; --glow:#d7b978; }
+.inviteMotionToggle { display:block; margin:0 0 0 auto; padding:9px 14px; border:0; background:var(--paper-deep); color:var(--ink); font-size:12px; cursor:pointer; }
+.inviteMotionToggle:focus-visible { outline:2px solid var(--foil); outline-offset:-3px; }
+.inviteMotion { position:absolute; inset:0; overflow:hidden; pointer-events:none; color:var(--foil); z-index:0; }
+.inviteWelcome > :not(.inviteMotion):not(.inviteStardust) { position:relative; z-index:1; }
+.inviteBotanical { position:absolute; width:26%; max-width:145px; height:70%; bottom:-18px; left:-15px; opacity:.65; }
+.inviteBotanicalRight { left:auto; right:-15px; transform:scaleX(-1); }
+.inviteBranch { transform-origin:50% 100%; animation:inviteBranchSway 7s ease-in-out infinite alternate; }
+.inviteBotanicalRight .inviteBranch { animation-delay:-3s; animation-duration:9s; }
+.inviteLeaf { transform-box:fill-box; transform-origin:bottom center; animation:inviteLeafSway 4s ease-in-out infinite alternate; }
+.inviteButterfly { position:absolute; width:35px; top:21%; right:12%; opacity:.65; animation:inviteButterflyDrift 13s ease-in-out infinite; }
+.inviteWingLeft,.inviteWingRight { transform-box:view-box; transform-origin:50% 50%; animation:inviteWingFlutter 1.5s ease-in-out infinite alternate; }
+.inviteWingRight { animation-delay:-.25s; }
+.inviteOrbit { position:absolute; width:185px; height:185px; border:1px solid currentColor; border-radius:50%; top:17%; left:calc(50% - 92px); opacity:.18; animation:inviteOrbitBreathe 8s ease-in-out infinite alternate; }
+.invitePetal { position:absolute; top:-25px; width:7px; height:12px; border-radius:80% 0 80% 0; background:currentColor; opacity:0; animation:invitePetalFall 16s linear infinite; }
+.inviteMotion-midnight .invitePetal { width:3px; height:3px; border-radius:50%; box-shadow:0 0 10px var(--glow); }
+.inviteMotion-confetti .invitePetal { border-radius:2px; }
+.inviteArtworkScene { position:relative; overflow:hidden; isolation:isolate; }
+.livingArtwork { position:relative; }
+.livingArtwork .inviteArtwork { animation:none; }
+.livingArtwork canvas { position:absolute; inset:0; width:100%; height:100%; opacity:0; pointer-events:none; }
+.livingArtwork canvas[data-ready=true] { opacity:1; }
+.characterInvitation { display:block; width:100%; height:auto; }
+.characterBoy,.characterGirl { transform-box:view-box; transform-origin:50% 85%; animation:characterSway 5s ease-in-out infinite alternate; }
+.characterGirl { animation-delay:-2s; animation-duration:6s; transform-origin:75% 78%; }
+.characterGaze { transition:transform 100ms ease-out; }
+@keyframes characterSway { from { transform:translateY(2px) rotate(-.2deg); } to { transform:translateY(-5px) rotate(.2deg); } }
+.inviteArtworkScene .inviteArtwork { animation:inviteArtworkBreathe 16s ease-in-out infinite alternate; transform-origin:50% 60%; }
+.inviteArtworkScene .inviteBotanical { width:18%; opacity:.38; }
+.inviteArtworkScene .inviteOrbit { display:none; }
+.animatedInvite[data-motion-paused=true] *, .animatedInvite[data-motion-paused=true] *::before,.animatedInvite[data-motion-paused=true] *::after { animation-play-state:paused!important; }
+@keyframes inviteBranchSway { from { transform:rotate(-3deg); } to { transform:rotate(4deg); } }
+@keyframes inviteLeafSway { from { transform:rotate(-5deg); } to { transform:rotate(6deg); } }
+@keyframes inviteButterflyDrift { 0%,100% { transform:translate(0,0) rotate(-12deg); } 40% { transform:translate(-24px,-16px) rotate(8deg); } 70% { transform:translate(9px,12px) rotate(-4deg); } }
+@keyframes inviteWingFlutter { from { transform:scaleX(.48); } to { transform:scaleX(1); } }
+@keyframes inviteOrbitBreathe { from { transform:scale(.92); opacity:.12; } to { transform:scale(1.12); opacity:.28; } }
+@keyframes invitePetalFall { 0% { transform:translate3d(0,0,0) rotate(0); opacity:0; } 12%,80% { opacity:.35; } 100% { transform:translate3d(35px,700px,0) rotate(240deg); opacity:0; } }
+@keyframes inviteArtworkBreathe { from { transform:scale(1); } to { transform:scale(1.025); } }
+@media(prefers-reduced-motion:reduce) { .inviteMotionToggle { display:none; } }
 .animatedInvite.inviteMood-garden { --paper:#f0f3e9; --paper-deep:#c9d5bf; --ink:#324735; --foil:#638464; --glow:#b4c99c; }
 .animatedInvite.inviteMood-midnight { --paper:#182538; --paper-deep:#0d1727; --ink:#f2e4c9; --foil:#caac71; --glow:#a28b62; }
 .animatedInvite.inviteMood-confetti { --paper:#fff0f0; --paper-deep:#e9bdca; --ink:#702f4a; --foil:#b35e83; --glow:#f0b1ce; }

@@ -1,5 +1,8 @@
 import { useCommerceCopy } from "../i18n/commerceCopy";
 import { useEffect, useState } from "react";
+import InvitationMotion from "./InvitationMotion";
+import CharacterInvitation from "./CharacterInvitation";
+import LivingArtwork from "./LivingArtwork";
 import { RotateCcw, MapPin, ArrowDown, CalendarDays, Sparkles } from "lucide-react";
 
 type Props = { image: string; title: string; details: Record<string, string>; onMoodChange?: (mood: string) => void; guest?: boolean; certificate?: boolean };
@@ -9,6 +12,7 @@ export default function AnimatedInvitation({ image, title, details, onMoodChange
   const copy = useCommerceCopy(guest ? guestLanguage : undefined);
   const locale = guest ? guestLanguage : document.documentElement.lang || "en";
   const [opened, setOpened] = useState(false);
+  const [motionPaused, setMotionPaused] = useState(false);
   const collection = image.split("/")[2];
   const defaultMood = collection === "birthdays" ? "confetti" : collection === "family" ? "garden" : collection === "openings" || collection === "graduations" ? "midnight" : "champagne";
   const mood = details.mood || defaultMood;
@@ -27,7 +31,8 @@ export default function AnimatedInvitation({ image, title, details, onMoodChange
   const calendarText = (value: string) => value.replace(/\\/g, "\\\\").replace(/\n/g, "\\n").replace(/,/g, "\\,").replace(/;/g, "\\;");
   const calendarDate = validDate ? details.date.replaceAll("-", "") : "";
   const calendar = ["BEGIN:VCALENDAR", "VERSION:2.0", "PRODID:-//Jibli//Invitation//EN", "BEGIN:VEVENT", `UID:${calendarDate}-${encodeURIComponent(name)}@jibli`, `DTSTAMP:${new Date(now).toISOString().replace(/[-:]/g, "").replace(/\.\d{3}/, "")}`, validDate && details.time ? `DTSTART:${new Date(eventTime).toISOString().replace(/[-:]/g, "").replace(/\.\d{3}/, "")}` : `DTSTART;VALUE=DATE:${calendarDate}`, `SUMMARY:${calendarText(name)}`, `LOCATION:${calendarText(details.venue || "")}`, `DESCRIPTION:${calendarText(details.note || title)}`, "END:VEVENT", "END:VCALENDAR"].join("\r\n");
-  return <section className={`animatedInvite inviteMood-${mood} ${opened ? "isOpen" : ""}`} dir={locale === "ar" ? "rtl" : "ltr"} aria-label="Interactive invitation preview">
+  return <section className={`animatedInvite inviteMood-${mood} ${opened ? "isOpen" : ""}`} data-motion-paused={motionPaused} dir={locale === "ar" ? "rtl" : "ltr"} aria-label="Interactive invitation preview">
+    <button type="button" className="inviteMotionToggle" aria-pressed={motionPaused} onClick={() => setMotionPaused(!motionPaused)}>{copy(motionPaused ? "Resume animation" : "Pause animation")}</button>
     <div className="animatedInviteToolbar"><span><Sparkles size={13} />{copy("Your invitation experience")} </span>{opened && <button type="button" onClick={() => setOpened(false)}><RotateCcw size={14} />{copy("Replay")} </button>}</div>
     {!guest && <div className="inviteMoodPicker" role="group" aria-label="Invitation colour theme">{([['champagne', 'Champagne'], ['garden', 'Botanical'], ['midnight', 'Midnight'], ['confetti', 'Rose']] as const).map(([value, label]) => <button key={value} type="button" aria-pressed={mood === value} aria-label={`${label} theme`} title={label} className={`inviteMoodSwatch swatch-${value}`} onClick={() => onMoodChange?.(value)} />)}<span>{copy("Choose your mood")} </span></div>}
     {!opened ? <button type="button" className="inviteEnvelope" onClick={() => { setNow(Date.now()); setOpened(true); }} aria-label={`Open invitation: ${title}`}>
@@ -39,10 +44,11 @@ export default function AnimatedInvitation({ image, title, details, onMoodChange
     </button> : <div className="inviteReveal" tabIndex={0} aria-label="Scroll through your invitation">
       <div className="inviteCurtain inviteCurtainLeft" /><div className="inviteCurtain inviteCurtainRight" />
       <div className="inviteWelcome">
+        <InvitationMotion mood={mood} />
         <div className="inviteStardust" aria-hidden="true">{Array.from({length: 12}, (_, index) => <i key={index} style={{left: `${(index * 29 + 7) % 100}%`, animationDelay: `${index * -.7}s`, animationDuration: `${5 + index % 4}s`}} />)}</div>
         <span className="inviteWelcomeKicker">{copy("A moment to remember")} </span><span className="inviteWelcomeMonogram" aria-hidden="true">{initials}</span><h2 dir="auto">{name}</h2><p>{validDate ? new Intl.DateTimeFormat(locale, {dateStyle: "long", timeZone:"Africa/Tunis"}).format(new Date(eventTime)) : copy("Something beautiful is coming")}</p><span className="inviteScrollHint">{copy("Discover your invitation")} <ArrowDown size={16} /></span>
       </div>
-      {image && <img className="inviteArtwork" src={image} alt={guest ? title : `${title} design reference`} />}
+      {image && <div className="inviteArtworkScene">{image === "/invitations/others/kindergarten-welcome.jfif" ? <CharacterInvitation title={title} paused={motionPaused} /> : <LivingArtwork image={image} title={guest ? title : `${title} design reference`} paused={motionPaused} />}</div>}
       <div className="inviteEventDetails">
         <span className="inviteOrnament" aria-hidden="true">{copy("✦")} </span><p>{copy(certificate ? "Certificate of achievement" : "You are warmly invited")}</p><h2 dir="auto">{name}</h2>
         {(details.hosts || details.school) && <p dir="auto">{details.hosts || details.school}</p>}

@@ -74,7 +74,7 @@ export default function GraduationInvitations() {
           <div className="weddingSelectedDesign"><AnimatedInvitation key={selected.id} image={`/invitations/graduations/${selected.id}.jfif`} title={selected.title} details={details} onMoodChange={(mood) => setDetails((current) => ({ ...current, mood }))} /><div><strong>{selected.title}</strong><span>{selected.description}</span>{selected.needsPhoto ? <p>{copy("Send the graduate photo in the WhatsApp chat after submitting.")} </p> : null}</div></div>
           <form className="invitationForm weddingOrderForm" onSubmit={(event) => event.preventDefault()}>
             <div className="invitationFormRow">
-              <label>{copy("Graduate name")} <input required maxLength={160} value={details.name} onChange={(event) => update("name", event.target.value)} placeholder={copy("Graduate name")} /></label>
+              <label>{copy("Graduate name")} <input required maxLength={160} value={details.name} onChange={(event) => update("name", event.target.value)} placeholder={copy("Example: Aymen & Balkis")} /></label>
               <label>{copy("School / degree")} <input value={details.school} onChange={(event) => update("school", event.target.value)} placeholder={copy("School, university or degree")} /></label>
             </div>
             <div className="invitationFormRow">

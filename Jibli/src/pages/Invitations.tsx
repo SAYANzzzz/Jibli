@@ -150,7 +150,7 @@ function Invitations() {
                 <p className="mutedText">{copy("This is a preview concept. Your final invitation is personalised by Jibli.")} </p>
               </div>
               <form className="invitationForm" onSubmit={(event) => event.preventDefault()}>
-                <label>{copy("Hosts, celebrant or business name")} <input value={details.hosts} onChange={(event) => changeDetail("hosts", event.target.value)} placeholder={copy("Example: Amira & Youssef")} /></label>
+                <label>{copy("Hosts, celebrant or business name")} <input value={details.hosts} onChange={(event) => changeDetail("hosts", event.target.value)} placeholder={copy("Example: Aymen & Balkis")} /></label>
                 <div className="invitationFormRow">
                   <label>{copy("Date")} <input type="date" value={details.date} onChange={(event) => changeDetail("date", event.target.value)} /></label>
                   <label>{copy("Time")} <input type="time" value={details.time} onChange={(event) => changeDetail("time", event.target.value)} /></label>

@@ -71,8 +71,8 @@ export default function FamilyGatheringInvitations() {
           <div className="weddingSelectedDesign"><AnimatedInvitation key={selected.id} image={`/invitations/family/${selected.id}.jfif`} title={selected.title} details={details} onMoodChange={(mood) => setDetails((current) => ({ ...current, mood }))} /><div><strong>{selected.title}</strong><span>{selected.description}</span></div></div>
           <form className="invitationForm weddingOrderForm" onSubmit={(event) => event.preventDefault()}>
             <div className="invitationFormRow">
-              <label>{copy("Family name / gathering title")} <input required maxLength={160} value={details.name} onChange={(event) => update("name", event.target.value)} placeholder={copy("Family name / gathering title")} /></label>
-              <label>{copy("Hosts")} <input value={details.hosts} onChange={(event) => update("hosts", event.target.value)} placeholder={copy("Names of the hosts")} /></label>
+              <label>{copy("Family name / gathering title")} <input required maxLength={160} value={details.name} onChange={(event) => update("name", event.target.value)} placeholder={copy("Example: Aymen & Balkis")} /></label>
+              <label>{copy("Hosts")} <input value={details.hosts} onChange={(event) => update("hosts", event.target.value)} placeholder={copy("Example: Aymen & Balkis")} /></label>
             </div>
             <div className="invitationFormRow">
               <label>{copy("Gathering date")} <input type="date" value={details.date} onChange={(event) => update("date", event.target.value)} /></label>

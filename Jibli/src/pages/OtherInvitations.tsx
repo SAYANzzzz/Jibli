@@ -109,7 +109,7 @@ export default function OtherInvitations() {
           <div className="weddingSelectedDesign"><AnimatedInvitation key={selected.id} image={`/invitations/others/${selected.id}.jfif`} title={selected.title} details={details} certificate={(selected.id.includes("certificate") || selected.id.includes("weekly-star"))} onMoodChange={(mood) => setDetails((current) => ({ ...current, mood }))} /><div><strong>{selected.title}</strong><span>{selected.description}</span></div></div>
           <form className="invitationForm weddingOrderForm" onSubmit={(event) => event.preventDefault()}>
             <div className="invitationFormRow">
-              <label>{copy("Recipient name / card title")} <input required maxLength={160} value={details.name} onChange={(event) => update("name", event.target.value)} placeholder={copy("Recipient name / card title")} /></label>
+              <label>{copy("Recipient name / card title")} <input required maxLength={160} value={details.name} onChange={(event) => update("name", event.target.value)} placeholder={copy("Example: Aymen & Balkis")} /></label>
               <label>{copy("School / organisation")} <input value={details.hosts} onChange={(event) => update("hosts", event.target.value)} placeholder={copy("School or teacher name")} /></label>
             </div>
             <div className="invitationFormRow">
