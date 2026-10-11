@@ -5101,7 +5101,10 @@ td {
 .animatedInvite.inviteStory .inviteEventDetails { position:relative; isolation:isolate; display:flex; flex-direction:column; gap:30px; padding:32px 20px 44px; background:var(--paper-deep); }
 .inviteStory .inviteEventDetails::before { content:""; position:absolute; inset:0; z-index:-1; background-image:linear-gradient(var(--paper-deep),transparent 35%,var(--paper-deep)),var(--story-artwork); background-size:cover; background-position:center; opacity:.2; pointer-events:none; }
 .inviteStoryPanel { position:relative; padding:32px 20px; border:1px solid color-mix(in srgb,var(--foil) 55%,transparent); border-radius:100px 100px 18px 18px; background:color-mix(in srgb,var(--paper) 93%,transparent); box-shadow:0 12px 36px #0000000c,inset 0 0 0 5px color-mix(in srgb,var(--paper-deep) 50%,transparent); }
-.inviteStoryPanel[data-entered=true] { animation:invitePanelArrive .85s cubic-bezier(.2,.7,.2,1) both; }
+.inviteStoryPanel[data-entered=true] { animation:none; }
+.inviteStoryPanel[data-entered=true] > * { animation:invitePanelArrive .95s cubic-bezier(.16,1,.3,1) both; }
+.inviteStoryPanel[data-entered=true] > :nth-child(2) { animation-delay:.06s; }
+.inviteStoryPanel[data-entered=true] > :nth-child(n+3) { animation-delay:.12s; }
 .inviteStory .inviteEventDetails h3 { margin:14px 0 20px; text-transform:capitalize; }
 .inviteMonthGrid { margin:20px 0; width:100%; }
 .inviteMonthRow { display:grid; grid-template-columns:repeat(7,minmax(0,1fr)); align-items:center; gap:4px; margin:6px 0; }
@@ -5118,10 +5121,210 @@ td {
 @keyframes inviteEnvelopeDepart { 0%,45% { opacity:1; transform:translateY(0); } 100% { opacity:0; transform:translateY(-105%); } }
 @keyframes inviteFlapUnfold { 0%,15% { transform:perspective(1000px) rotateX(0); } 100% { transform:perspective(1000px) rotateX(175deg); } }
 @keyframes inviteSealRelease { to { opacity:0; transform:translateY(28px) scale(.8); } }
-@keyframes invitePanelArrive { from { opacity:.35; transform:translateY(28px); } to { opacity:1; transform:translateY(0); } }
+@keyframes invitePanelArrive { from { opacity:.65; transform:translateY(10px); } to { opacity:1; transform:translateY(0); } }
 @keyframes inviteScrollNudge { 50% { transform:translateY(7px); } }
 @media(max-width:560px) { .inviteStory .inviteEnvelope { min-height:580px; } .inviteStoryPanel { padding:30px 16px; } .animatedInvite.inviteStory .inviteEventDetails { padding-inline:14px; gap:24px; } }
 @media(prefers-reduced-motion:reduce) {
   .inviteStory *, .inviteStory *::before, .inviteStory *::after { animation:none!important; transition:none!important; scroll-behavior:auto!important; }
   .inviteStory .inviteEnvelope.isOpening { animation:inviteEnvelopeDepart .01s linear both!important; }
 }
+
+/* Invitation chapters: a full-screen cover, tactile opening, and event stationery. */
+.inviteSampleNotice { margin:0!important; padding:10px 16px!important; background:var(--paper-deep); color:var(--ink)!important; font:11px/1.6 system-ui,sans-serif!important; text-align:center; }
+.inviteChapterNav { display:flex; position:absolute; inset:0 0 auto; z-index:4; justify-content:center; gap:3px; padding:9px 6px; border-bottom:1px solid color-mix(in srgb,var(--foil) 25%,transparent); background:color-mix(in srgb,var(--paper) 96%,transparent); backdrop-filter:blur(12px); }
+.inviteChapterNav button { display:flex; align-items:center; justify-content:center; gap:6px; flex:1; min-height:36px; padding:6px 8px; border:0; border-radius:30px; background:transparent; color:var(--ink); cursor:pointer; font:10px/1.4 system-ui,sans-serif; }
+.inviteChapterNav button:hover { background:var(--paper-deep); }
+.inviteChapterNav button:focus-visible,.inviteScrollHint:focus-visible { outline:2px solid var(--foil); outline-offset:2px; }
+.animatedInvite.inviteStory .inviteReveal { position:relative; padding-top:55px; height:min(850px,88svh); scroll-padding-top:70px; }
+.inviteStory .inviteWelcome { position:relative; min-height:650px; display:grid; place-items:center; overflow:hidden; background:var(--paper-deep); }
+.inviteStory .inviteWelcome > .inviteStoryArtwork { position:absolute; inset:0; height:100%; opacity:.26; filter:blur(1px); pointer-events:none; }
+.inviteStory .inviteStoryArtwork .livingArtwork { height:100%; }
+.inviteStory .inviteStoryArtwork :is(img,svg,canvas) { height:100%; object-fit:cover; }
+.inviteStory .inviteWelcome::after { display:block; content:""; position:absolute; inset:0; z-index:0; background:linear-gradient(var(--paper) 0%,transparent 35%,var(--paper) 100%); opacity:.65; pointer-events:none; }
+.inviteStory .inviteStoryTitle { width:calc(100% - 44px); min-height:540px; margin:35px 22px; padding:52px 20px 36px; border:1px solid var(--foil); border-radius:180px 180px 12px 12px; background:color-mix(in srgb,var(--paper) 88%,transparent); box-shadow:0 12px 40px #00000012,inset 0 0 0 7px color-mix(in srgb,var(--paper-deep) 65%,transparent); z-index:1; }
+.inviteHeroRule { width:36px; height:1px; background:var(--foil); margin:16px auto 25px; }
+.inviteStory .inviteStoryTitle h2 { font:italic clamp(34px,5vw,48px)/1.3 Georgia,serif; margin:18px 0; }
+.inviteStory .inviteScrollHint { padding:12px; background:transparent; border:0; cursor:pointer; }
+.inviteStory .inviteWelcomeMonogram { width:92px; height:92px; border-style:double; border-width:3px; font-size:36px; }
+.inviteStory .inviteEventDetails::before { background-size:auto 800px; background-repeat:repeat-y; opacity:.3; }
+.inviteStoryPanel { border-radius:22px; padding:36px 22px; background:color-mix(in srgb,var(--paper) 92%,transparent); box-shadow:0 18px 35px #00000010,inset 0 0 0 6px color-mix(in srgb,var(--paper-deep) 48%,transparent); }
+.inviteStoryIntro { border-radius:140px 140px 20px 20px; padding-top:58px; }
+.inviteSectionNumber { display:block; margin:0 0 22px; font:9px/1.6 system-ui,sans-serif; color:var(--ink); letter-spacing:.16em; text-transform:uppercase; opacity:.7; }
+.inviteDateDisplay { display:flex; flex-direction:column; align-items:center; gap:4px; padding:10px 0 22px; color:var(--ink); }
+.inviteDateDisplay > span { font:14px/1.6 Georgia,serif; text-transform:capitalize; }
+.inviteStory .inviteDateDisplay > strong { font:90px/1.1 Georgia,serif; color:var(--foil); margin:5px 0; }
+.inviteTimeDisplay { display:flex; flex-wrap:wrap; align-items:center; justify-content:center; gap:10px; padding:20px 10px; border-block:1px solid color-mix(in srgb,var(--foil) 40%,transparent); color:var(--ink); }
+.inviteStory .inviteTimeDisplay > strong { font:26px Georgia,serif; color:var(--ink); }
+.inviteTimeDisplay > span { flex-basis:100%; font:10px system-ui,sans-serif; opacity:.7; }
+.inviteEventRibbon { display:flex; justify-content:center; align-items:center; gap:15px; margin:24px 0 0; font:italic 13px/1.6 Georgia,serif; color:var(--ink); }
+.inviteEventRibbon > span { color:var(--foil); }
+.inviteStoryCalendar { border-radius:22px; }
+.inviteMonthGrid { padding:12px 0; border-block:1px solid color-mix(in srgb,var(--foil) 25%,transparent); }
+.inviteMonthRow > span { min-height:35px; }
+.inviteMonthRow .isEventDay { position:relative; background:var(--foil); color:var(--paper); outline-offset:3px; }
+.inviteMonthRow .isEventDay::after { content:"\2665"; position:absolute; bottom:-9px; inset-inline-end:-3px; font-size:13px; color:var(--ink); }
+.inviteStory .inviteCountdown { margin-bottom:0; direction:ltr; }
+.inviteStory .inviteCountdown > div { position:relative; border:0; border-radius:8px; padding:20px 2px 12px; background:var(--paper-deep); box-shadow:inset 0 1px 0 #ffffff50,0 5px 9px #00000009; }
+.inviteStory .inviteCountdown > div::after { content:""; position:absolute; inset:45% 0 auto; height:1px; background:color-mix(in srgb,var(--foil) 25%,transparent); }
+.inviteStory .inviteCountdown strong { position:relative; z-index:1; font:30px/1.2 Georgia,serif; }
+.inviteStory .inviteCountdown span { display:block; margin-top:12px; font:8px system-ui,sans-serif; }
+.inviteStory .inviteVenueMap { height:260px; border:4px solid var(--paper-deep); box-shadow:0 8px 16px #0000000c; }
+.inviteStory .inviteLocation { display:inline-flex; align-items:center; justify-content:center; min-height:44px; background:var(--ink); color:var(--paper); border-color:var(--ink); box-shadow:0 5px 12px #00000015; }
+.inviteStory .inviteLocation:hover { background:var(--foil); color:var(--paper); }
+.inviteEnvelopePaper { position:absolute; inset:10% 12% 8%; z-index:-1; display:grid; place-items:start center; padding-top:50px; border:1px solid var(--foil); border-radius:140px 140px 8px 8px; background:var(--paper); color:var(--foil); font:italic 48px Georgia,serif; opacity:0; }
+.inviteStory .inviteEnvelope { perspective:1200px; }
+.inviteStory .inviteEnvelopeFlap { z-index:1; filter:drop-shadow(0 14px 10px #00000025); }
+.inviteStory .inviteWaxSeal { z-index:2; }
+.inviteStory .inviteEnvelope.isOpening { animation:inviteEnvelopeDepart 2.4s cubic-bezier(.22,.7,.2,1) both; }
+.inviteStory .isOpening .inviteEnvelopeFlap { animation:inviteFlapUnfold 1.4s .2s ease-in-out both; }
+.inviteStory .isOpening .inviteEnvelopePaper { animation:inviteLetterLift 1.6s .5s ease-out both; }
+@keyframes inviteEnvelopeDepart { 0%,65% { opacity:1; transform:translateY(0); } 100% { opacity:0; transform:translateY(100%); } }
+@keyframes inviteLetterLift { 0% { opacity:0; transform:translateY(55px) scale(.94); } 35% { opacity:1; } 100% { opacity:1; transform:translateY(-160px) scale(1.04); } }
+@media(max-width:560px) { .inviteStory .inviteWelcome { min-height:590px; } .inviteStory .inviteStoryTitle { min-height:500px; margin-inline:18px; width:calc(100% - 36px); } .inviteChapterNav button { font-size:9px; gap:4px; } .inviteStoryPanel { padding-inline:18px; } }
+@media(prefers-reduced-motion:reduce) { .inviteStory .inviteEnvelope.isOpening { animation:inviteEnvelopeDepart .01s linear both!important; } }
+.inviteStory .inviteDateDisplay > span, .inviteStory .inviteSectionNumber, .inviteStory .inviteTimeDisplay > span { color:var(--ink); }
+
+/* Each artwork has its own palette and stationery silhouette. */
+.inviteUtilityBar { display:flex; justify-content:space-between; align-items:center; background:var(--paper-deep); gap:8px; }
+.inviteUtilityBar .inviteMotionToggle { margin:0; }
+.inviteExpandButton { display:flex; align-items:center; gap:6px; padding:10px 14px; border:0; background:transparent; color:var(--ink); font-size:11px; cursor:pointer; }
+.inviteOriginalTheme { border:1px solid var(--foil); border-radius:20px; padding:6px 10px; background:transparent; color:var(--ink); font-size:10px; cursor:pointer; }
+.inviteOriginalTheme[aria-pressed=true] { background:var(--ink); color:var(--paper); }
+.inviteStory :is(.inviteEnvelope strong,.inviteEnvelopeGreeting,.inviteOpenHint,.inviteWelcomeKicker,.inviteStoryTitle p,.inviteOriginalArtwork .inviteSectionNumber) { color:var(--ink); }
+.inviteOriginalArtwork { padding:32px 18px; background:var(--paper-deep); text-align:center; }
+.inviteOriginalArtworkFrame { overflow:hidden; border-radius:12px; box-shadow:0 12px 30px #00000020; background:var(--paper); }
+.inviteOriginalArtworkFrame :is(img,svg) { display:block; width:100%; height:auto; }
+.inviteOriginalArtworkFrame .livingArtwork canvas { width:100%; height:100%; }
+.inviteStory[data-layout=editorial] .inviteStoryTitle { border-radius:4px; min-height:470px; border-inline:0; border-width:2px; box-shadow:none; }
+.inviteStory[data-layout=editorial] .inviteStoryTitle h2 { font:500 clamp(32px,5vw,46px)/1.18 system-ui,sans-serif; letter-spacing:-.04em; }
+.inviteStory[data-layout=editorial] .inviteWelcomeMonogram { border:0; border-radius:0; border-bottom:1px solid var(--foil); font-style:normal; }
+.inviteStory[data-layout=editorial] .inviteBotanical,.inviteStory[data-layout=editorial] .inviteButterfly { display:none; }
+.inviteStory[data-layout=editorial] .inviteStoryPanel { border-radius:4px; box-shadow:0 8px 20px #0000000c; }
+.inviteStory[data-layout=editorial] .inviteStoryIntro { padding-top:36px; }
+.inviteStory[data-layout=playful] .inviteStoryTitle { border-radius:32px; border:2px solid var(--foil); box-shadow:8px 8px 0 color-mix(in srgb,var(--foil) 20%,transparent); transform:rotate(-1deg); }
+.inviteStory[data-layout=playful] .inviteStoryTitle h2 { font:800 clamp(34px,5vw,48px)/1.15 system-ui,sans-serif; letter-spacing:-.045em; }
+.inviteStory[data-layout=playful] .inviteWelcomeMonogram { border-radius:25px; border:2px solid var(--foil); transform:rotate(8deg); background:var(--paper-deep); font-family:system-ui,sans-serif; font-weight:800; }
+.inviteStory[data-layout=playful] .inviteBotanical { display:none; }
+.inviteStory[data-layout=playful] .inviteStoryPanel { border-radius:26px; border:2px solid color-mix(in srgb,var(--foil) 55%,transparent); }
+.inviteStory[data-layout=playful] .inviteStoryIntro { padding-top:36px; }
+.inviteStory[data-layout=playful] .inviteDateDisplay > strong { font-family:system-ui,sans-serif; font-weight:800; }
+.inviteStory[data-layout=certificate] .inviteWelcome { display:block; min-height:0; }
+.inviteStory[data-layout=certificate] .inviteWelcome > .inviteStoryArtwork { position:relative; opacity:1; filter:none; height:auto; }
+.inviteStory[data-layout=certificate] .inviteStoryArtwork :is(img,svg,canvas) { height:auto; }
+.inviteStory[data-layout=certificate] .inviteStoryArtwork canvas { height:100%; }
+.inviteStory[data-layout=certificate] .inviteStoryTitle,.inviteStory[data-layout=certificate] .inviteWelcome::after { display:none; }
+.inviteStory[data-layout=certificate] .inviteStoryIntro { border-radius:16px; padding-top:32px; }
+.inviteExpanded { position:fixed!important; inset:0!important; z-index:2000; width:min(100%,560px)!important; height:100dvh; margin:auto!important; overflow:auto; border-radius:0!important; box-shadow:0 0 0 100vmax #070b1ef2; }
+.inviteExpanded .inviteStage { height:calc(100dvh - 150px); min-height:400px; }
+.inviteExpanded .inviteStage .inviteReveal { height:100%; min-height:0; }
+.inviteExpanded .inviteEnvelope { min-height:100%; }
+.inviteExpanded .invitePreviewNote { display:none!important; }
+.guestInvitation .animatedInvite.inviteStory .inviteReveal { height:auto; max-height:none; overflow:visible; }
+.guestInvitation .inviteChapterNav { position:sticky; top:0; }
+.guestInvitation .inviteStory .inviteReveal { padding-top:0; }
+.guestInvitation .inviteExpanded .inviteStage .inviteReveal { height:100%; overflow:auto; padding-top:55px; }
+.guestInvitation .inviteExpanded .inviteChapterNav { position:absolute; }
+@media(max-width:560px) { .inviteStory .inviteUtilityBar { min-height:40px; } .inviteExpanded { width:100%!important; } .inviteOriginalArtwork { padding:24px 14px; } }
+.inviteChapterNav button { white-space:nowrap; min-width:0; } .inviteChapterNav button[aria-label] { flex:0 0 38px; }
+.inviteStory { --envelope-height:660px; }
+.inviteStory .inviteEnvelope.isOpening { bottom:auto; height:var(--envelope-height); min-height:0; }
+.inviteStage:has(.isOpening) > .inviteReveal { opacity:0; pointer-events:none; }
+.guestInvitation .inviteStage { overflow:visible; }
+.guestInvitation .inviteStage:has(.isOpening) { overflow:hidden; }
+.inviteExpanded .inviteEnvelope.isOpening { height:100%; }
+@media(max-width:560px) { .inviteStory { --envelope-height:580px; } }
+.inviteExpanded::before { content:""; position:fixed; inset:0; z-index:-1; background:#070b1ef2; }
+/* Settle each swipe on an invitation chapter, while allowing tall artwork to scroll. */
+.animatedInvite.inviteStory .inviteReveal {
+  scroll-snap-type:y mandatory;
+  scroll-padding-block:64px 20px;
+  scroll-behavior:smooth;
+  overscroll-behavior-y:contain;
+}
+.inviteStory :is(.inviteWelcome,.inviteOriginalArtwork,.inviteStoryPanel) {
+  scroll-snap-align:start;
+  scroll-snap-stop:always;
+}
+.inviteStory .inviteStoryPanel {
+  min-height:min(700px,calc(88svh - 94px));
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+}
+.inviteStory[data-layout=certificate] .inviteStoryPanel { min-height:0; }
+.guestInvitation .animatedInvite.inviteStory .inviteReveal {
+  height:calc(100svh - 100px);
+  min-height:360px;
+  overflow-y:auto;
+  padding-top:55px;
+}
+.guestInvitation .inviteChapterNav { position:absolute; top:0; }
+.guestInvitation .inviteStage { overflow:hidden; }
+.inviteStory.inviteExpanded .inviteStage .inviteReveal { height:100%; min-height:0; }
+@media(prefers-reduced-motion:reduce) {
+  .animatedInvite.inviteStory .inviteReveal { scroll-behavior:auto; }
+}
+.inviteCalendarDownload { display:block; margin:12px auto 0; color:var(--ink); font:11px/1.6 system-ui,sans-serif; text-underline-offset:4px; opacity:.8; } .inviteCalendarDownload:hover { opacity:1; }
+/* Solid paper envelope: the selected artwork stays inside the letter. */
+.inviteStory .inviteEnvelope {
+  background:repeating-linear-gradient(0deg,#ffffff08 0 1px,transparent 1px 4px),linear-gradient(135deg,var(--paper),var(--paper-deep));
+  box-shadow:inset 0 0 0 1px #00000012,inset 0 -15px 35px #0000000a;
+}
+.inviteStory .inviteEnvelopeFold { z-index:1; background:none; pointer-events:none; }
+.inviteEnvelopeFold::before,.inviteEnvelopeFold::after { content:""; position:absolute; inset:0; }
+.inviteEnvelopeFold::before { clip-path:polygon(0 0,54% 50%,0 100%); background:linear-gradient(100deg,var(--paper),var(--paper-deep)); }
+.inviteEnvelopeFold::after { clip-path:polygon(100% 0,46% 50%,100% 100%); background:linear-gradient(260deg,var(--paper),var(--paper-deep)); }
+.inviteEnvelopePocket { position:absolute; inset:0; z-index:1; clip-path:polygon(0 100%,0 49%,50% 78%,100% 49%,100% 100%); background:linear-gradient(0deg,var(--paper),var(--paper-deep)); filter:drop-shadow(0 -3px 3px #00000018); pointer-events:none; }
+.inviteStory .inviteEnvelopeFlap { z-index:2; height:56%; clip-path:polygon(0 0,100% 0,100% 2%,52% 98%,50% 100%,48% 98%,0 2%); background:linear-gradient(165deg,var(--paper) 15%,var(--paper-deep)); filter:drop-shadow(0 6px 5px #00000030); }
+.inviteStory .inviteWaxSeal { z-index:3; width:94px; height:94px; border:4px double var(--foil); background:radial-gradient(circle at 35% 25%,#fffef9,#e9e3d6); box-shadow:0 8px 14px #00000025,inset 0 0 0 3px #ffffff90,inset 0 -4px 7px #00000012; }
+.inviteStory .inviteSealLogo { display:block; width:80px; height:80px; object-fit:contain; border-radius:50%; }
+.inviteStory .inviteEnvelope > :is(strong,.inviteEnvelopeGreeting,.inviteOpenHint) { position:relative; z-index:3; }
+.inviteStory .inviteEnvelopeBorder { z-index:3; pointer-events:none; }
+.inviteStory .inviteEnvelopePaper { z-index:0; border-radius:6px; box-shadow:0 8px 30px #00000020; }
+/* Coloured cardstock, with overlapping closed-envelope folds. */
+.inviteStory .inviteEnvelope {
+  --envelope-base:color-mix(in srgb,var(--foil) 72%,var(--paper-deep));
+  --envelope-light:color-mix(in srgb,var(--foil) 57%,var(--paper));
+  --envelope-dark:color-mix(in srgb,var(--foil) 82%,#15202b);
+  background:repeating-linear-gradient(15deg,#ffffff08 0 1px,transparent 1px 3px),var(--envelope-base);
+  box-shadow:inset 0 0 0 1px #00000024,inset 0 -18px 45px #00000016;
+}
+.inviteStory .inviteEnvelopeFold::before { clip-path:polygon(0 0,55% 52%,0 100%); background:linear-gradient(100deg,var(--envelope-light),var(--envelope-base)); }
+.inviteStory .inviteEnvelopeFold::after { clip-path:polygon(100% 0,45% 52%,100% 100%); background:linear-gradient(260deg,var(--envelope-base),var(--envelope-dark)); }
+.inviteStory .inviteEnvelopePocket { clip-path:polygon(0 100%,0 48%,50% 36%,100% 48%,100% 100%); background:linear-gradient(0deg,var(--envelope-base),var(--envelope-light)); filter:none; }
+.inviteStory .inviteEnvelopeFlap { height:56%; clip-path:polygon(0 0,100% 0,100% 2%,52% 98%,50% 100%,48% 98%,0 2%); background:linear-gradient(155deg,var(--envelope-light),var(--envelope-base) 70%,var(--envelope-dark)); filter:none; box-shadow:none; }
+.inviteStory .inviteEnvelopeFlap::after { content:""; position:absolute; inset:0; clip-path:polygon(0 0,50% 98%,100% 0,100% 3%,50% 100%,0 3%); background:linear-gradient(90deg,#ffffff45,#00000050,#ffffff35); }
+.inviteStory .inviteEnvelope > :is(strong,.inviteEnvelopeGreeting,.inviteOpenHint) { color:#fffdf7; text-shadow:0 1px 2px #00000030; }
+.inviteStory .inviteEnvelopeBorder { border-color:#fff9; opacity:.45; }
+.inviteStory .inviteMainPicture { padding:0; background:var(--paper); }
+.inviteStory .inviteMainPicture .inviteOriginalArtworkFrame { border-radius:0; box-shadow:none; }
+/* Fit each chapter to the actual viewer, including full-screen and resized windows. */
+.inviteStory .inviteMainPicture {
+  height:var(--chapter-height,600px);
+  min-height:0;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  overflow:hidden;
+}
+.inviteStory .inviteMainPicture .inviteOriginalArtworkFrame {
+  width:min(100%,calc(var(--chapter-height,600px) * var(--artwork-ratio,.7)));
+  aspect-ratio:var(--artwork-ratio,.7);
+  flex-shrink:0;
+  max-height:100%;
+}
+.inviteStory .inviteMainPicture .livingArtwork { width:100%; height:100%; }
+.inviteStory .inviteMainPicture :is(img,svg) { display:block; width:100%; height:100%; object-fit:contain; }
+.inviteStory .inviteMainPicture .livingArtwork canvas { width:100%; height:100%; }
+.inviteStory .inviteStoryPanel,
+.inviteStory[data-layout=certificate] .inviteStoryPanel {
+  height:var(--chapter-height,600px);
+  min-height:0;
+  max-height:var(--chapter-height,600px);
+  overflow-y:auto;
+  padding-block:clamp(16px,3svh,32px);
+}
+.inviteStory .inviteStoryPanel > * { flex-shrink:0; }
+.inviteStory .inviteVenueMap { height:clamp(100px,calc(var(--chapter-height,600px) - 310px),260px); min-height:100px; }
+.inviteStory .inviteDateDisplay > strong { font-size:clamp(48px,calc(var(--chapter-height,600px) * .14),90px); }
+.inviteStory .inviteStoryPanel { justify-content:safe center; }

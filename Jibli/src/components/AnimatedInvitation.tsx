@@ -1,15 +1,28 @@
 import { useCommerceCopy } from "../i18n/commerceCopy";
 import { useEffect, useRef, useState } from "react";
 import type { CSSProperties } from "react";
-import InvitationMotion from "./InvitationMotion";
+import { getInvitationDesign } from "../invitationDesigns";
 import CharacterInvitation from "./CharacterInvitation";
 import LivingArtwork from "./LivingArtwork";
 import SchoolRegistrationMotion from "./SchoolRegistrationMotion";
-import { RotateCcw, MapPin, ArrowDown, CalendarDays, Sparkles } from "lucide-react";
+import { RotateCcw, MapPin, ArrowDown, CalendarDays, Sparkles, Clock3, Navigation, Heart, Maximize2, X } from "lucide-react";
 
 type Props = { image: string; title: string; details: Record<string, string>; onMoodChange?: (mood: string) => void; guest?: boolean; certificate?: boolean };
 
-export default function AnimatedInvitation({ image, title, details, onMoodChange, guest = false, certificate = false }: Props) {
+export default function AnimatedInvitation({ image, title, details: savedDetails, onMoodChange, guest = false, certificate: suppliedCertificate = false }: Props) {
+  const design = getInvitationDesign(image);
+  const certificate = suppliedCertificate || design.layout === "certificate";
+  const [expanded, setExpanded] = useState(false);
+  const sampleDate = new Date();
+  sampleDate.setMonth(sampleDate.getMonth() + 3);
+  const sampleDateString = `${sampleDate.getFullYear()}-${String(sampleDate.getMonth() + 1).padStart(2, "0")}-${String(sampleDate.getDate()).padStart(2, "0")}`;
+  const isSample = !guest && !certificate && (!(savedDetails.couple || savedDetails.name) || !savedDetails.date || !savedDetails.time || !savedDetails.venue);
+  const details = guest || certificate ? savedDetails : {
+    ...savedDetails,
+    date: savedDetails.date || sampleDateString,
+    time: savedDetails.time || "19:00",
+    venue: savedDetails.venue || "Tunis, Tunisia",
+  };
   const guestLanguage = details.language?.startsWith("Arabic") ? "ar" : details.language?.startsWith("French") ? "fr" : "en";
   const copy = useCommerceCopy(guest ? guestLanguage : undefined);
   const locale = guest ? guestLanguage : document.documentElement.lang || "en";
@@ -36,57 +49,118 @@ export default function AnimatedInvitation({ image, title, details, onMoodChange
           observer.unobserve(entry.target);
         }
       });
-    }, { root, threshold: .12 });
+    }, { root, threshold: .4 });
     root.querySelectorAll(".inviteStoryPanel").forEach((panel) => observer.observe(panel));
     return () => observer.disconnect();
   }, [opened]);
   useEffect(() => {
     if (opened && !opening) story.current?.focus({ preventScroll: true });
   }, [opened, opening]);
-  const name = details.couple || details.name || copy("Your name here");
-  const initials = name === "Your name here" ? "J" : name.split(/\s+|&/).filter(Boolean).slice(0, 2).map((part) => Array.from(part)[0]).join("").toUpperCase();
+  useEffect(() => {
+    if (!expanded) return;
+    const previous = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    const root = story.current?.closest<HTMLElement>(".animatedInvite") || document.querySelector<HTMLElement>(".inviteExpanded");
+    const trigger = root?.querySelector<HTMLButtonElement>(".inviteExpandButton");
+    const priorFocus = document.activeElement;
+    trigger?.focus();
+    const close = (event: KeyboardEvent) => {
+      if (event.key === "Escape") setExpanded(false);
+      if (event.key !== "Tab" || !root) return;
+      const focusable = [...root.querySelectorAll<HTMLElement>('button:not(:disabled), a[href], [tabindex="0"], iframe')].filter((element) => element.getClientRects().length > 0);
+      const first = focusable[0];
+      const last = focusable[focusable.length - 1];
+      if (event.shiftKey && document.activeElement === first) { event.preventDefault(); last?.focus(); }
+      if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first?.focus(); }
+    };
+    document.addEventListener("keydown", close);
+    return () => {
+      document.body.style.overflow = previous;
+      document.removeEventListener("keydown", close);
+      if (priorFocus instanceof HTMLElement && priorFocus.isConnected) priorFocus.focus({ preventScroll: true });
+    };
+  }, [expanded]);
+  useEffect(() => {
+    const root = story.current;
+    if (!opened || !root) return;
+    const picture = root.querySelector<HTMLImageElement>(".inviteMainPicture img");
+    const svg = root.querySelector<SVGSVGElement>(".inviteMainPicture svg");
+    const measure = () => {
+      root.style.setProperty("--chapter-height", `${Math.max(200, root.clientHeight - 84)}px`);
+      const ratio = picture?.naturalWidth && picture.naturalHeight
+        ? picture.naturalWidth / picture.naturalHeight
+        : svg?.viewBox.baseVal.height ? svg.viewBox.baseVal.width / svg.viewBox.baseVal.height : .7;
+      root.style.setProperty("--artwork-ratio", String(ratio));
+    };
+    measure();
+    const observer = new ResizeObserver(measure);
+    observer.observe(root);
+    picture?.addEventListener("load", measure);
+    return () => { observer.disconnect(); picture?.removeEventListener("load", measure); };
+  }, [opened, image]);
+  const name = details.couple || details.name || (guest ? copy("Your name here") : certificate ? "Nour" : collection === "weddings" || collection === "engagements" ? "Amira & Youssef" : collection === "birthdays" || collection === "graduations" ? "Nour" : collection === "family" ? copy("Together again") : collection === "openings" ? copy("A new beginning") : copy("Welcome, little dreamers"));
+  const initials = !(savedDetails.couple || savedDetails.name) && guest ? "J" : name.split(/\s+|&/).filter(Boolean).slice(0, 2).map((part) => Array.from(part)[0]).join("").toUpperCase();
   const eventTime = details.date ? new Date(`${details.date}T${details.time || "00:00"}:00+01:00`).getTime() : NaN;
   const remaining = Math.max(0, Math.floor((eventTime - now) / 1000));
   const units = [Math.floor(remaining / 86400), Math.floor(remaining / 3600) % 24, Math.floor(remaining / 60) % 60, remaining % 60];
   const validDate = Number.isFinite(eventTime);
   const calendarText = (value: string) => value.replace(/\\/g, "\\\\").replace(/\n/g, "\\n").replace(/,/g, "\\,").replace(/;/g, "\\;");
   const calendarDate = validDate ? details.date.replaceAll("-", "") : "";
-  const calendar = ["BEGIN:VCALENDAR", "VERSION:2.0", "PRODID:-//Jibli//Invitation//EN", "BEGIN:VEVENT", `UID:${calendarDate}-${encodeURIComponent(name)}@jibli`, `DTSTAMP:${new Date(now).toISOString().replace(/[-:]/g, "").replace(/\.\d{3}/, "")}`, validDate && details.time ? `DTSTART:${new Date(eventTime).toISOString().replace(/[-:]/g, "").replace(/\.\d{3}/, "")}` : `DTSTART;VALUE=DATE:${calendarDate}`, `SUMMARY:${calendarText(name)}`, `LOCATION:${calendarText(details.venue || "")}`, `DESCRIPTION:${calendarText(details.note || title)}`, "END:VEVENT", "END:VCALENDAR"].join("\r\n");
+  const calendarTitle = `${copy(collection === "weddings" ? "Wedding" : collection === "engagements" ? "Engagement" : collection === "birthdays" ? "Birthday" : "Invitation")} - ${name}`;
+  const calendarTimestamp = (stamp: number) => new Date(stamp).toISOString().replace(/[-:]/g, "").replace(/\.\d{3}/, "");
+  const nextCalendarDay = validDate ? new Date(Date.UTC(...(() => {
+    const [y, m, d] = details.date.split("-").map(Number);
+    return [y, m - 1, d + 1] as const;
+  })())).toISOString().slice(0, 10).replaceAll("-", "") : "";
+  const calendarDates = validDate && details.time ? `${calendarTimestamp(eventTime)}/${calendarTimestamp(eventTime)}` : `${calendarDate}/${nextCalendarDay}`;
+  const googleCalendarUrl = `https://calendar.google.com/calendar/render?${new URLSearchParams({ action: "TEMPLATE", text: calendarTitle, dates: calendarDates, ctz: "Africa/Tunis", location: details.venue || "", details: details.note || title })}`;
+  const calendar = ["BEGIN:VCALENDAR", "VERSION:2.0", "PRODID:-//Jibli//Invitation//EN", "BEGIN:VEVENT", `UID:${calendarDate}-${encodeURIComponent(name)}@jibli`, `DTSTAMP:${new Date(now).toISOString().replace(/[-:]/g, "").replace(/\.\d{3}/, "")}`, validDate && details.time ? `DTSTART:${new Date(eventTime).toISOString().replace(/[-:]/g, "").replace(/\.\d{3}/, "")}` : `DTSTART;VALUE=DATE:${calendarDate}`, `SUMMARY:${calendarText(calendarTitle)}`, `LOCATION:${calendarText(details.venue || "")}`, `DESCRIPTION:${calendarText(details.note || title)}`, ...(!details.time && validDate ? [`DTEND;VALUE=DATE:${nextCalendarDay}`] : []), "END:VEVENT", "END:VCALENDAR"].join("\r\n");
   const eventDate = validDate ? new Date(eventTime) : null;
+  const formattedTime = eventDate && details.time ? new Intl.DateTimeFormat(locale, { hour: "2-digit", minute: "2-digit", timeZone: "Africa/Tunis" }).format(eventDate) : "";
+  const jumpTo = (selector: string) => {
+    const panel = story.current?.querySelector<HTMLElement>(selector);
+    if (panel && story.current) story.current.scrollTo({ top: panel.getBoundingClientRect().top - story.current.getBoundingClientRect().top + story.current.scrollTop - 64, behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth" });
+  };
   const calendarMonth = eventDate ? new Intl.DateTimeFormat(locale, { month: "long", year: "numeric", timeZone: "Africa/Tunis" }).format(eventDate) : "";
   const [year, month, day] = (details.date || "").split("-").map(Number);
   const firstWeekday = validDate ? (new Date(Date.UTC(year, month - 1, 1)).getUTCDay() + 6) % 7 : 0;
   const daysInMonth = validDate ? new Date(Date.UTC(year, month, 0)).getUTCDate() : 0;
   const artwork = image === "/invitations/others/kindergarten-welcome.jfif" ? <CharacterInvitation title={title} paused={motionPaused} /> : image === "/invitations/others/school-registration.jfif" ? <SchoolRegistrationMotion title={title} paused={motionPaused} /> : <LivingArtwork image={image} title={guest ? title : `${title} design reference`} paused={motionPaused} />;
-  return <section style={{ "--story-artwork": `url("${image}")` } as CSSProperties} className={`animatedInvite inviteStory inviteMood-${mood} ${opened ? "isOpen" : ""}`} data-motion-paused={motionPaused} dir={locale === "ar" ? "rtl" : "ltr"} aria-label="Interactive invitation preview">
-    <button type="button" className="inviteMotionToggle" aria-pressed={motionPaused} onClick={() => setMotionPaused(!motionPaused)}>{copy(motionPaused ? "Resume animation" : "Pause animation")}</button>
+  return <section style={{ ...(!savedDetails.mood ? design.colours : {}), "--story-artwork": `url("${image}")` } as CSSProperties} role={expanded ? "dialog" : undefined} aria-modal={expanded || undefined} data-layout={certificate ? "certificate" : design.layout} data-design={design.key} data-collection={collection} className={`animatedInvite inviteStory inviteMood-${mood} ${opened ? "isOpen" : ""} ${expanded ? "inviteExpanded" : ""}`} data-motion-paused={motionPaused} dir={locale === "ar" ? "rtl" : "ltr"} aria-label="Interactive invitation preview">
+    <div className="inviteUtilityBar"><button type="button" className="inviteExpandButton" aria-pressed={expanded} onClick={() => setExpanded(!expanded)}>{expanded ? <X size={14} /> : <Maximize2 size={14} />}{copy(expanded ? "Close preview" : "Full screen")}</button><button type="button" className="inviteMotionToggle" aria-pressed={motionPaused} onClick={() => setMotionPaused(!motionPaused)}>{copy(motionPaused ? "Resume animation" : "Pause animation")}</button></div>
     <div className="animatedInviteToolbar"><span><Sparkles size={13} />{copy("Your invitation experience")} </span>{opened && <button type="button" onClick={() => { setOpening(false); setOpened(false); }}><RotateCcw size={14} />{copy("Replay")} </button>}</div>
-    {!guest && <div className="inviteMoodPicker" role="group" aria-label="Invitation colour theme">{([['champagne', 'Champagne'], ['garden', 'Botanical'], ['midnight', 'Midnight'], ['confetti', 'Rose']] as const).map(([value, label]) => <button key={value} type="button" aria-pressed={mood === value} aria-label={`${label} theme`} title={label} className={`inviteMoodSwatch swatch-${value}`} onClick={() => onMoodChange?.(value)} />)}<span>{copy("Choose your mood")} </span></div>}
+    {!guest && <div className="inviteMoodPicker" role="group" aria-label="Invitation colour theme">{([['champagne', 'Champagne'], ['garden', 'Botanical'], ['midnight', 'Midnight'], ['confetti', 'Rose']] as const).map(([value, label]) => <button key={value} type="button" aria-pressed={mood === value} aria-label={`${label} theme`} title={label} className={`inviteMoodSwatch swatch-${value}`} onClick={() => onMoodChange?.(value)} />)}<button type="button" className="inviteOriginalTheme" aria-pressed={!savedDetails.mood} onClick={() => onMoodChange?.("")}>{copy("Original")}</button><span>{copy("Choose your mood")} </span></div>}
+    {isSample && <p className="inviteSampleNotice">{copy("Sample event details - fill in the form to personalise your preview.")}</p>}
     <div className="inviteStage">
-    {(!opened || opening) && <button type="button" className={`inviteEnvelope ${opening ? "isOpening" : ""}`} disabled={opening} onAnimationEnd={(event) => { if (event.target === event.currentTarget) setOpening(false); }} onClick={() => { setNow(Date.now()); setOpening(true); setOpened(true); }} aria-label={`Open invitation: ${title}`}>
-      {image && <img src={image} alt="" className="inviteEnvelopeTexture" />}
-      <span className="inviteEnvelopeFlap" /><span className="inviteEnvelopeFold" /><span className="inviteEnvelopeBorder" />
-      <span className="inviteWaxSeal"><span className="inviteMonogram">{initials}</span></span>
+    {(!opened || opening) && <button type="button" className={`inviteEnvelope ${opening ? "isOpening" : ""}`} disabled={opening} onAnimationEnd={(event) => { if (event.target === event.currentTarget) setOpening(false); }} onClick={() => { setNow(Date.now()); setOpening(!motionPaused); setOpened(true); }} aria-label={`Open invitation: ${title}`}>
+      <span className="inviteEnvelopePaper" aria-hidden="true"><span>{initials}</span></span><span className="inviteEnvelopeFold" /><span className="inviteEnvelopePocket" /><span className="inviteEnvelopeFlap" /><span className="inviteEnvelopeBorder" />
+      <span className="inviteWaxSeal"><img className="inviteSealLogo" src="/jibli-seal-logo.png" alt="Jibli" /></span>
       <span className="inviteEnvelopeGreeting">{copy("A little invitation for you")} </span>
       <strong dir="auto">{name}</strong><span className="inviteOpenHint">{copy("Break the seal")} <ArrowDown size={14} /></span>
     </button>}
-    {opened && <div ref={story} className="inviteReveal" tabIndex={0} aria-label="Scroll through your invitation">
-      <div className="inviteWelcome">
-        {image && <div className="inviteArtworkScene inviteStoryArtwork">{artwork}</div>}
-        <div className="inviteStoryTitle">
-        <InvitationMotion mood={mood} />
-        <div className="inviteStardust" aria-hidden="true">{Array.from({length: 12}, (_, index) => <i key={index} style={{left: `${(index * 29 + 7) % 100}%`, animationDelay: `${index * -.7}s`, animationDuration: `${5 + index % 4}s`}} />)}</div>
-        <span className="inviteWelcomeKicker">{copy("A moment to remember")} </span><span className="inviteWelcomeMonogram" aria-hidden="true">{initials}</span><h2 dir="auto">{name}</h2><p>{validDate ? new Intl.DateTimeFormat(locale, {dateStyle: "long", timeZone:"Africa/Tunis"}).format(new Date(eventTime)) : copy("Something beautiful is coming")}</p><span className="inviteScrollHint">{copy("Discover your invitation")} <ArrowDown size={16} /></span>
-      </div>
-      </div>
+    {opened && <>
+    <nav inert={opening} className="inviteChapterNav" aria-label={copy("Explore your invitation")}>
+      <button type="button" onClick={() => jumpTo(".inviteOriginalArtwork")}><Heart size={15} />{copy("Invitation")}</button>
+      {!certificate && validDate && <button type="button" onClick={() => jumpTo(".inviteStorySchedule")}><Clock3 size={15} />{copy("Date & time")}</button>}
+      {!certificate && details.venue && <button type="button" onClick={() => jumpTo(".inviteStoryVenue")}><MapPin size={15} />{copy("Location")}</button>}
+    </nav>
+    <div ref={story} inert={opening} className="inviteReveal" tabIndex={0} aria-label="Scroll through your invitation">
+      <section className="inviteOriginalArtwork inviteMainPicture"><div className="inviteOriginalArtworkFrame">{artwork}</div></section>
       <div className="inviteEventDetails">
         <section className="inviteStoryPanel inviteStoryIntro">
         <span className="inviteOrnament" aria-hidden="true">{copy("✦")} </span><p>{copy(certificate ? "Certificate of achievement" : "You are warmly invited")}</p><h2 dir="auto">{name}</h2>
         {(details.hosts || details.school) && <p dir="auto">{details.hosts || details.school}</p>}
         {validDate && <p className="inviteEventDate">{new Intl.DateTimeFormat(locale, { dateStyle: "long", timeZone: "Africa/Tunis" }).format(new Date(eventTime))}{details.time && ` · ${details.time}`}</p>}
         </section>
+        {!certificate && validDate && <section className="inviteStoryPanel inviteStorySchedule">
+          <span className="inviteSectionNumber">01 / {copy("The celebration")}</span>
+          <h3>{copy("A date to remember")}</h3>
+          <div className="inviteDateDisplay"><span>{new Intl.DateTimeFormat(locale, {weekday:"long",timeZone:"Africa/Tunis"}).format(new Date(eventTime))}</span><strong>{day}</strong><span>{calendarMonth}</span></div>
+          {formattedTime && <div className="inviteTimeDisplay"><Clock3 size={20} /><strong>{formattedTime}</strong><span>{copy("Tunisia time")}</span></div>}
+          <div className="inviteEventRibbon"><span aria-hidden="true">✦</span>{copy("You are warmly invited")}<span aria-hidden="true">✦</span></div>
+        </section>}
         {!certificate && validDate && <section className="inviteStoryPanel inviteStoryCalendar">
-          <span className="inviteWelcomeKicker">{copy("Save the date")}</span>
+          <span className="inviteSectionNumber">02 / {copy("Save the date")}</span>
           <h3>{calendarMonth}</h3>
           <div className="inviteMonthGrid" role="table" aria-label={calendarMonth}>
             <div className="inviteMonthRow" role="row">{Array.from({ length: 7 }, (_, index) => <span role="columnheader" key={index}>{new Intl.DateTimeFormat(locale, { weekday: "short", timeZone: "UTC" }).format(new Date(Date.UTC(2026, 0, 5 + index)))}</span>)}</div>
@@ -95,18 +169,19 @@ export default function AnimatedInvitation({ image, title, details, onMoodChange
               return <span role="cell" key={column} className={date === day ? "isEventDay" : undefined} aria-label={date === day ? new Intl.DateTimeFormat(locale, {dateStyle: "full", timeZone: "Africa/Tunis"}).format(new Date(eventTime)) : undefined}>{date > 0 && date <= daysInMonth ? date : ""}</span>;
             })}</div>)}
           </div>
-          <a className="inviteLocation inviteCalendar" download="jibli-invitation.ics" href={`data:text/calendar;charset=utf-8,${encodeURIComponent(calendar)}`}><CalendarDays size={15} />{copy("Save the date")}</a>
+          <a className="inviteLocation inviteCalendar" href={googleCalendarUrl} target="_blank" rel="noopener noreferrer"><CalendarDays size={15} />{copy("Save the date")}</a>
+          <a className="inviteCalendarDownload" download="jibli-invitation.ics" href={`data:text/calendar;charset=utf-8,${encodeURIComponent(calendar)}`}>{copy("Apple / Outlook calendar (.ics)")}</a>
         </section>}
-        {!certificate && Number.isFinite(eventTime) && eventTime > now && <section className="inviteStoryPanel"><p>{copy("Counting down to our special day")} </p><div className="inviteCountdown" aria-label="Event countdown">{units.map((value, index) => <div key={index}><strong>{String(value).padStart(2, "0")}</strong><span>{copy(["Days", "Hours", "Minutes", "Seconds"][index])}</span></div>)}</div></section>}
+        {!certificate && Number.isFinite(eventTime) && eventTime > now && <section className="inviteStoryPanel inviteStoryCountdown"><span className="inviteSectionNumber">03 / {copy("Every second brings us closer")}</span><p>{copy("Counting down to our special day")} </p><div className="inviteCountdown" aria-label="Event countdown">{units.map((value, index) => <div key={index}><strong>{String(value).padStart(2, "0")}</strong><span>{copy(["Days", "Hours", "Minutes", "Seconds"][index])}</span></div>)}</div></section>}
         {!certificate && Number.isFinite(eventTime) && eventTime <= now && <p>{copy("The date has arrived")} </p>}
-        {!certificate && details.venue && <section className="inviteStoryPanel inviteStoryVenue"><div className="inviteVenueIllustration" aria-hidden="true"><MapPin size={38} /></div><h3>{copy("Meet us here")} </h3><p dir="auto">{details.venue}</p><a className="inviteLocation" href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(details.venue)}`} target="_blank" rel="noreferrer"><MapPin size={15} />{copy("View location")} </a>
+        {!certificate && details.venue && <section className="inviteStoryPanel inviteStoryVenue"><span className="inviteSectionNumber">04 / {copy("The place")}</span><div className="inviteVenueIllustration" aria-hidden="true"><MapPin size={38} /></div><h3>{copy("Meet us here")} </h3><p dir="auto">{details.venue}</p><a className="inviteLocation" href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(details.venue)}`} target="_blank" rel="noreferrer"><Navigation size={15} />{copy("Get directions")} </a>
           <iframe className="inviteVenueMap" title={`${copy("Meet us here")}: ${details.venue}`} src={`https://maps.google.com/maps?q=${encodeURIComponent(details.venue)}&output=embed`} loading="lazy" referrerPolicy="no-referrer-when-downgrade" />
         </section>}
         {details.note && <section className="inviteStoryPanel"><p className="invitePersonalNote" dir="auto">{details.note}</p></section>}
         {!certificate && (details.rsvp || details.contact) && <section className="inviteStoryPanel"><h3>{copy("RSVP / contact")} </h3><p dir="auto">{details.rsvp || details.contact}</p></section>}
         <span className="inviteOrnament" aria-hidden="true">{copy("✦")} </span><p>{copy("Made with love · Jibli")} </p>
       </div>
-    </div>}
+    </div></>}
     </div>
     {!guest && <p className="invitePreviewNote">{copy("Preview your opening animation and event details. The artwork shown is a design example; Jibli personalises the final invitation.")} </p>}
   </section>;
