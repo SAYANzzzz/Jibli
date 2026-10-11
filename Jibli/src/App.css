@@ -5398,30 +5398,73 @@ td {
   clip-path:polygon(49% 0,61% 3%,73% 13%,89% 21%,98% 36%,98% 53%,92% 66%,88% 83%,76% 91%,59% 94%,45% 100%,32% 95%,24% 80%,13% 68%,3% 55%,0 41%,7% 27%,23% 19%,35% 5%);
 }
 
-/* Carry the chosen artwork through every chapter of the invitation. */
+/* Keep printed artwork readable in every theme. Themes colour the viewer,
+   while the original artwork retains its flowers, photos and lettering. */
 .animatedInvite.inviteStory .inviteReveal {
-  background-color:var(--paper-deep);
-  background-image:var(--story-artwork);
-  background-position:center;
-  background-size:cover;
-  background-repeat:no-repeat;
-  background-attachment:local;
-}
-.animatedInvite.inviteStory .inviteMainPicture,
-.animatedInvite.inviteStory .inviteEventDetails { background:transparent; }
-.inviteStory .inviteEventDetails::before { display:none; }
-.inviteStory .inviteStoryPanel {
-  background:color-mix(in srgb,var(--paper) 86%,transparent);
-  backdrop-filter:blur(3px);
-}
-/* Theme colour applies to both the surrounding artwork and the main picture. */
-.animatedInvite.inviteStory[data-custom-theme=true] .inviteReveal {
-  background-blend-mode:luminosity;
-}
-.inviteStory[data-custom-theme=true] .inviteOriginalArtworkFrame {
-  isolation:isolate;
   background:var(--paper-deep);
 }
-.inviteStory[data-custom-theme=true] .inviteOriginalArtworkFrame > * {
-  mix-blend-mode:luminosity;
+.animatedInvite.inviteStory .inviteMainPicture {
+  background:var(--paper-deep);
+  padding:12px;
+}
+.inviteStory .inviteMainPicture .inviteOriginalArtworkFrame {
+  max-width:100%;
+  background:var(--paper);
+  border-radius:8px;
+  box-shadow:0 4px 20px #00000020;
+}
+.animatedInvite.inviteStory .inviteEventDetails {
+  background:linear-gradient(var(--paper-deep),var(--paper));
+  color:var(--ink);
+}
+.inviteStory .inviteEventDetails::before { display:none; }
+.inviteStory .inviteStoryPanel {
+  background:var(--paper);
+  color:var(--ink);
+  backdrop-filter:none;
+}
+.inviteStory .inviteHostCredit {
+  color:var(--ink);
+  background:var(--paper);
+  padding:12px 16px;
+  border-radius:12px;
+}
+
+/* Shared client-facing invitation layout across every collection. */
+.animatedInvite.inviteStory { border:1px solid color-mix(in srgb,var(--ink) 16%,var(--paper)); border-radius:16px; box-shadow:0 12px 36px #17202c12; overflow:hidden; }
+.inviteStory .inviteUtilityBar { padding:8px 12px; background:var(--paper); border-bottom:1px solid color-mix(in srgb,var(--ink) 12%,transparent); }
+.inviteStory .inviteUtilityBar button { min-height:40px; font-size:12px; color:var(--ink); }
+.inviteStory .animatedInviteToolbar { padding:12px 16px; background:var(--paper); }
+.weddingSelectedDesign .inviteStory .animatedInviteToolbar span { font:600 13px/1.5 system-ui,sans-serif; text-transform:none; letter-spacing:0; }
+.inviteStory .inviteMoodPicker { flex-wrap:wrap; gap:8px; padding:12px 16px; border-bottom:1px solid color-mix(in srgb,var(--ink) 12%,transparent); }
+.inviteStory .inviteMoodSwatch { display:inline-flex; align-items:center; gap:7px; width:auto; height:auto; min-height:40px; padding:8px 10px; background:var(--paper); color:var(--ink); border:1px solid color-mix(in srgb,var(--ink) 22%,transparent); border-radius:8px; box-shadow:none; font:500 12px/1.4 system-ui,sans-serif; }
+.inviteStory .inviteMoodSwatchDot { width:14px; height:14px; border-radius:50%; background:#d6bd91; border:1px solid #0002; }
+.inviteStory .swatch-garden .inviteMoodSwatchDot { background:#638464; }
+.inviteStory .swatch-midnight .inviteMoodSwatchDot { background:#182538; }
+.inviteStory .swatch-confetti .inviteMoodSwatchDot { background:#b35e83; }
+.inviteStory .inviteMoodSwatch[aria-pressed=true] { border-color:var(--ink); outline:1px solid var(--ink); outline-offset:0; }
+.inviteStory .inviteOriginalTheme { min-height:40px; color:var(--ink); }
+.weddingSelectedDesign .inviteStory .inviteMoodPicker > span { width:100%; margin:0; font-size:12px; }
+.inviteStory .inviteSampleNotice { font-size:12px!important; text-align:start; }
+.animatedInvite.inviteStory .inviteReveal { scroll-snap-type:y proximity; }
+.inviteStory .inviteChapterNav { gap:6px; padding:8px; background:var(--paper); backdrop-filter:none; }
+.inviteStory .inviteChapterNav button { min-height:44px; font-size:12px; border-radius:8px; }
+.animatedInvite.inviteStory .inviteEventDetails { gap:20px; padding:24px 16px 32px; }
+.animatedInvite.inviteStory .inviteStoryPanel,
+.animatedInvite.inviteStory[data-layout=certificate] .inviteStoryPanel {
+  height:auto; min-height:0; max-height:none; overflow:visible;
+  padding:28px 20px; border-radius:12px; border:1px solid color-mix(in srgb,var(--ink) 16%,transparent);
+  box-shadow:0 4px 16px #00000008; scroll-snap-stop:normal;
+}
+.inviteStory .inviteSectionNumber { color:var(--ink); opacity:.75; font:600 11px/1.6 system-ui,sans-serif; letter-spacing:.06em; }
+.inviteStory .inviteEventDetails h3 { font:500 clamp(24px,4vw,30px)/1.25 Georgia,serif; margin:12px 0 20px; }
+.weddingSelectedDesign .inviteStory .inviteEventDetails p { font-size:16px; line-height:1.7; }
+.inviteStory .inviteCalendarDownload { font-size:13px; }
+.inviteStory .inviteVenueMap { height:220px; border-radius:8px; }
+.animatedInvite.inviteStory .inviteEnvelope strong { font-size:clamp(28px,5vw,40px); line-height:1.25; }
+.inviteStory .inviteOpenHint { min-height:44px; padding:10px 20px; border:1px solid #fff7; border-radius:30px; background:#0003; font:600 12px/1.4 system-ui,sans-serif; letter-spacing:.05em; }
+.weddingSelectedDesign .inviteStory .invitePreviewNote { font-size:12px; line-height:1.7; padding:14px 16px; opacity:1; }
+@media(max-width:560px) {
+  .inviteStory .inviteChapterNav button { font-size:11px; gap:4px; }
+  .animatedInvite.inviteStory .inviteStoryPanel { padding:24px 16px; }
 }

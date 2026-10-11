@@ -1,6 +1,8 @@
 import { useTranslation } from "./useTranslation";
 
 const copy: Record<string, [string, string]> = {
+  "Invitation preview": ["Aper?u de votre invitation", "\u0645\u0639\u0627\u064a\u0646\u0629 \u0627\u0644\u062f\u0639\u0648\u0629"],
+  "Open invitation": ["Ouvrir l?invitation", "\u0627\u0641\u062a\u062d \u0627\u0644\u062f\u0639\u0648\u0629"],
   "Invitation by": ["Invitation de", "بدعوة من"],
   "A little invitation for you by": ["Une invitation pour vous de la part de", "دعوة خاصة لك من"],
   "Engagement": ["Fiançailles", "خطوبة"],
