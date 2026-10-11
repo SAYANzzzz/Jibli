@@ -13,7 +13,7 @@ function Login() {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
-  const nextPath = searchParams.get("next") ?? "/request";
+  const nextPath = "/";
   const registerPath = `/register?next=${encodeURIComponent(nextPath)}`;
   const accountExists = searchParams.get("reason") === "exists";
   const [errorMessage, setErrorMessage] = useState("");

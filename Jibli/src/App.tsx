@@ -75,7 +75,6 @@ function ProtectedRoute({ children }: { children: ReactElement }) {
 }
 
 function GuestRoute({ children }: { children: ReactElement }) {
-  const location = useLocation();
   const [isCheckingAuth, setIsCheckingAuth] = useState(true);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
@@ -112,10 +111,7 @@ function GuestRoute({ children }: { children: ReactElement }) {
     return children;
   }
 
-  const searchParams = new URLSearchParams(location.search);
-  const nextPath = searchParams.get("next");
-
-  return <Navigate to={nextPath || "/account"} replace />;
+  return <Navigate to="/" replace />;
 }
 
 // /order used to be a separate, login-free page; it's now merged into

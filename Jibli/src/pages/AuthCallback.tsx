@@ -13,7 +13,7 @@ function AuthCallback() {
     let isMounted = true;
 
     const finishLogin = async () => {
-      const nextPath = searchParams.get("next") || "/request";
+      const nextPath = "/";
       const code = searchParams.get("code");
       const authError = searchParams.get("error_description") || searchParams.get("error");
 
