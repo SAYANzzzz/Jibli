@@ -5328,3 +5328,72 @@ td {
 .inviteStory .inviteVenueMap { height:clamp(100px,calc(var(--chapter-height,600px) - 310px),260px); min-height:100px; }
 .inviteStory .inviteDateDisplay > strong { font-size:clamp(48px,calc(var(--chapter-height,600px) * .14),90px); }
 .inviteStory .inviteStoryPanel { justify-content:safe center; }
+
+/* Photographic burgundy paper and wax from the supplied envelope reference. */
+.animatedInvite.inviteStory .inviteEnvelope {
+  background: #35161c url("/invitations/envelope-burgundy.jfif") center / 100% 100% no-repeat;
+  box-shadow: inset 0 0 40px #12070b55;
+  padding-bottom: 42px;
+}
+.inviteStory .inviteEnvelope::after,
+.inviteStory .inviteEnvelopeFold,
+.inviteStory .inviteEnvelopePocket,
+.inviteStory .inviteEnvelopeBorder { display:none; }
+.animatedInvite.inviteStory .inviteEnvelopeFlap {
+  inset:0;
+  width:100%;
+  height:100%;
+  background:url("/invitations/envelope-burgundy.jfif") center / 100% 100% no-repeat;
+  clip-path:polygon(0 0,100% 0,100% 100%,34% 50%);
+  transform-origin:100% 50%;
+  filter:none;
+}
+.inviteStory .inviteEnvelopeFlap::after { display:none; }
+.animatedInvite.inviteStory .inviteWaxSeal {
+  top:43%;
+  left:23%;
+  width:23%;
+  height:14%;
+  border:0;
+  border-radius:0;
+  background:transparent;
+  box-shadow:none;
+}
+.animatedInvite.inviteStory .inviteSealLogo {
+  width:65%;
+  height:65%;
+  object-fit:contain;
+  opacity:.65;
+  mix-blend-mode:multiply;
+  filter:sepia(.6);
+}
+.inviteStory .inviteEnvelope:hover .inviteWaxSeal { transform:none; box-shadow:none; }
+.animatedInvite.inviteStory .inviteEnvelope > :is(strong,.inviteEnvelopeGreeting,.inviteOpenHint) {
+  color:#fff4df;
+  text-shadow:0 2px 8px #16080c;
+}
+.inviteStory .isOpening .inviteEnvelopeFlap {
+  animation:inviteReferenceFlapOpen 1.4s .2s ease-in-out both;
+}
+@keyframes inviteReferenceFlapOpen {
+  to { transform:perspective(1200px) rotateY(155deg); opacity:0; }
+}
+@media (prefers-reduced-motion:reduce) {
+  .inviteStory .isOpening .inviteEnvelopeFlap { animation:none; }
+}
+
+/* Recolour the photographed paper using the selected invitation palette. */
+.animatedInvite.inviteStory .inviteEnvelope,
+.animatedInvite.inviteStory .inviteEnvelopeFlap {
+  background-color:var(--envelope-base);
+  background-blend-mode:luminosity;
+}
+/* Keep the original ivory wax independent of the paper tint. */
+.animatedInvite.inviteStory .inviteWaxSeal {
+  top:40%;
+  left:18%;
+  width:33%;
+  height:21%;
+  background:url("/invitations/envelope-burgundy.jfif") 26.87% 50.63% / 303.03% 476.19% no-repeat;
+  clip-path:polygon(49% 0,61% 3%,73% 13%,89% 21%,98% 36%,98% 53%,92% 66%,88% 83%,76% 91%,59% 94%,45% 100%,32% 95%,24% 80%,13% 68%,3% 55%,0 41%,7% 27%,23% 19%,35% 5%);
+}
