@@ -42,7 +42,7 @@ function weddingWhatsappUrl(design: WeddingDesign, details: Record<string, strin
     `Time: ${details.time || "Not decided"}`,
     `Venue: ${details.venue || "Not decided"}`,
     `Language: ${details.language}`,
-    `RSVP / contact: ${details.rsvp || "Not decided"}`,
+    `Hosts: ${details.hosts || "Not decided"}`, `RSVP / contact: ${details.rsvp || "Not decided"}`,
     design.needsPhotos ? "Photos: I will send the couple's photos on WhatsApp." : "",
     details.note ? `Extra request: ${details.note}` : "",
   ].filter(Boolean);
@@ -53,7 +53,7 @@ function weddingWhatsappUrl(design: WeddingDesign, details: Record<string, strin
 function WeddingInvitations() {
   const copy = useCommerceCopy();
   const [selectedId, setSelectedId] = useState<string | null>(null);
-  const [details, setDetails] = usePersistentState("jibli-details-weddings", { mood: "", couple: "", date: "", time: "", venue: "", language: "Arabic / French", rsvp: "", note: "" });
+  const [details, setDetails] = usePersistentState("jibli-details-weddings", { mood: "", hosts: "", couple: "", date: "", time: "", venue: "", language: "Arabic / French", rsvp: "", note: "" });
   const selected = useMemo(() => WEDDING_DESIGNS.find((design) => design.id === selectedId) ?? null, [selectedId]);
   const updateDetail = (field: keyof typeof details, value: string) => setDetails((current) => ({ ...current, [field]: value }));
 
@@ -101,6 +101,7 @@ function WeddingInvitations() {
             <div className="weddingOrderGrid">
               <div className="weddingSelectedDesign"><AnimatedInvitation key={selected.id} image={selected.image} title={selected.title} details={details} onMoodChange={(mood) => setDetails((current) => ({ ...current, mood }))} /><div><strong>{selected.title}</strong><span>{selected.description}</span>{selected.needsPhotos && <p><ImagePlus size={15} />{copy("Send your photos in the WhatsApp chat after submitting.")} </p>}</div></div>
               <form className="invitationForm weddingOrderForm" onSubmit={(event) => event.preventDefault()}>
+              <label>{copy("Names of the hosts")} <input maxLength={160} value={details.hosts || ""} onChange={(event) => setDetails((current) => ({ ...current, hosts: event.target.value }))} /></label>
                 <label>{copy("Couple's names")} <input required maxLength={160} value={details.couple} onChange={(event) => updateDetail("couple", event.target.value)} placeholder={copy("Example: Aymen & Balkis")} /></label>
                 <div className="invitationFormRow"><label>{copy("Date")} <input type="date" value={details.date} onChange={(event) => updateDetail("date", event.target.value)} /></label><label>{copy("Time")} <input type="time" value={details.time} onChange={(event) => updateDetail("time", event.target.value)} /></label></div>
                 <label><MapPin size={15} />{copy("Venue and city")} <input value={details.venue} onChange={(event) => updateDetail("venue", event.target.value)} placeholder={copy("Example: Salle des fêtes, Tunis")} /></label>

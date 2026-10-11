@@ -21,7 +21,7 @@ const DESIGNS = [
 export default function BusinessOpeningInvitations() {
   const copy = useCommerceCopy();
   const [selectedId, setSelectedId] = useState<string | null>(null);
-  const [details, setDetails] = usePersistentState("jibli-details-openings", { mood: "", name: "", businessType: "", date: "", time: "", venue: "", language: "French / Arabic", contact: "", note: "" });
+  const [details, setDetails] = usePersistentState("jibli-details-openings", { mood: "", hosts: "", name: "", businessType: "", date: "", time: "", venue: "", language: "French / Arabic", contact: "", note: "" });
   const selected = DESIGNS.find((design) => design.id === selectedId);
   const update = (field: keyof typeof details, value: string) => setDetails((current) => ({ ...current, [field]: value }));
   const whatsappUrl = selected ? `https://wa.me/21692001397?text=${encodeURIComponent([
@@ -33,7 +33,7 @@ export default function BusinessOpeningInvitations() {
     `Time: ${details.time || "Not decided"}`,
     `Address: ${details.venue || "Not decided"}`,
     `Language: ${details.language}`,
-    `RSVP / contact: ${details.contact || "Not decided"}`,
+    `Hosts: ${details.hosts || "Not decided"}`, `RSVP / contact: ${details.contact || "Not decided"}`,
     "Brand assets: I will send any logo or business photos in this chat.",
     details.note ? `Extra request: ${details.note}` : "",
   ].filter(Boolean).join("\n"))}` : "";
@@ -73,6 +73,7 @@ export default function BusinessOpeningInvitations() {
         <div className="weddingOrderGrid">
           <div className="weddingSelectedDesign"><AnimatedInvitation key={selected.id} image={`/invitations/openings/${selected.id}.jfif`} title={selected.title} details={details} onMoodChange={(mood) => setDetails((current) => ({ ...current, mood }))} /><div><strong>{selected.title}</strong><span>{selected.description}</span><p>{copy("Send your logo or business photos in the WhatsApp chat if you want them included.")} </p></div></div>
           <form className="invitationForm weddingOrderForm" onSubmit={(event) => event.preventDefault()}>
+              <label>{copy("Names of the hosts")} <input maxLength={160} value={details.hosts || ""} onChange={(event) => setDetails((current) => ({ ...current, hosts: event.target.value }))} /></label>
             <div className="invitationFormRow">
               <label>{copy("Business name")} <input required maxLength={160} value={details.name} onChange={(event) => update("name", event.target.value)} placeholder={copy("Your business name")} /></label>
               <label>{copy("Business type")} <input value={details.businessType} onChange={(event) => update("businessType", event.target.value)} placeholder={copy("Café, salon, boutique...")} /></label>

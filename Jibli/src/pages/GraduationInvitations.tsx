@@ -22,7 +22,7 @@ const DESIGNS = [
 export default function GraduationInvitations() {
   const copy = useCommerceCopy();
   const [selectedId, setSelectedId] = useState<string | null>(null);
-  const [details, setDetails] = usePersistentState("jibli-details-graduations", { mood: "", name: "", school: "", date: "", time: "", venue: "", language: "French / Arabic", contact: "", note: "" });
+  const [details, setDetails] = usePersistentState("jibli-details-graduations", { mood: "", hosts: "", name: "", school: "", date: "", time: "", venue: "", language: "French / Arabic", contact: "", note: "" });
   const selected = DESIGNS.find((design) => design.id === selectedId);
   const update = (field: keyof typeof details, value: string) => setDetails((current) => ({ ...current, [field]: value }));
   const whatsappUrl = selected ? `https://wa.me/21692001397?text=${encodeURIComponent([
@@ -34,7 +34,7 @@ export default function GraduationInvitations() {
     `Time: ${details.time || "Not decided"}`,
     `Address: ${details.venue || "Not decided"}`,
     `Language: ${details.language}`,
-    `RSVP / contact: ${details.contact || "Not decided"}`,
+    `Hosts: ${details.hosts || "Not decided"}`, `RSVP / contact: ${details.contact || "Not decided"}`,
     selected.needsPhoto ? "Photo: I will send the graduate photo in this chat." : "",
     details.note ? `Extra request: ${details.note}` : "",
   ].filter(Boolean).join("\n"))}` : "";
@@ -74,6 +74,7 @@ export default function GraduationInvitations() {
         <div className="weddingOrderGrid">
           <div className="weddingSelectedDesign"><AnimatedInvitation key={selected.id} image={`/invitations/graduations/${selected.id}.jfif`} title={selected.title} details={details} onMoodChange={(mood) => setDetails((current) => ({ ...current, mood }))} /><div><strong>{selected.title}</strong><span>{selected.description}</span>{selected.needsPhoto ? <p>{copy("Send the graduate photo in the WhatsApp chat after submitting.")} </p> : null}</div></div>
           <form className="invitationForm weddingOrderForm" onSubmit={(event) => event.preventDefault()}>
+              <label>{copy("Names of the hosts")} <input maxLength={160} value={details.hosts || ""} onChange={(event) => setDetails((current) => ({ ...current, hosts: event.target.value }))} /></label>
             <div className="invitationFormRow">
               <label>{copy("Graduate name")} <input required maxLength={160} value={details.name} onChange={(event) => update("name", event.target.value)} placeholder={copy("Example: Aymen & Balkis")} /></label>
               <label>{copy("School / degree")} <input value={details.school} onChange={(event) => update("school", event.target.value)} placeholder={copy("School, university or degree")} /></label>

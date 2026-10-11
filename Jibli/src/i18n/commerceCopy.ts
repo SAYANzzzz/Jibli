@@ -1,6 +1,7 @@
 import { useTranslation } from "./useTranslation";
 
 const copy: Record<string, [string, string]> = {
+  "Invitation by": ["Invitation de", "????? ??"],
   "Engagement": ["Fiançailles", "خطوبة"],
   "Apple / Outlook calendar (.ics)": ["Calendrier Apple / Outlook (.ics)", "تقويم Apple / Outlook (.ics)"],
   "Full screen": ["Plein écran", "ملء الشاشة"],

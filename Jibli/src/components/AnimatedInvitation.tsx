@@ -147,11 +147,7 @@ export default function AnimatedInvitation({ image, title, details: savedDetails
     <div ref={story} inert={opening} className="inviteReveal" tabIndex={0} aria-label="Scroll through your invitation">
       <section className="inviteOriginalArtwork inviteMainPicture"><div className="inviteOriginalArtworkFrame">{artwork}</div></section>
       <div className="inviteEventDetails">
-        <section className="inviteStoryPanel inviteStoryIntro">
-        <span className="inviteOrnament" aria-hidden="true">{copy("✦")} </span><p>{copy(certificate ? "Certificate of achievement" : "You are warmly invited")}</p><h2 dir="auto">{name}</h2>
-        {(details.hosts || details.school) && <p dir="auto">{details.hosts || details.school}</p>}
-        {validDate && <p className="inviteEventDate">{new Intl.DateTimeFormat(locale, { dateStyle: "long", timeZone: "Africa/Tunis" }).format(new Date(eventTime))}{details.time && ` · ${details.time}`}</p>}
-        </section>
+        {!certificate && details.hosts?.trim() && <p className="inviteHostCredit">{copy("Invitation by")} <strong dir="auto">{details.hosts.trim()}</strong></p>}
         {!certificate && validDate && <section className="inviteStoryPanel inviteStorySchedule">
           <span className="inviteSectionNumber">01 / {copy("The celebration")}</span>
           <h3>{copy("A date to remember")}</h3>
