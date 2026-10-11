@@ -1,6 +1,7 @@
 import { useCommerceCopy } from "../i18n/commerceCopy";
 import { usePersistentState } from "../usePersistentState";
 import AnimatedInvitation from "../components/AnimatedInvitation";
+import LivingArtwork from "../components/LivingArtwork";
 import PaymentButton from "../components/PaymentButton";
 
 import { ArrowRight, Check, ChevronLeft, Store } from "lucide-react";
@@ -60,7 +61,7 @@ export default function BusinessOpeningInvitations() {
           </div>
           <div className="weddingDesignGrid">
             {DESIGNS.map((design) => <button type="button" className="weddingDesignCard" key={design.id} onClick={() => setSelectedId(design.id)}>
-              <img src={`/invitations/openings/${design.id}.jfif`} alt={`${design.title} business opening invitation example`} loading="lazy" decoding="async" />
+              {design.id === "burgundy-bow" ? <LivingArtwork image={`/invitations/openings/${design.id}.jfif`} title={`${design.title} business opening invitation example`} paused={false} /> : <img src={`/invitations/openings/${design.id}.jfif`} alt={`${design.title} business opening invitation example`} loading="lazy" decoding="async" />}
               <div className="weddingDesignOverlay"><span>{design.style}</span><strong>{design.title}</strong><p>{design.description}</p><span className="invitationCardPrice">{copy("10 TND")} </span><b>{copy("Choose design")} <ArrowRight size={15} /></b></div>
             </button>)}
           </div>

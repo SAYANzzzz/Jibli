@@ -1,6 +1,7 @@
 import { useCommerceCopy } from "../i18n/commerceCopy";
 import { usePersistentState } from "../usePersistentState";
 import AnimatedInvitation from "../components/AnimatedInvitation";
+import LivingArtwork from "../components/LivingArtwork";
 import PaymentButton from "../components/PaymentButton";
 import { useMemo } from "react";
 import { ArrowRight, Check, ChevronLeft, ImagePlus, MapPin, Sparkles } from "lucide-react";
@@ -83,7 +84,7 @@ function WeddingInvitations() {
               <div className="weddingDesignGrid">
                 {WEDDING_DESIGNS.map((design) => (
                   <button type="button" className="weddingDesignCard" key={design.id} onClick={() => setSelectedId(design.id)}>
-                    <img src={design.image} alt={`${design.title} wedding invitation example`} loading="lazy" decoding="async" />
+                    {["arabesque-burgundy", "arabic-satin", "blush-embossed", "garden-couple", "classic-ivory", "photo-frame", "illustrated-photo", "teal-love"].includes(design.id) ? <LivingArtwork image={design.image} title={`${design.title} wedding invitation example`} paused={false} /> : <img src={design.image} alt={`${design.title} wedding invitation example`} loading="lazy" decoding="async" />}
                     <div className="weddingDesignOverlay"><span>{design.style}</span><strong>{design.title}</strong><p>{design.description}</p>{design.needsPhotos && <small><ImagePlus size={14} />{copy("Couple photos needed")} </small>}<span className="invitationCardPrice">{copy("15 TND")} </span><b>{copy("Choose design")} <ArrowRight size={15} /></b></div>
                   </button>
                 ))}

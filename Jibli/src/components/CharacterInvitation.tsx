@@ -37,12 +37,16 @@ export default function CharacterInvitation({ title, paused }: { title: string; 
   return <svg ref={scene} className="characterInvitation" viewBox="0 0 736 920" role="img" aria-label={`${title}: animated children illustration`}>
     <defs>
       <clipPath id={`${id}-text`}><rect width="736" height="440" /></clipPath>
+      <clipPath id={`${id}-background`}><rect width="736" height="700" /></clipPath>
       <clipPath id={`${id}-book`}><path d="M0 767L46 761L100 775L159 795L205 823L230 801L305 759L383 730L453 710L478 705L527 714L604 745L669 777L727 809L736 920L0 920Z" /></clipPath>
       <clipPath id={`${id}-boy`}><path d="M18 699L26 690L48 685L148 675L170 663L167 650L150 626L131 600L126 570L130 540L144 519L174 503L204 496L240 493L270 503L283 500L296 492L303 505L289 515L304 540L307 562L306 577L314 592L305 616L288 636L302 630L329 628L359 638L372 651L368 666L386 675L389 686L376 687L385 706L391 730L356 744L321 759L285 774L242 791L218 825L194 815L186 795L193 774L201 753L195 718L164 716L161 710L116 710L72 712L45 707L37 700Z" /></clipPath>
       <clipPath id={`${id}-girl`}><path d="M422 716L432 678L438 641L425 621L415 609L410 589L414 569L417 552L411 531L412 505L420 482L436 465L459 458L469 446L492 442L518 445L549 460L574 480L587 499L594 494L600 509L617 524L634 548L642 574L636 591L620 605L611 613L637 627L651 646L662 663L670 690L669 714L658 740L640 751L612 757L586 746L563 739L539 733L513 726L485 718L460 714Z" /></clipPath>
     </defs>
-    <image href="/invitations/others/kindergarten-motion-background.png" width="736" height="920" preserveAspectRatio="none" />
+    <rect width="736" height="920" fill="#fff0ea" />
+    <rect y="900" width="736" height="20" fill="#8b80a5" />
+    <image href="/invitations/others/kindergarten-motion-background.png" width="736" height="920" preserveAspectRatio="none" clipPath={`url(#${id}-background)`} />
     <image href={SOURCE} width="736" height="920" clipPath={`url(#${id}-text)`} />
+    <g className="characterBookGroup">
     <g className="characterBoy">
       <image href={SOURCE} width="736" height="920" clipPath={`url(#${id}-boy)`} />
       <g className="characterEyes">
@@ -60,5 +64,6 @@ export default function CharacterInvitation({ title, paused }: { title: string; 
       </g>
     </g>
     <image href={SOURCE} width="736" height="920" clipPath={`url(#${id}-book)`} />
+    </g>
   </svg>;
 }

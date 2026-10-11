@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import InvitationMotion from "./InvitationMotion";
 import CharacterInvitation from "./CharacterInvitation";
 import LivingArtwork from "./LivingArtwork";
+import SchoolRegistrationMotion from "./SchoolRegistrationMotion";
 import { RotateCcw, MapPin, ArrowDown, CalendarDays, Sparkles } from "lucide-react";
 
 type Props = { image: string; title: string; details: Record<string, string>; onMoodChange?: (mood: string) => void; guest?: boolean; certificate?: boolean };
@@ -48,7 +49,7 @@ export default function AnimatedInvitation({ image, title, details, onMoodChange
         <div className="inviteStardust" aria-hidden="true">{Array.from({length: 12}, (_, index) => <i key={index} style={{left: `${(index * 29 + 7) % 100}%`, animationDelay: `${index * -.7}s`, animationDuration: `${5 + index % 4}s`}} />)}</div>
         <span className="inviteWelcomeKicker">{copy("A moment to remember")} </span><span className="inviteWelcomeMonogram" aria-hidden="true">{initials}</span><h2 dir="auto">{name}</h2><p>{validDate ? new Intl.DateTimeFormat(locale, {dateStyle: "long", timeZone:"Africa/Tunis"}).format(new Date(eventTime)) : copy("Something beautiful is coming")}</p><span className="inviteScrollHint">{copy("Discover your invitation")} <ArrowDown size={16} /></span>
       </div>
-      {image && <div className="inviteArtworkScene">{image === "/invitations/others/kindergarten-welcome.jfif" ? <CharacterInvitation title={title} paused={motionPaused} /> : <LivingArtwork image={image} title={guest ? title : `${title} design reference`} paused={motionPaused} />}</div>}
+      {image && <div className="inviteArtworkScene">{image === "/invitations/others/kindergarten-welcome.jfif" ? <CharacterInvitation title={title} paused={motionPaused} /> : image === "/invitations/others/school-registration.jfif" ? <SchoolRegistrationMotion title={title} paused={motionPaused} /> : <LivingArtwork image={image} title={guest ? title : `${title} design reference`} paused={motionPaused} />}</div>}
       <div className="inviteEventDetails">
         <span className="inviteOrnament" aria-hidden="true">{copy("✦")} </span><p>{copy(certificate ? "Certificate of achievement" : "You are warmly invited")}</p><h2 dir="auto">{name}</h2>
         {(details.hosts || details.school) && <p dir="auto">{details.hosts || details.school}</p>}
