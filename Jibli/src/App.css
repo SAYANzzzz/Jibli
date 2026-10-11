@@ -5385,7 +5385,7 @@ td {
 /* Recolour the photographed paper using the selected invitation palette. */
 .animatedInvite.inviteStory .inviteEnvelope,
 .animatedInvite.inviteStory .inviteEnvelopeFlap {
-  background-color:var(--envelope-base);
+  background-color:var(--paper-deep);
   background-blend-mode:luminosity;
 }
 /* Keep the original ivory wax independent of the paper tint. */
@@ -5396,4 +5396,32 @@ td {
   height:21%;
   background:url("/invitations/envelope-burgundy.jfif") 26.87% 50.63% / 303.03% 476.19% no-repeat;
   clip-path:polygon(49% 0,61% 3%,73% 13%,89% 21%,98% 36%,98% 53%,92% 66%,88% 83%,76% 91%,59% 94%,45% 100%,32% 95%,24% 80%,13% 68%,3% 55%,0 41%,7% 27%,23% 19%,35% 5%);
+}
+
+/* Carry the chosen artwork through every chapter of the invitation. */
+.animatedInvite.inviteStory .inviteReveal {
+  background-color:var(--paper-deep);
+  background-image:var(--story-artwork);
+  background-position:center;
+  background-size:cover;
+  background-repeat:no-repeat;
+  background-attachment:local;
+}
+.animatedInvite.inviteStory .inviteMainPicture,
+.animatedInvite.inviteStory .inviteEventDetails { background:transparent; }
+.inviteStory .inviteEventDetails::before { display:none; }
+.inviteStory .inviteStoryPanel {
+  background:color-mix(in srgb,var(--paper) 86%,transparent);
+  backdrop-filter:blur(3px);
+}
+/* Theme colour applies to both the surrounding artwork and the main picture. */
+.animatedInvite.inviteStory[data-custom-theme=true] .inviteReveal {
+  background-blend-mode:luminosity;
+}
+.inviteStory[data-custom-theme=true] .inviteOriginalArtworkFrame {
+  isolation:isolate;
+  background:var(--paper-deep);
+}
+.inviteStory[data-custom-theme=true] .inviteOriginalArtworkFrame > * {
+  mix-blend-mode:luminosity;
 }
