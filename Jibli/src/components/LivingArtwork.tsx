@@ -270,7 +270,7 @@ export default function LivingArtwork({ image, title, paused }: { image: string;
           ` : ""}
           shift+=mask*${synchronized ? "vec2(sin(phase)*.0015,sin(phase)*.005)" : satinWedding || embossedWedding || ivoryWedding ? "vec2(sin(phase+d.x*.4)*.0035,cos(phase)*.0045)" : floralWedding ? "vec2(sin(phase)*.0025,cos(phase)*.004)" : starCertificate || pinkCertificate || quranCertificate ? "vec2(sin(phase)*.004,cos(phase)*.009)" : "vec2(sin(phase)*.0012,cos(phase*.85)*.0035)"}*amount;
         }}
-        vec2 sampleUV=clamp(uv-shift,vec2(0.),vec2(1.));
+        vec2 sampleUV=clamp(uv-shift*1.55,vec2(0.),vec2(1.));
         ${coolKid ? `
         vec2 flamePoint=vec2(sampleUV.x*736.,(1.-sampleUV.y)*1030.);
         float flameMask=1.-smoothstep(.3,1.,length((flamePoint-vec2(133.,738.))/vec2(5.,14.)));
@@ -349,7 +349,7 @@ export default function LivingArtwork({ image, title, paused }: { image: string;
       if (active) time += Math.min((stamp-previous)/1000, .05);
       previous = stamp;
       if (visible) {
-        gl.uniform1f(clock, time); gl.uniform1f(amount, reduced.matches ? 0 : 1);
+        gl.uniform1f(clock, time * 1.15); gl.uniform1f(amount, reduced.matches ? 0 : 1);
         gl.uniform2f(pointerLocation, pointer[0], 1 - pointer[1]);
         gl.drawArrays(gl.TRIANGLES, 0, 6);
       }

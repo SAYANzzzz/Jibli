@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { useCommerceCopy } from "../i18n/commerceCopy";
 import { usePersistentState } from "../usePersistentState";
 import AnimatedInvitation from "../components/AnimatedInvitation";
@@ -20,7 +21,7 @@ const DESIGNS = [
 
 export default function GraduationInvitations() {
   const copy = useCommerceCopy();
-  const [selectedId, setSelectedId] = usePersistentState<string | null>("jibli-design-graduations", null);
+  const [selectedId, setSelectedId] = useState<string | null>(null);
   const [details, setDetails] = usePersistentState("jibli-details-graduations", { mood: "", name: "", school: "", date: "", time: "", venue: "", language: "French / Arabic", contact: "", note: "" });
   const selected = DESIGNS.find((design) => design.id === selectedId);
   const update = (field: keyof typeof details, value: string) => setDetails((current) => ({ ...current, [field]: value }));

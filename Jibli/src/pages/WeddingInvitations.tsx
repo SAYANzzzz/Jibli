@@ -3,7 +3,7 @@ import { usePersistentState } from "../usePersistentState";
 import AnimatedInvitation from "../components/AnimatedInvitation";
 import LivingArtwork from "../components/LivingArtwork";
 import PaymentButton from "../components/PaymentButton";
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { ArrowRight, Check, ChevronLeft, ImagePlus, MapPin, Sparkles } from "lucide-react";
 import { Link } from "react-router-dom";
 import Navbar from "../components/Navbar";
@@ -52,7 +52,7 @@ function weddingWhatsappUrl(design: WeddingDesign, details: Record<string, strin
 
 function WeddingInvitations() {
   const copy = useCommerceCopy();
-  const [selectedId, setSelectedId] = usePersistentState<string | null>("jibli-design-weddings", null);
+  const [selectedId, setSelectedId] = useState<string | null>(null);
   const [details, setDetails] = usePersistentState("jibli-details-weddings", { mood: "", couple: "", date: "", time: "", venue: "", language: "Arabic / French", rsvp: "", note: "" });
   const selected = useMemo(() => WEDDING_DESIGNS.find((design) => design.id === selectedId) ?? null, [selectedId]);
   const updateDetail = (field: keyof typeof details, value: string) => setDetails((current) => ({ ...current, [field]: value }));
