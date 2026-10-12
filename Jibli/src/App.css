@@ -4463,10 +4463,19 @@ td {
 .gamingGameCard:hover .gamingGameImageWrap img { transform: scale(1.08); }
 
 .gamingGameFallback {
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;
+  width:100%;height:100%;min-height:130px;
+  background:radial-gradient(ellipse at top right,#7755e955,transparent 70%),linear-gradient(135deg,#152e52,#0a1028);
   font-size: 34px;
   font-weight: 800;
   color: var(--accent);
 }
+.gamingGameFallback svg { opacity:.55;color:#b4ccff; }
+.gamingGameFallback span { color:#e5edff;letter-spacing:.08em; }
+.gamingPriceNote { flex:1;min-width:0;margin:0;color:var(--text-muted,#b5c0d5);line-height:1.6; }
+.gamingOffersFooter { flex-wrap:wrap;gap:20px; }
+.gamingWhatsappQuote { display:inline-flex;align-items:center;justify-content:center;gap:10px;white-space:normal;text-align:center; }
+.gamingOtherGame { display:flex;align-items:center;justify-content:center;gap:10px;width:fit-content;max-width:100%;margin:16px auto 0;text-align:center; }
 
 .gamingGameCard strong {
   min-height: 40px;
@@ -5755,6 +5764,20 @@ td {
 .inviteArtworkField.artworkFont-script { font-family:"Invitation Script","Segoe Script",cursive; }
 .inviteArtworkField.artworkFont-serif { font-family:Georgia,"Times New Roman",serif; }
 .inviteArtworkField.artworkFont-sans { font-family:Arial,Helvetica,sans-serif; font-weight:600; }
+.invitePersonalisedCover {
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:24px;aspect-ratio:7/10;box-sizing:border-box;padding:12%;
+  background:var(--paper);color:var(--ink);text-align:center;
+  border:1px solid color-mix(in srgb,var(--foil) 35%,transparent);
+}
+.inviteStory .invitePersonalisedCover h2 {
+  margin:0;font:400 clamp(24px,6vw,46px)/1.3 Georgia,serif;
+  overflow-wrap:anywhere;text-wrap:balance;color:var(--ink);
+}
+.invitePersonalisedCover p,.invitePersonalisedCover span {
+  margin:0;max-width:100%;overflow-wrap:anywhere;color:var(--ink);
+}
+.inviteStory .inviteHostCredit strong { color:var(--ink);font:inherit;font-weight:600; }
 .inviteStory .inviteArtworkCaption {
   padding:20px 8% 28px;text-align:center;color:var(--ink);
   background:var(--invitation-paper,var(--paper));

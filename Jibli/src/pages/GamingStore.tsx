@@ -1,7 +1,6 @@
-import PaymentButton from "../components/PaymentButton";
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { ArrowUpRight, Gamepad2, Zap } from "lucide-react";
+import { ArrowUpRight, Gamepad2, MessageCircle, Zap } from "lucide-react";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import ProfileNavLink from "../components/ProfileNavLink";
@@ -11,7 +10,6 @@ const ADMIN_WHATSAPP_NUMBER = "21692001397";
 
 type GamingTier = {
   label: string;
-  priceTnd: number | null;
   features?: string[];
 };
 
@@ -20,20 +18,34 @@ type GamingGame = {
   name: string;
   category: string;
   image?: string;
+  badge?: string;
   tiers: GamingTier[];
 };
 
 const GAMING_CATALOG: GamingGame[] = [
+  { id: "pubg-mobile", name: "PUBG Mobile", category: "Game top-up", badge: "PUBG", tiers: [{ label: "Available packages" }] },
+  { id: "fortnite", name: "Fortnite", category: "Game top-up", badge: "FN", tiers: [{ label: "Available packages" }] },
+  { id: "fc-mobile", name: "EA SPORTS FC Mobile", category: "Game top-up", badge: "FC", tiers: [{ label: "Available packages" }] },
+  { id: "call-of-duty-mobile", name: "Call of Duty: Mobile", category: "Game top-up", badge: "COD", tiers: [{ label: "Available packages" }] },
+  { id: "mobile-legends", name: "Mobile Legends: Bang Bang", category: "Game top-up", badge: "ML", tiers: [{ label: "Available packages" }] },
+  { id: "genshin-impact", name: "Genshin Impact", category: "Game top-up", badge: "GI", tiers: [{ label: "Available packages" }] },
+  { id: "honkai-star-rail", name: "Honkai: Star Rail", category: "Game top-up", badge: "HSR", tiers: [{ label: "Available packages" }] },
+  { id: "brawl-stars", name: "Brawl Stars", category: "Game top-up", badge: "BS", tiers: [{ label: "Available packages" }] },
+  { id: "clash-of-clans", name: "Clash of Clans", category: "Game top-up", badge: "COC", tiers: [{ label: "Available packages" }] },
+  { id: "clash-royale", name: "Clash Royale", category: "Game top-up", badge: "CR", tiers: [{ label: "Available packages" }] },
+  { id: "playstation", name: "PlayStation Store", category: "Gift card", badge: "PS", tiers: [{ label: "Available packages" }] },
+  { id: "xbox", name: "Xbox", category: "Gift card", badge: "XBOX", tiers: [{ label: "Available packages" }] },
+
   {
     id: "riot-points",
     category: "Gift card",
     name: "League of Legends — Riot Gift Card",
     image: "/games/league-of-legends.jpg",
     tiers: [
-      { label: "5 USD Riot Key", priceTnd: 22 },
-      { label: "10 USD Riot Key", priceTnd: 40 },
-      { label: "25 USD Riot Key", priceTnd: 90 },
-      { label: "80 USD Riot Key", priceTnd: 280 },
+      { label: "5 USD Riot Key" },
+      { label: "10 USD Riot Key" },
+      { label: "25 USD Riot Key" },
+      { label: "80 USD Riot Key" },
     ],
   },
   {
@@ -41,7 +53,7 @@ const GAMING_CATALOG: GamingGame[] = [
     category: "Game top-up",
     name: "Valorant — VP",
     image: "/games/valorant.jpg",
-    tiers: [{ label: "475 VP Key", priceTnd: 22 }],
+    tiers: [{ label: "475 VP Key" }],
   },
   {
     id: "free-fire",
@@ -49,11 +61,11 @@ const GAMING_CATALOG: GamingGame[] = [
     name: "Free Fire — Diamonds",
     image: "/games/freefire.jpg",
     tiers: [
-      { label: "110 Diamonds", priceTnd: 5 },
-      { label: "231 Diamonds", priceTnd: 10 },
-      { label: "583 Diamonds", priceTnd: 24 },
-      { label: "1188 Diamonds", priceTnd: 45 },
-      { label: "2420 Diamonds", priceTnd: 82 },
+      { label: "110 Diamonds" },
+      { label: "231 Diamonds" },
+      { label: "583 Diamonds" },
+      { label: "1188 Diamonds" },
+      { label: "2420 Diamonds" },
     ],
   },
   {
@@ -62,10 +74,10 @@ const GAMING_CATALOG: GamingGame[] = [
     name: "Roblox — Robux",
     image: "/games/roblox.png",
     tiers: [
-      { label: "100 Robux", priceTnd: 12 },
-      { label: "200 Robux", priceTnd: 18 },
-      { label: "500 Robux", priceTnd: 38 },
-      { label: "800 Robux", priceTnd: 50 },
+      { label: "100 Robux" },
+      { label: "200 Robux" },
+      { label: "500 Robux" },
+      { label: "800 Robux" },
     ],
   },
   {
@@ -73,7 +85,7 @@ const GAMING_CATALOG: GamingGame[] = [
     category: "Game top-up",
     name: "eFootball — Coins",
     image: "/games/efootball.png",
-    tiers: [{ label: "Message us for current packages & pricing", priceTnd: null }],
+    tiers: [{ label: "Message us for current packages & pricing" }],
   },
   {
     id: "chess-premium",
@@ -83,12 +95,12 @@ const GAMING_CATALOG: GamingGame[] = [
     tiers: [
       {
         label: "Gold",
-        priceTnd: 30,
+
         features: ["Unlimited Puzzles", "Unlimited Lessons", "Unlock All Bots", "No Ads"],
       },
       {
         label: "Platinum",
-        priceTnd: 42,
+
         features: [
           "Unlimited Game Review",
           "Unlimited Puzzles",
@@ -99,7 +111,7 @@ const GAMING_CATALOG: GamingGame[] = [
       },
       {
         label: "Diamond",
-        priceTnd: 60,
+
         features: [
           "Unlimited Game Review",
           "Unlimited Coach Explanations",
@@ -119,10 +131,10 @@ const GAMING_CATALOG: GamingGame[] = [
     name: "Spotify Premium (1 month)",
     image: "/games/spotify.png",
     tiers: [
-      { label: "Personnel", priceTnd: 15 },
-      { label: "Étudiants", priceTnd: 10 },
-      { label: "Duo", priceTnd: 20 },
-      { label: "Familier", priceTnd: 25 },
+      { label: "Personnel" },
+      { label: "Étudiants" },
+      { label: "Duo" },
+      { label: "Familier" },
     ],
   },
   {
@@ -130,14 +142,14 @@ const GAMING_CATALOG: GamingGame[] = [
     category: "Subscription",
     name: "Netflix",
     image: "/games/netflix.png",
-    tiers: [{ label: "Message us for current plans & pricing", priceTnd: null }],
+    tiers: [{ label: "Message us for current plans & pricing" }],
   },
   {
     id: "minecraft",
     category: "Game code",
     name: "Minecraft — Java & Bedrock Edition (PC)",
     image: "/games/minecraft.jpg",
-    tiers: [{ label: "Full game", priceTnd: 90 }],
+    tiers: [{ label: "Full game" }],
   },
   {
     id: "steam-gift-cards",
@@ -145,19 +157,28 @@ const GAMING_CATALOG: GamingGame[] = [
     name: "Steam Wallet Gift Card",
     image: "/games/steam.jpg",
     tiers: [
-      { label: "15 USD Steam Key", priceTnd: 65 },
-      { label: "20 USD Steam Key", priceTnd: 85 },
-      { label: "30 USD Steam Key", priceTnd: 130 },
-      { label: "50 USD Steam Key", priceTnd: 220 },
+      { label: "15 USD Steam Key" },
+      { label: "20 USD Steam Key" },
+      { label: "30 USD Steam Key" },
+      { label: "50 USD Steam Key" },
     ],
   },
 ];
 
-function buildWhatsappUrl(gameName: string, tierLabel: string, priceTnd: number | null) {
-  const priceLine = priceTnd !== null ? ` — ${priceTnd} TND` : "";
-  const message = `Hi! I'd like to order:\n${gameName}\n${tierLabel}${priceLine}`;
+function buildWhatsappUrl(gameName: string, tierLabel: string, language: string) {
+  const message = language === "fr"
+    ? `Bonjour Jibli ! Quel est le prix pour ${gameName} ?\nOption : ${tierLabel}\nPouvez-vous confirmer les offres disponibles pour ma plateforme et ma r?gion ?`
+    : language === "ar"
+      ? `?????? ????! ???? ????? ??? ${gameName}.\n??????: ${tierLabel}\n?? ?????? ????? ??????? ???????? ?????? ????????`
+      : `Hi Jibli! What is the price for ${gameName}?\nOption: ${tierLabel}\nPlease confirm the available packages for my platform and region.`;
   return `https://wa.me/${ADMIN_WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`;
 }
+
+const PRICE_COPY = {
+  en: { ask: "Ask for a price on WhatsApp", browse: "Explore games", action: "View packages", hero: "Gaming prices on WhatsApp", note: "Contact us for current prices and availability. Tell us your platform and account region.", packages: "Available packages", other: "Ask about another game" },
+  fr: { ask: "Demander le prix sur WhatsApp", browse: "D?couvrir les jeux", action: "Voir les offres", hero: "Prix gaming sur WhatsApp", note: "Contactez-nous pour les prix et la disponibilit?. Pr?cisez votre plateforme et la r?gion de votre compte.", packages: "Offres disponibles", other: "Demander un autre jeu" },
+  ar: { ask: "???? ?? ????? ??? ??????", browse: "???? ???????", action: "??? ???????", hero: "????? ??????? ??? ??????", note: "????? ???? ?????? ??????? ???????. ?????? ?????? ?????? ?????.", packages: "??????? ????????", other: "???? ?? ???? ????" },
+};
 
 const CATEGORY_KEYS: Record<string, "categoryTopup" | "categorySubscription" | "categoryGameCode" | "categoryGiftCard"> = {
   "Game top-up": "categoryTopup",
@@ -167,7 +188,9 @@ const CATEGORY_KEYS: Record<string, "categoryTopup" | "categorySubscription" | "
 };
 
 function GamingStore() {
-  const { t } = useTranslation();
+  const { t, language } = useTranslation();
+  const copy = PRICE_COPY[language];
+  const tierLabel = (label: string) => label === "Available packages" || label.startsWith("Message us for") ? copy.packages : label;
   const [selectedGameId, setSelectedGameId] = useState<string | null>(null);
   const [selectedTierIndex, setSelectedTierIndex] = useState(0);
   const selectedGame = GAMING_CATALOG.find((game) => game.id === selectedGameId) ?? null;
@@ -193,10 +216,10 @@ function GamingStore() {
       <main className="requestPage gamingStorePage">
         <section className="gamingEditorialHero">
           <div className="gamingEditorialContent">
-            <span className="gamingEditorialEyebrow"><Zap size={15} /> Digital delivery after payment verification</span>
+            <span className="gamingEditorialEyebrow"><Zap size={15} /> {copy.hero}</span>
             <h1>{t("gaming.title")}</h1>
-            <p>{t("gaming.subtitle")}</p>
-            <a className="gamingBrowseBtn" href="#gaming-catalog"><Gamepad2 size={17} /> Explore top-ups</a>
+            <p>{copy.note}</p>
+            <a className="gamingBrowseBtn" href="#gaming-catalog"><Gamepad2 size={17} /> {copy.browse}</a>
           </div>
         </section>
 
@@ -213,12 +236,12 @@ function GamingStore() {
                   {game.image ? (
                     <img src={game.image} alt="" />
                   ) : (
-                    <span className="gamingGameFallback">{game.name.slice(0, 1)}</span>
+                    <span className="gamingGameFallback"><Gamepad2 size={32} aria-hidden="true" /><span>{game.badge || game.name.slice(0, 1)}</span></span>
                   )}
                 </div>
                 <strong>{game.name}</strong>
                 <span className="platformBadge">{categoryLabel(game.category)}</span>
-                <span className="gamingGameAction">View offers <ArrowUpRight size={15} /></span>
+                <span className="gamingGameAction">{copy.action} <ArrowUpRight size={15} /></span>
               </button>
             ))}
           </div>
@@ -234,14 +257,14 @@ function GamingStore() {
                   {selectedGame.image ? (
                     <img src={selectedGame.image} alt="" className="gamingOffersHeroImage" />
                   ) : (
-                    <span className="gamingGameFallback">{selectedGame.name.slice(0, 1)}</span>
+                    <span className="gamingGameFallback"><Gamepad2 size={32} aria-hidden="true" /><span>{selectedGame.badge || selectedGame.name.slice(0, 1)}</span></span>
                   )}
                 </div>
                 <div>
                   <span className="platformBadge">{categoryLabel(selectedGame.category)}</span>
                   <h3>{selectedGame.name}</h3>
                   {selectedGame.tiers.length === 1 && (
-                    <p className="mutedText">{selectedGame.tiers[0].label}</p>
+                    <p className="mutedText">{tierLabel(selectedGame.tiers[0].label)}</p>
                   )}
                 </div>
               </div>
@@ -257,8 +280,7 @@ function GamingStore() {
                         className={index === selectedTierIndex ? "gamingTierTile active" : "gamingTierTile"}
                         onClick={() => setSelectedTierIndex(index)}
                       >
-                        <strong>{tier.label}</strong>
-                        {tier.priceTnd !== null && <span>{tier.priceTnd} TND</span>}
+                        <strong>{tierLabel(tier.label)}</strong>
                       </button>
                     ))}
                   </div>
@@ -275,10 +297,8 @@ function GamingStore() {
 
               {selectedTier && (
                 <div className="gamingOffersFooter">
-                  {selectedTier.priceTnd !== null && (
-                    <span className="gamingTierPrice">{selectedTier.priceTnd} TND</span>
-                  )}
-                  {selectedTier.priceTnd !== null ? <PaymentButton productKey={`gaming:${selectedGame.id}:${selectedTierIndex}`} requestUrl={buildWhatsappUrl(selectedGame.name, selectedTier.label, selectedTier.priceTnd)} /> : <a className="primaryBtn" href={buildWhatsappUrl(selectedGame.name, selectedTier.label, null)} target="_blank" rel="noreferrer">Ask for a price on WhatsApp</a>}
+                  <p className="gamingPriceNote">{copy.note}</p>
+                  <a className="primaryBtn gamingWhatsappQuote" href={buildWhatsappUrl(selectedGame.name, tierLabel(selectedTier.label), language)} target="_blank" rel="noopener noreferrer"><MessageCircle size={18} />{copy.ask}<ArrowUpRight size={16} /></a>
                 </div>
               )}
             </div>
@@ -286,6 +306,7 @@ function GamingStore() {
         )}
 
         <p className="secureText">{t("gaming.notFound")}</p>
+        <a className="outlineBtn gamingOtherGame" href={buildWhatsappUrl(copy.other, copy.packages, language)} target="_blank" rel="noopener noreferrer"><MessageCircle size={17} />{copy.other}</a>
       </main>
 
       <Footer />

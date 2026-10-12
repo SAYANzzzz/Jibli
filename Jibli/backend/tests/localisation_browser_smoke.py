@@ -20,12 +20,15 @@ with sync_playwright() as p:
         page.locator(".invitationWhatsappBtn").click()
         assert "/invitations/weddings" in page.url
         name.fill("Amira & Youssef")
-        page.get_by_role("button", name="Midnight theme", exact=True).click()
+        page.locator("input[type=date]").fill("2027-06-20")
+        page.locator("input[type=time]").fill("18:30")
+        page.locator('.invitationForm input[maxlength="240"]').fill("Tunis")
         page.locator(".invitationForm select").select_option("Arabic")
         page.reload()
+        page.locator(".weddingDesignCard").first.click()
         expect(page.locator(".invitationForm input").first).to_have_value("Amira & Youssef")
         expect(page.locator(".invitationForm select")).to_have_value("Arabic")
-        expect(page.locator(".animatedInvite")).to_have_class("animatedInvite inviteMood-midnight ")
+        expect(page.locator(".animatedInvite")).to_have_attribute("data-design", "arabesque-burgundy")
         if language == "ar":
             expect(page.get_by_label("اسما العروسين", exact=True)).to_be_visible()
         else:
@@ -36,7 +39,7 @@ with sync_playwright() as p:
         draft = page.evaluate("JSON.parse(Object.entries(localStorage).find(([k]) => k.startsWith('jibli-payment-'))[1])")
         import json
         saved = json.loads(draft["details"])["invitation"]
-        assert saved["mood"] == "midnight"
+        assert saved["mood"] == "champagne"
         assert saved["details"]["couple"] == "Amira & Youssef"
         context.close()
     browser.close()
