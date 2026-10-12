@@ -22,11 +22,10 @@ type WeddingDesign = {
 };
 
 const WEDDING_DESIGNS: WeddingDesign[] = [
-  { id: "arabesque-burgundy", title: "Arabesque burgundy", style: "Arabic · Luxury floral", image: "/invitations/weddings/arabesque-burgundy.jfif", description: "Grand arches, burgundy blooms and warm gold details." },
+  { id: "arabesque-burgundy", title: "Arabesque burgundy", style: "Arabic · Luxury floral", image: "/invitations/weddings/arabesque-burgundy.png", description: "Grand arches, burgundy blooms and warm gold details." },
   { id: "arabic-satin", title: "Satin ribbons", style: "Arabic · Modern", image: "/invitations/weddings/arabic-satin.jfif", description: "Soft fabric-like florals and elegant Arabic calligraphy." },
   { id: "blush-embossed", title: "Blush embossed", style: "Arabic · Floral", image: "/invitations/weddings/blush-embossed.jfif", description: "Embossed ivory texture with gentle blush florals." },
   { id: "garden-couple", title: "Garden couple", style: "Arabic · Illustrated", image: "/invitations/weddings/garden-couple.jfif", description: "Rose garden framing with a bride-and-groom illustration." },
-  { id: "classic-ivory", title: "Classic ivory", style: "English / French · Timeless", image: "/invitations/weddings/classic-ivory.jfif", description: "A refined cream card with delicate botanical borders." },
   { id: "photo-frame", title: "Childhood story", style: "Photo · Playful", image: "/invitations/weddings/photo-frame.jfif", description: "A charming save-the-date that uses childhood photos.", needsPhotos: true },
   { id: "illustrated-photo", title: "Illustrated love", style: "Photo · Playful", image: "/invitations/weddings/illustrated-photo.jfif", description: "Your photos in a sweet, illustrated wedding scene.", needsPhotos: true },
   { id: "teal-love", title: "Teal celebration", style: "English · Hand-drawn", image: "/invitations/weddings/teal-love.jfif", description: "Hand-drawn champagne, rings and a joyful teal script." },
@@ -42,7 +41,7 @@ function weddingWhatsappUrl(design: WeddingDesign, details: Record<string, strin
     `Time: ${details.time || "Not decided"}`,
     `Venue: ${details.venue || "Not decided"}`,
     `Language: ${details.language}`,
-    `Hosts: ${details.hosts || "Not decided"}`, `RSVP / contact: ${details.rsvp || "Not decided"}`,
+    details.hosts?.trim() ? `Hosts: ${details.hosts.trim()}` : "", details.rsvp.trim() ? `RSVP / contact: ${details.rsvp.trim()}` : "",
     design.needsPhotos ? "Photos: I will send the couple's photos on WhatsApp." : "",
     details.note ? `Extra request: ${details.note}` : "",
   ].filter(Boolean);
@@ -74,7 +73,7 @@ function WeddingInvitations() {
                 <a href="#wedding-designs" className="weddingHeroButton">{copy("Choose your design")} <ArrowRight size={17} /></a>
               </div>
               <aside className="weddingHeroPromise">
-                <span>01</span><strong>{copy("Pick a design")} </strong><p>{copy("Eight curated directions to start from.")} </p>
+                <span>01</span><strong>{copy("Pick a design")} </strong><p>{copy("Every design is personalised by Jibli.")} </p>
                 <span>02</span><strong>{copy("Tell us the details")} </strong><p>{copy("Arabic, French, English—or a mix of all three.")} </p>
                 <span>03</span><strong>{copy("Share the moment")} </strong><p>{copy("Your final invitation arrives on WhatsApp.")} </p>
               </aside>
@@ -84,7 +83,7 @@ function WeddingInvitations() {
               <div className="weddingDesignGrid">
                 {WEDDING_DESIGNS.map((design) => (
                   <button type="button" className="weddingDesignCard" key={design.id} onClick={() => setSelectedId(design.id)}>
-                    {["arabesque-burgundy", "arabic-satin", "blush-embossed", "garden-couple", "classic-ivory", "photo-frame", "illustrated-photo", "teal-love"].includes(design.id) ? <LivingArtwork image={design.image} title={`${design.title} wedding invitation example`} paused={false} /> : <img src={design.image} alt={`${design.title} wedding invitation example`} loading="lazy" decoding="async" />}
+                    {["arabesque-burgundy", "arabic-satin", "blush-embossed", "garden-couple", "photo-frame", "illustrated-photo", "teal-love"].includes(design.id) ? <LivingArtwork image={design.image} title={`${design.title} wedding invitation example`} paused={false} /> : <img src={design.image} alt={`${design.title} wedding invitation example`} loading="lazy" decoding="async" />}
                     <div className="weddingDesignOverlay"><span>{design.style}</span><strong>{design.title}</strong><p>{design.description}</p>{design.needsPhotos && <small><ImagePlus size={14} />{copy("Couple photos needed")} </small>}<span className="invitationCardPrice">{copy("15 TND")} </span><b>{copy("Choose design")} <ArrowRight size={15} /></b></div>
                   </button>
                 ))}
@@ -101,12 +100,17 @@ function WeddingInvitations() {
             <div className="weddingOrderGrid">
               <div className="weddingSelectedDesign"><AnimatedInvitation key={selected.id} image={selected.image} title={selected.title} details={details} onMoodChange={(mood) => setDetails((current) => ({ ...current, mood }))} /><div><strong>{selected.title}</strong><span>{selected.description}</span>{selected.needsPhotos && <p><ImagePlus size={15} />{copy("Send your photos in the WhatsApp chat after submitting.")} </p>}</div></div>
               <form className="invitationForm weddingOrderForm" onSubmit={(event) => event.preventDefault()}>
-              <label>{copy("Names of the hosts")} <input maxLength={160} value={details.hosts || ""} onChange={(event) => setDetails((current) => ({ ...current, hosts: event.target.value }))} /></label>
                 <label>{copy("Couple's names")} <input required maxLength={160} value={details.couple} onChange={(event) => updateDetail("couple", event.target.value)} placeholder={copy("Example: Aymen & Balkis")} /></label>
-                <div className="invitationFormRow"><label>{copy("Date")} <input type="date" value={details.date} onChange={(event) => updateDetail("date", event.target.value)} /></label><label>{copy("Time")} <input type="time" value={details.time} onChange={(event) => updateDetail("time", event.target.value)} /></label></div>
-                <label><MapPin size={15} />{copy("Venue and city")} <input value={details.venue} onChange={(event) => updateDetail("venue", event.target.value)} placeholder={copy("Example: Salle des fêtes, Tunis")} /></label>
-                <div className="invitationFormRow"><label>{copy("Invitation language")} <select value={details.language} onChange={(event) => updateDetail("language", event.target.value)}><option value="Arabic / French">{copy("Arabic / French")}</option><option value="Arabic">{copy("Arabic")}</option><option value="French">{copy("French")}</option><option value="English">{copy("English")}</option><option value="Arabic / English">{copy("Arabic / English")}</option></select></label><label>{copy("RSVP / contact")} <input value={details.rsvp} onChange={(event) => updateDetail("rsvp", event.target.value)} placeholder={copy("Phone number or name")} /></label></div>
-                <label>{copy("Special wording or changes")} <textarea value={details.note} onChange={(event) => updateDetail("note", event.target.value)} placeholder={copy("Quran verse, family names, dress code, colour changes...")} /></label>
+                <div className="invitationFormRow"><label>{copy("Date")} <input required type="date" value={details.date} onChange={(event) => updateDetail("date", event.target.value)} /></label><label>{copy("Time")} <input required type="time" value={details.time} onChange={(event) => updateDetail("time", event.target.value)} /></label></div>
+                <label><MapPin size={15} />{copy("Venue and city")} <input required maxLength={240} value={details.venue} onChange={(event) => updateDetail("venue", event.target.value)} placeholder={copy("Example: Salle des fêtes, Tunis")} /></label>
+                <label>{copy("Invitation language")} <select value={details.language} onChange={(event) => updateDetail("language", event.target.value)}><option value="Arabic / French">{copy("Arabic / French")}</option><option value="Arabic">{copy("Arabic")}</option><option value="French">{copy("French")}</option><option value="English">{copy("English")}</option><option value="Arabic / English">{copy("Arabic / English")}</option></select></label>
+                <details className="invitationOptionalDetails">
+                  <summary>{copy("Optional details")}</summary>
+                  <p className="invitationOptionalHint">{copy("Add a separate host, RSVP contact or special wording only if needed.")}</p>
+                  <label>{copy("Names of the hosts")} <input maxLength={160} value={details.hosts || ""} onChange={(event) => setDetails((current) => ({ ...current, hosts: event.target.value }))} /></label>
+                  <label>{copy("RSVP / contact")} <input maxLength={160} value={details.rsvp} onChange={(event) => updateDetail("rsvp", event.target.value)} placeholder={copy("Phone number or name")} /></label>
+                  <label>{copy("Special wording or changes")} <textarea maxLength={1500} value={details.note} onChange={(event) => updateDetail("note", event.target.value)} placeholder={copy("Quran verse, family names, dress code...")} /></label>
+                </details>
                 <PaymentButton productKey={`invitation:weddings:${selected.id}`} requestUrl={weddingWhatsappUrl(selected, details)} invitation={{ image: selected.image, title: selected.title, mood: details.mood, details, certificate: selected.id.includes("certificate") || selected.id.includes("weekly-star") }} />
                 <p><Check size={15} />{copy("You approve the final proof before it is delivered.")} </p>
               </form>

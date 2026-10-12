@@ -3,7 +3,7 @@ import { invitationMotionProfiles } from "../invitationMotionProfiles";
 
 // Local texture deformation moves pixels already in the artwork, without
 // duplicating a character or adding unrelated decorative illustrations.
-export default function LivingArtwork({ image, title, paused }: { image: string; title: string; paused: boolean }) {
+export default function LivingArtwork({ image, title, paused, paperTheme = "" }: { image: string; title: string; paused: boolean; paperTheme?: string }) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const pausedRef = useRef(paused);
   useEffect(() => { pausedRef.current = paused; }, [paused]);
@@ -370,7 +370,67 @@ export default function LivingArtwork({ image, title, paused }: { image: string;
       canvas.height = Math.round(source.naturalHeight*scale);
       gl.viewport(0,0,canvas.width,canvas.height);
       gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
-      gl.texImage2D(gl.TEXTURE_2D,0,gl.RGB,gl.RGB,gl.UNSIGNED_BYTE,source);
+      const paperColours: Record<string, [number, number, number]> = {
+        garden: [221, 235, 214], midnight: [24, 37, 56],
+        confetti: [249, 222, 232], champagne: [246, 233, 208],
+      };
+      let target = paperColours[paperTheme];
+      let artworkSource: TexImageSource = source;
+      {
+        const paper = document.createElement("canvas");
+        paper.width = canvas.width; paper.height = canvas.height;
+        const context = paper.getContext("2d", { willReadFrequently: true });
+        if (context) {
+          context.drawImage(source, 0, 0, paper.width, paper.height);
+          const pixels = context.getImageData(0, 0, paper.width, paper.height);
+          const data = pixels.data;
+          // Find the dominant pale paper colour in the central writing area.
+          const bins = new Map<number, { count: number; index: number }>();
+          for (let y = Math.floor(paper.height * .18); y < paper.height * .8; y += 3) {
+            for (let x = Math.floor(paper.width * .25); x < paper.width * .75; x += 3) {
+              const index = y * paper.width + x, offset = index * 4;
+              const r = data[offset], g = data[offset + 1], b = data[offset + 2];
+              if (Math.min(r, g, b) < 165 || Math.max(r, g, b) - Math.min(r, g, b) > 65) continue;
+              const bin = (r >> 4) * 256 + (g >> 4) * 16 + (b >> 4);
+              const entry = bins.get(bin);
+              bins.set(bin, { count: (entry?.count || 0) + 1, index });
+            }
+          }
+          const seed = [...bins.values()].sort((a, b) => b.count - a.count)[0]?.index;
+          if (seed !== undefined) {
+            const base = [data[seed * 4], data[seed * 4 + 1], data[seed * 4 + 2]];
+            if (!target) target = [base[0], base[1], base[2]];
+            const seen = new Uint8Array(paper.width * paper.height);
+            const queue = new Int32Array(seen.length);
+            let head = 0, tail = 1; queue[0] = seed; seen[seed] = 1;
+            while (head < tail) {
+              const index = queue[head++], offset = index * 4;
+              const distance = Math.max(...base.map((value, channel) => Math.abs(data[offset + channel] - value)));
+              if (distance > 38) continue;
+              const weight = Math.min(1, (38 - distance) / 14);
+              const shade = (data[offset] + data[offset + 1] + data[offset + 2]) / (base[0] + base[1] + base[2]);
+              for (let channel = 0; channel < 3; channel++) {
+                if (paperTheme) data[offset + channel] = data[offset + channel] * (1 - weight) + Math.min(255, target[channel] * shade) * weight;
+              }
+              const x = index % paper.width;
+              const neighbours = [x > 0 ? index - 1 : -1, x < paper.width - 1 ? index + 1 : -1, index - paper.width, index + paper.width];
+              for (const next of neighbours) {
+                if (next >= 0 && next < seen.length && !seen[next]) { seen[next] = 1; queue[tail++] = next; }
+              }
+            }
+            context.putImageData(pixels, 0, 0);
+            artworkSource = paper;
+          }
+        }
+      }
+      // Reuse the exact rendered artwork for the invitation's decorative edges.
+      const invitation = canvas.closest<HTMLElement>(".animatedInvite");
+      if (invitation) {
+        const decoration = artworkSource instanceof HTMLCanvasElement ? artworkSource.toDataURL("image/png") : image;
+        invitation.style.setProperty("--invitation-decoration", `url("${decoration}")`);
+        invitation.style.setProperty("--invitation-paper", target ? `rgb(${target.join(",")})` : "var(--paper)");
+      }
+      gl.texImage2D(gl.TEXTURE_2D,0,gl.RGB,gl.RGB,gl.UNSIGNED_BYTE,artworkSource);
       canvas.dataset.ready = "true";
       frame = requestAnimationFrame(draw);
     };
@@ -383,7 +443,7 @@ export default function LivingArtwork({ image, title, paused }: { image: string;
       gl.deleteTexture(texture); gl.deleteBuffer(buffer); gl.deleteProgram(program);
       shaders.forEach((shader) => gl.deleteShader(shader));
     };
-  }, [image]);
+  }, [image, paperTheme]);
   return <div className="livingArtwork"><img className="inviteArtwork" src={image} alt={title} /><canvas ref={canvasRef} aria-hidden="true" />
     {image.endsWith("/family-roots.jfif") && <svg className="treeLeaves" viewBox="0 0 736 1030" aria-hidden="true">
       {[{ x: 195, y: 285, dx: -110 }, { x: 235, y: 405, dx: -140 }, { x: 290, y: 220, dx: -125 }, { x: 515, y: 285, dx: 115 }, { x: 510, y: 435, dx: 145 }, { x: 430, y: 225, dx: 140 }, { x: 170, y: 460, dx: -100 }, { x: 565, y: 375, dx: 95 }].map((leaf, index) => <g key={index} transform={`translate(${leaf.x} ${leaf.y})`}>

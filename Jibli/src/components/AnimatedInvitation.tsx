@@ -4,13 +4,16 @@ import type { CSSProperties } from "react";
 import { getInvitationDesign } from "../invitationDesigns";
 import CharacterInvitation from "./CharacterInvitation";
 import LivingArtwork from "./LivingArtwork";
+import InvitationArtworkText from "./InvitationArtworkText";
 import SchoolRegistrationMotion from "./SchoolRegistrationMotion";
-import { RotateCcw, MapPin, ArrowDown, CalendarDays, Sparkles, Clock3, Navigation, Heart, Maximize2, X } from "lucide-react";
+import { RotateCcw, MapPin, ArrowDown, CalendarDays, Sparkles, Clock3, Navigation, Maximize2, X } from "lucide-react";
 
 type Props = { image: string; title: string; details: Record<string, string>; onMoodChange?: (mood: string) => void; guest?: boolean; certificate?: boolean };
 
-export default function AnimatedInvitation({ image, title, details: savedDetails, onMoodChange, guest = false, certificate: suppliedCertificate = false }: Props) {
+export default function AnimatedInvitation({ image, title, details: savedDetails, guest = false, certificate: suppliedCertificate = false }: Props) {
   const design = getInvitationDesign(image);
+  const kindergartenWelcome = design.key === "eid-school-welcome";
+  const registration = design.key === "kindergarten-welcome" || design.key === "school-registration";
   const certificate = suppliedCertificate || design.layout === "certificate";
   const [expanded, setExpanded] = useState(false);
   const sampleDate = new Date();
@@ -31,8 +34,7 @@ export default function AnimatedInvitation({ image, title, details: savedDetails
   const story = useRef<HTMLDivElement>(null);
   const [motionPaused, setMotionPaused] = useState(false);
   const collection = image.split("/")[2];
-  const defaultMood = collection === "birthdays" ? "confetti" : collection === "family" ? "garden" : collection === "openings" || collection === "graduations" ? "midnight" : "champagne";
-  const mood = details.mood || defaultMood;
+  const mood = "original";
   const [now, setNow] = useState(() => Date.now());
   useEffect(() => {
     if (!opened || !details.date) return;
@@ -56,6 +58,46 @@ export default function AnimatedInvitation({ image, title, details: savedDetails
   useEffect(() => {
     if (opened && !opening) story.current?.focus({ preventScroll: true });
   }, [opened, opening]);
+  useEffect(() => {
+    const root = story.current;
+    if (!opened || opening || !root) return;
+    let previousWheel = 0;
+    let lockedUntil = 0;
+    let accumulated = 0;
+    let direction = 0;
+    const wheel = (event: WheelEvent) => {
+      if (event.ctrlKey || Math.abs(event.deltaX) > Math.abs(event.deltaY) || !event.deltaY) return;
+      const panels = [...root.querySelectorAll<HTMLElement>(".inviteOriginalArtwork, .inviteStoryPanel")];
+      if (!panels.length) return;
+      const top = root.getBoundingClientRect().top;
+      const inset = 0;
+      const positions = panels.map((panel) => panel.getBoundingClientRect().top - top + root.scrollTop - inset);
+      const current = positions.reduce((best, position, index) => Math.abs(position - root.scrollTop) < Math.abs(positions[best] - root.scrollTop) ? index : best, 0);
+      const nextDirection = event.deltaY > 0 ? 1 : -1;
+      const next = Math.max(0, Math.min(panels.length - 1, current + nextDirection));
+      const timestamp = performance.now();
+      const gap = timestamp - previousWheel;
+      previousWheel = timestamp;
+      // Use a bounded cooldown: ongoing mouse-wheel input must never lock navigation.
+      if (timestamp < lockedUntil) {
+        event.preventDefault();
+        return;
+      }
+      // Let the surrounding page scroll once the first/last section is reached.
+      if (next === current) return;
+      event.preventDefault();
+      if (gap > 180 || direction !== nextDirection) accumulated = 0;
+      direction = nextDirection;
+      accumulated += Math.abs(event.deltaY) * (event.deltaMode === 1 ? 16 : event.deltaMode === 2 ? root.clientHeight : 1);
+      if (accumulated < 14) return;
+      accumulated = 0;
+      lockedUntil = timestamp + 650;
+      root.scrollTo({ top: Math.max(0, positions[next]), behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth" });
+    };
+    root.addEventListener("wheel", wheel, { passive: false, capture: true });
+    return () => root.removeEventListener("wheel", wheel, true);
+  }, [opened, opening]);
+
   useEffect(() => {
     if (!expanded) return;
     const previous = document.body.style.overflow;
@@ -86,7 +128,7 @@ export default function AnimatedInvitation({ image, title, details: savedDetails
     const picture = root.querySelector<HTMLImageElement>(".inviteMainPicture img");
     const svg = root.querySelector<SVGSVGElement>(".inviteMainPicture svg");
     const measure = () => {
-      root.style.setProperty("--chapter-height", `${Math.max(200, root.clientHeight - 84)}px`);
+      root.style.setProperty("--chapter-height", `${Math.max(200, root.clientHeight)}px`);
       const ratio = picture?.naturalWidth && picture.naturalHeight
         ? picture.naturalWidth / picture.naturalHeight
         : svg?.viewBox.baseVal.height ? svg.viewBox.baseVal.width / svg.viewBox.baseVal.height : .7;
@@ -117,19 +159,20 @@ export default function AnimatedInvitation({ image, title, details: savedDetails
   const calendar = ["BEGIN:VCALENDAR", "VERSION:2.0", "PRODID:-//Jibli//Invitation//EN", "BEGIN:VEVENT", `UID:${calendarDate}-${encodeURIComponent(name)}@jibli`, `DTSTAMP:${new Date(now).toISOString().replace(/[-:]/g, "").replace(/\.\d{3}/, "")}`, validDate && details.time ? `DTSTART:${new Date(eventTime).toISOString().replace(/[-:]/g, "").replace(/\.\d{3}/, "")}` : `DTSTART;VALUE=DATE:${calendarDate}`, `SUMMARY:${calendarText(calendarTitle)}`, `LOCATION:${calendarText(details.venue || "")}`, `DESCRIPTION:${calendarText(details.note || title)}`, ...(!details.time && validDate ? [`DTEND;VALUE=DATE:${nextCalendarDay}`] : []), "END:VEVENT", "END:VCALENDAR"].join("\r\n");
   const eventDate = validDate ? new Date(eventTime) : null;
   const formattedTime = eventDate && details.time ? new Intl.DateTimeFormat(locale, { hour: "2-digit", minute: "2-digit", timeZone: "Africa/Tunis" }).format(eventDate) : "";
-  const jumpTo = (selector: string) => {
-    const panel = story.current?.querySelector<HTMLElement>(selector);
-    if (panel && story.current) story.current.scrollTo({ top: panel.getBoundingClientRect().top - story.current.getBoundingClientRect().top + story.current.scrollTop - 64, behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth" });
-  };
+
   const calendarMonth = eventDate ? new Intl.DateTimeFormat(locale, { month: "long", year: "numeric", timeZone: "Africa/Tunis" }).format(eventDate) : "";
   const [year, month, day] = (details.date || "").split("-").map(Number);
   const firstWeekday = validDate ? (new Date(Date.UTC(year, month - 1, 1)).getUTCDay() + 6) % 7 : 0;
   const daysInMonth = validDate ? new Date(Date.UTC(year, month, 0)).getUTCDate() : 0;
+
   const artwork = image === "/invitations/others/kindergarten-welcome.jfif" ? <CharacterInvitation title={title} paused={motionPaused} /> : image === "/invitations/others/school-registration.jfif" ? <SchoolRegistrationMotion title={title} paused={motionPaused} /> : <LivingArtwork image={image} title={guest ? title : `${title} design reference`} paused={motionPaused} />;
-  return <section style={{ ...(!savedDetails.mood ? design.colours : {}), "--story-artwork": `url("${image}")` } as CSSProperties} role={expanded ? "dialog" : undefined} aria-modal={expanded || undefined} data-layout={certificate ? "certificate" : design.layout} data-design={design.key} data-collection={collection} className={`animatedInvite inviteStory inviteMood-${mood} ${opened ? "isOpen" : ""} ${expanded ? "inviteExpanded" : ""}`} data-motion-paused={motionPaused} dir={locale === "ar" ? "rtl" : "ltr"} aria-label="Interactive invitation preview">
+
+  const floral = ["arabesque-burgundy", "arabic-satin", "blush-embossed", "garden-couple", "classic-ivory", "photo-frame", "blue-florals", "nouveau-florals", "green-tradition", "family-roots"].includes(design.key);
+  const driftingLeaves = floral ? <div className="inviteFloralMotion" aria-hidden="true">{Array.from({ length: 6 }, (_, index) => <span key={index} className={`inviteDriftingLeaf inviteDriftingLeaf-${index}`} />)}</div> : null;
+  return <section style={{ ...design.colours, "--story-artwork": `url("${image}")` } as CSSProperties} role={expanded ? "dialog" : undefined} aria-modal={expanded || undefined} data-layout={certificate ? "certificate" : design.layout} data-design={design.key} data-collection={collection} className={`animatedInvite inviteStory inviteMood-${mood} ${opened ? "isOpen" : ""} ${expanded ? "inviteExpanded" : ""}`} data-motion-paused={motionPaused} dir={locale === "ar" ? "rtl" : "ltr"} aria-label="Interactive invitation preview">
     <div className="inviteUtilityBar"><button type="button" className="inviteExpandButton" aria-pressed={expanded} onClick={() => setExpanded(!expanded)}>{expanded ? <X size={14} /> : <Maximize2 size={14} />}{copy(expanded ? "Close preview" : "Full screen")}</button><button type="button" className="inviteMotionToggle" aria-pressed={motionPaused} onClick={() => setMotionPaused(!motionPaused)}>{copy(motionPaused ? "Resume animation" : "Pause animation")}</button></div>
     <div className="animatedInviteToolbar"><span><Sparkles size={13} />{copy("Invitation preview")} </span>{opened && <button type="button" onClick={() => { setOpening(false); setOpened(false); }}><RotateCcw size={14} />{copy("Replay")} </button>}</div>
-    {!guest && <div className="inviteMoodPicker" role="group" aria-label="Invitation colour theme">{([['champagne', 'Champagne'], ['garden', 'Botanical'], ['midnight', 'Midnight'], ['confetti', 'Rose']] as const).map(([value, label]) => <button key={value} type="button" aria-pressed={savedDetails.mood === value} aria-label={`${label} theme`} title={label} className={`inviteMoodSwatch swatch-${value}`} onClick={() => onMoodChange?.(value)}><span className="inviteMoodSwatchDot" aria-hidden="true" /><span>{label}</span></button>)}<button type="button" className="inviteOriginalTheme" aria-pressed={!savedDetails.mood} onClick={() => onMoodChange?.("")}>{copy("Original")}</button><span>{copy("Choose your mood")} </span></div>}
+
     {isSample && <p className="inviteSampleNotice">{copy("Sample event details - fill in the form to personalise your preview.")}</p>}
     <div className="inviteStage">
     {(!opened || opening) && <button type="button" className={`inviteEnvelope ${opening ? "isOpening" : ""}`} disabled={opening} onAnimationEnd={(event) => { if (event.target === event.currentTarget) setOpening(false); }} onClick={() => { setNow(Date.now()); setOpening(!motionPaused); setOpened(true); }} aria-label={`Open invitation: ${title}`}>
@@ -139,23 +182,20 @@ export default function AnimatedInvitation({ image, title, details: savedDetails
       <strong dir="auto">{details.hosts?.trim() || name}</strong><span className="inviteOpenHint">{copy("Open invitation")} <ArrowDown size={14} /></span>
     </button>}
     {opened && <>
-    <nav inert={opening} className="inviteChapterNav" aria-label={copy("Explore your invitation")}>
-      <button type="button" onClick={() => jumpTo(".inviteOriginalArtwork")}><Heart size={15} />{copy("Invitation")}</button>
-      {!certificate && validDate && <button type="button" onClick={() => jumpTo(".inviteStorySchedule")}><Clock3 size={15} />{copy("Date & time")}</button>}
-      {!certificate && details.venue && <button type="button" onClick={() => jumpTo(".inviteStoryVenue")}><MapPin size={15} />{copy("Location")}</button>}
-    </nav>
     <div ref={story} inert={opening} className="inviteReveal" tabIndex={0} aria-label="Scroll through your invitation">
-      <section className="inviteOriginalArtwork inviteMainPicture"><div className="inviteOriginalArtworkFrame">{artwork}</div></section>
+      <section className="inviteOriginalArtwork inviteMainPicture"><div className="inviteOriginalArtworkFrame">{artwork}<InvitationArtworkText image={image} details={savedDetails} locale={guestLanguage} /></div><InvitationArtworkText image={image} details={savedDetails} locale={guestLanguage} caption /></section>
       <div className="inviteEventDetails">
+        {!certificate && validDate && <section className="inviteStoryPanel inviteStorySchedule">{driftingLeaves}
         {!certificate && details.hosts?.trim() && <p className="inviteHostCredit">{copy("Invitation by")} <strong dir="auto">{details.hosts.trim()}</strong></p>}
-        {!certificate && validDate && <section className="inviteStoryPanel inviteStorySchedule">
-          <span className="inviteSectionNumber">01 / {copy("The celebration")}</span>
-          <h3>{copy("A date to remember")}</h3>
+        {details.school?.trim() && <p className="inviteHostCredit" dir="auto">{details.school.trim()}</p>}
+
+          <span className="inviteSectionNumber">01 / {copy(kindergartenWelcome ? "Back to kindergarten" : registration ? "Registration" : "The celebration")}</span>
+          <h3>{copy(kindergartenWelcome ? "Welcome back, little learners" : registration ? "Registration opens" : "A date to remember")}</h3>
           <div className="inviteDateDisplay"><span>{new Intl.DateTimeFormat(locale, {weekday:"long",timeZone:"Africa/Tunis"}).format(new Date(eventTime))}</span><strong>{day}</strong><span>{calendarMonth}</span></div>
           {formattedTime && <div className="inviteTimeDisplay"><Clock3 size={20} /><strong>{formattedTime}</strong><span>{copy("Tunisia time")}</span></div>}
-          <div className="inviteEventRibbon"><span aria-hidden="true">✦</span>{copy("You are warmly invited")}<span aria-hidden="true">✦</span></div>
+          <div className="inviteEventRibbon"><span aria-hidden="true">✦</span>{copy(kindergartenWelcome ? "We can?t wait to see you" : registration ? "Welcome, little learners" : "You are warmly invited")}<span aria-hidden="true">✦</span></div>
         </section>}
-        {!certificate && validDate && <section className="inviteStoryPanel inviteStoryCalendar">
+        {!certificate && validDate && <section className="inviteStoryPanel inviteStoryCalendar">{driftingLeaves}
           <span className="inviteSectionNumber">02 / {copy("Save the date")}</span>
           <h3>{calendarMonth}</h3>
           <div className="inviteMonthGrid" role="table" aria-label={calendarMonth}>
@@ -168,14 +208,12 @@ export default function AnimatedInvitation({ image, title, details: savedDetails
           <a className="inviteLocation inviteCalendar" href={googleCalendarUrl} target="_blank" rel="noopener noreferrer"><CalendarDays size={15} />{copy("Save the date")}</a>
           <a className="inviteCalendarDownload" download="jibli-invitation.ics" href={`data:text/calendar;charset=utf-8,${encodeURIComponent(calendar)}`}>{copy("Apple / Outlook calendar (.ics)")}</a>
         </section>}
-        {!certificate && Number.isFinite(eventTime) && eventTime > now && <section className="inviteStoryPanel inviteStoryCountdown"><span className="inviteSectionNumber">03 / {copy("Every second brings us closer")}</span><p>{copy("Counting down to our special day")} </p><div className="inviteCountdown" aria-label="Event countdown">{units.map((value, index) => <div key={index}><strong>{String(value).padStart(2, "0")}</strong><span>{copy(["Days", "Hours", "Minutes", "Seconds"][index])}</span></div>)}</div></section>}
-        {!certificate && Number.isFinite(eventTime) && eventTime <= now && <p>{copy("The date has arrived")} </p>}
-        {!certificate && details.venue && <section className="inviteStoryPanel inviteStoryVenue"><span className="inviteSectionNumber">04 / {copy("The place")}</span><div className="inviteVenueIllustration" aria-hidden="true"><MapPin size={38} /></div><h3>{copy("Meet us here")} </h3><p dir="auto">{details.venue}</p><a className="inviteLocation" href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(details.venue)}`} target="_blank" rel="noreferrer"><Navigation size={15} />{copy("Get directions")} </a>
-          <iframe className="inviteVenueMap" title={`${copy("Meet us here")}: ${details.venue}`} src={`https://maps.google.com/maps?q=${encodeURIComponent(details.venue)}&output=embed`} loading="lazy" referrerPolicy="no-referrer-when-downgrade" />
+        {!certificate && Number.isFinite(eventTime) && eventTime > now && <section className="inviteStoryPanel inviteStoryCountdown">{driftingLeaves}<span className="inviteSectionNumber">03 / {copy(kindergartenWelcome ? "See you soon" : registration ? "Registration countdown" : "Every second brings us closer")}</span><p>{copy(kindergartenWelcome ? "Counting down to our return to kindergarten" : registration ? "Counting down to registration opening" : "Counting down to our special day")} </p><div className="inviteCountdown" aria-label="Event countdown">{units.map((value, index) => <div key={index}><strong>{String(value).padStart(2, "0")}</strong><span>{copy(["Days", "Hours", "Minutes", "Seconds"][index])}</span></div>)}</div></section>}
+        {!certificate && details.venue && <section className="inviteStoryPanel inviteStoryVenue">{driftingLeaves}<span className="inviteSectionNumber">04 / {copy(kindergartenWelcome || registration ? "Our kindergarten" : "The place")}</span><div className="inviteVenueIllustration" aria-hidden="true"><MapPin size={38} /></div><h3>{copy(kindergartenWelcome || registration ? "Visit our kindergarten" : "Meet us here")} </h3><p dir="auto">{details.venue}</p><a className="inviteLocation" href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(details.venue)}`} target="_blank" rel="noreferrer"><Navigation size={15} />{copy("Get directions")} </a>
+          <iframe className="inviteVenueMap" title={`${copy(kindergartenWelcome || registration ? "Visit our kindergarten" : "Meet us here")}: ${details.venue}`} src={`https://maps.google.com/maps?q=${encodeURIComponent(details.venue)}&output=embed`} loading="lazy" referrerPolicy="no-referrer-when-downgrade" />
         </section>}
         {details.note && <section className="inviteStoryPanel"><p className="invitePersonalNote" dir="auto">{details.note}</p></section>}
-        {!certificate && (details.rsvp || details.contact) && <section className="inviteStoryPanel"><h3>{copy("RSVP / contact")} </h3><p dir="auto">{details.rsvp || details.contact}</p></section>}
-        <span className="inviteOrnament" aria-hidden="true">{copy("✦")} </span><p>{copy("Made with love · Jibli")} </p>
+        {!certificate && (details.rsvp || details.contact) && <section className="inviteStoryPanel"><h3>{copy(kindergartenWelcome ? "Contact our kindergarten" : registration ? "Registration enquiries" : "RSVP / contact")} </h3><p dir="auto">{details.rsvp || details.contact}</p></section>}
       </div>
     </div></>}
     </div>

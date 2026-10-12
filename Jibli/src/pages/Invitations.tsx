@@ -150,15 +150,15 @@ function Invitations() {
                 <p className="mutedText">{copy("This is a preview concept. Your final invitation is personalised by Jibli.")} </p>
               </div>
               <form className="invitationForm" onSubmit={(event) => event.preventDefault()}>
-                <label>{copy("Hosts, celebrant or business name")} <input value={details.hosts} onChange={(event) => changeDetail("hosts", event.target.value)} placeholder={copy("Example: Aymen & Balkis")} /></label>
+                <label>{copy("Hosts, celebrant or business name")} <input required maxLength={160} value={details.hosts} onChange={(event) => changeDetail("hosts", event.target.value)} placeholder={copy("Example: Aymen & Balkis")} /></label>
                 <div className="invitationFormRow">
-                  <label>{copy("Date")} <input type="date" value={details.date} onChange={(event) => changeDetail("date", event.target.value)} /></label>
-                  <label>{copy("Time")} <input type="time" value={details.time} onChange={(event) => changeDetail("time", event.target.value)} /></label>
+                  <label>{copy("Date")} <input required type="date" value={details.date} onChange={(event) => changeDetail("date", event.target.value)} /></label>
+                  <label>{copy("Time")} <input required type="time" value={details.time} onChange={(event) => changeDetail("time", event.target.value)} /></label>
                 </div>
-                <label><MapPin size={15} />{copy("Location / venue")} <input value={details.location} onChange={(event) => changeDetail("location", event.target.value)} placeholder={copy("Example: Deguach, Tunisia")} /></label>
+                <label><MapPin size={15} />{copy("Location / venue")} <input required maxLength={240} value={details.location} onChange={(event) => changeDetail("location", event.target.value)} placeholder={copy("Example: Deguach, Tunisia")} /></label>
                 <label>{copy("Invitation language")} <select value={details.language} onChange={(event) => changeDetail("language", event.target.value)}><option value="French / Arabic">{copy("French / Arabic")}</option><option value="Arabic">{copy("Arabic")}</option><option value="French">{copy("French")}</option><option value="English">{copy("English")}</option></select></label>
-                <label>{copy("Anything else you want us to know?")} <textarea value={details.note} onChange={(event) => changeDetail("note", event.target.value)} placeholder={copy("Colours, dress code, RSVP details, special wording...")} /></label>
-                <a className="primaryBtn invitationWhatsappBtn" href={invitationWhatsappUrl(selected, details)} target="_blank" rel="noreferrer"><Send size={17} />{copy("Request on WhatsApp")} </a>
+                <details className="invitationOptionalDetails"><summary>{copy("Optional details")}</summary><label>{copy("Anything else you want us to know?")} <textarea maxLength={1500} value={details.note} onChange={(event) => changeDetail("note", event.target.value)} placeholder={copy("Colours, dress code, RSVP details, special wording...")} /></label></details>
+                <a className="primaryBtn invitationWhatsappBtn" onClick={(event) => { if (!event.currentTarget.closest("form")?.reportValidity()) event.preventDefault(); }} href={invitationWhatsappUrl(selected, details)} target="_blank" rel="noreferrer"><Send size={17} />{copy("Request on WhatsApp")} </a>
                 <p><Check size={15} />{copy("Invitations cost 10 TND; weddings cost 15 TND. We will confirm the final design before starting.")} </p>
               </form>
             </div>

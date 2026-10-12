@@ -11,7 +11,22 @@ const palettes: Record<string, Palette> = {
   sky: ["#f2f9ff", "#d5e7f5", "#23466b", "#477caf", "#9fc6e6"],
   coral: ["#fff5ef", "#f6dace", "#642c32", "#b94e51", "#e9a18c"],
   coffee: ["#fff6ea", "#e9d6c1", "#4e2b20", "#98513b", "#cda47c"],
+  goldBrown: ["#fff8ed", "#e6d4b6", "#513820", "#94703c", "#cfad70"],
   noir: ["#25212b", "#15121b", "#fff4f5", "#e3a8c5", "#976c95"],
+};
+
+// Envelope cardstock follows the artwork rather than its pale interior paper.
+const envelopeColours: Record<string, string> = {
+  burgundy: "#651e33", ivory: "#ead7b4", blush: "#d7a6b7",
+  sage: "#739473", teal: "#33877e", navy: "#192c4c",
+  silver: "#bbc1cc", lilac: "#bba0d1", sky: "#89b4dc",
+  coral: "#c94e52", coffee: "#a77b63", noir: "#302532",
+  goldBrown: "#ad8752",
+};
+const envelopeOverrides: Record<string, string> = {
+  "eid-school-welcome": "#46c5df",
+  "popup-party": "#486354", "family-roots": "#cba656",
+  "illustrated-photo": "#e6dfd0", "tiffs-party": "#ad775e",
 };
 
 // Match each collection's actual artwork rather than giving every card one theme.
@@ -20,9 +35,9 @@ const designs: Record<string, [palette: string, layout: string]> = {
   "blush-embossed": ["blush", "arch"], "garden-couple": ["sage", "arch"],
   "classic-ivory": ["ivory", "arch"], "photo-frame": ["ivory", "editorial"],
   "illustrated-photo": ["sky", "playful"], "teal-love": ["teal", "playful"],
-  "garden-hands": ["sage", "editorial"], "ring-promise": ["silver", "editorial"],
-  "intimate-vows": ["coffee", "arch"], "childhood-love": ["blush", "playful"],
-  "disco-eighteen": ["noir", "playful"], "blue-cake": ["sky", "playful"],
+  "garden-hands": ["burgundy", "editorial"], "ring-promise": ["silver", "editorial"],
+  "intimate-vows": ["silver", "arch"], "childhood-love": ["silver", "playful"],
+  "disco-eighteen": ["silver", "playful"], "blue-cake": ["sky", "playful"],
   "pink-night": ["noir", "playful"], "tiffs-party": ["burgundy", "editorial"],
   "pink-sparkle": ["blush", "playful"], "cool-kid": ["coral", "playful"],
   "birthday-disco": ["lilac", "playful"], "silver-fourteen": ["silver", "playful"],
@@ -43,5 +58,11 @@ export function getInvitationDesign(image: string) {
   const key = image.split("/").pop()?.replace(/\.[^.]+$/, "") || "";
   const [palette, layout] = designs[key] || ["ivory", "arch"];
   const [paper, deep, ink, foil, glow] = palettes[palette];
-  return { key, layout, colours: { "--paper": paper, "--paper-deep": deep, "--ink": ink, "--foil": foil, "--glow": glow } };
+  const background = designs[key]
+    ? image.replace(/[^/]+$/, `${key}-stationery${key === "burgundy-bow" ? "-clean" : ""}.png`)
+    : undefined;
+  return { key, layout, colours: { "--paper": paper, "--paper-deep": deep, "--ink": ink, "--foil": foil, "--glow": glow,
+    "--envelope-colour": envelopeOverrides[key] || envelopeColours[palette],
+    "--envelope-ink": ["burgundy", "teal", "navy", "coral", "noir"].includes(palette) || key === "popup-party" ? "#fff4df" : "#38252d",
+    "--section-background": background ? `url("${background}")` : "none" } };
 }

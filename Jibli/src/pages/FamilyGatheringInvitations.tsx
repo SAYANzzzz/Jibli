@@ -28,12 +28,12 @@ export default function FamilyGatheringInvitations() {
     "Hi Jibli! I want a personalised family gathering invitation.",
     `Design: ${selected.title} (${selected.style})`, "Price: 10 TND",
     `Family name / gathering title: ${details.name || "Not decided"}`,
-    `Hosts: ${details.hosts || "Not decided"}`,
+    details.hosts?.trim() ? `Hosts: ${details.hosts.trim()}` : "",
     `Date: ${details.date || "Not decided"}`,
     `Time: ${details.time || "Not decided"}`,
     `Address: ${details.venue || "Not decided"}`,
     `Language: ${details.language}`,
-    `RSVP / contact: ${details.contact || "Not decided"}`,
+    details.contact?.trim() ? `RSVP / contact: ${details.contact.trim()}` : "",
     details.note ? `Extra request: ${details.note}` : "",
   ].filter(Boolean).join("\n"))}` : "";
 
@@ -74,19 +74,20 @@ export default function FamilyGatheringInvitations() {
           <form className="invitationForm weddingOrderForm" onSubmit={(event) => event.preventDefault()}>
             <div className="invitationFormRow">
               <label>{copy("Family name / gathering title")} <input required maxLength={160} value={details.name} onChange={(event) => update("name", event.target.value)} placeholder={copy("Example: Aymen & Balkis")} /></label>
-              <label>{copy("Hosts")} <input value={details.hosts} onChange={(event) => update("hosts", event.target.value)} placeholder={copy("Example: Aymen & Balkis")} /></label>
+
             </div>
             <div className="invitationFormRow">
-              <label>{copy("Gathering date")} <input type="date" value={details.date} onChange={(event) => update("date", event.target.value)} /></label>
-              <label>{copy("Gathering time")} <input type="time" value={details.time} onChange={(event) => update("time", event.target.value)} /></label>
+              <label>{copy("Gathering date")} <input required type="date" value={details.date} onChange={(event) => update("date", event.target.value)} /></label>
+              <label>{copy("Gathering time")} <input required type="time" value={details.time} onChange={(event) => update("time", event.target.value)} /></label>
             </div>
-            <label>{copy("Address and city")} <input value={details.venue} onChange={(event) => update("venue", event.target.value)} placeholder={copy("Street address, city")} /></label>
+            <label>{copy("Address and city")} <input required maxLength={240} value={details.venue} onChange={(event) => update("venue", event.target.value)} placeholder={copy("Street address, city")} /></label>
             <div className="invitationFormRow">
               <label>{copy("Invitation language")} <select value={details.language} onChange={(event) => update("language", event.target.value)}><option value="French / Arabic">{copy("French / Arabic")}</option><option value="Arabic">{copy("Arabic")}</option><option value="French">{copy("French")}</option><option value="English">{copy("English")}</option></select></label>
-              <label>{copy("RSVP / contact")} <input value={details.contact} onChange={(event) => update("contact", event.target.value)} placeholder={copy("Phone, website or social handle")} /></label>
+
             </div>
-            <label>{copy("Special wording or changes")} <textarea value={details.note} onChange={(event) => update("note", event.target.value)} placeholder={copy("Colours, special wording, meal plans, dress code...")} /></label>
-            <PaymentButton productKey={`invitation:family:${selected.id}`} requestUrl={whatsappUrl} invitation={{ image: `/invitations/family/${selected.id}.jfif`, title: selected.title, mood: details.mood, details, certificate: selected.id.includes("certificate") || selected.id.includes("weekly-star") }} />
+
+            <details className="invitationOptionalDetails"><summary>{copy("Optional details")}</summary><label>{copy("Hosts")} <input maxLength={160} value={details.hosts} onChange={(event) => update("hosts", event.target.value)} placeholder={copy("Example: Aymen & Balkis")} /></label><label>{copy("RSVP / contact")} <input maxLength={160} value={details.contact} onChange={(event) => update("contact", event.target.value)} placeholder={copy("Phone, website or social handle")} /></label><label>{copy("Special wording or changes")} <textarea maxLength={1500} value={details.note} onChange={(event) => update("note", event.target.value)} placeholder={copy("Colours, special wording, meal plans, dress code...")} /></label></details>
+<PaymentButton productKey={`invitation:family:${selected.id}`} requestUrl={whatsappUrl} invitation={{ image: `/invitations/family/${selected.id}.jfif`, title: selected.title, mood: details.mood, details, certificate: selected.id.includes("certificate") || selected.id.includes("weekly-star") }} />
             <p><Check size={15} />{copy("You approve the final proof before it is delivered.")} </p>
           </form>
         </div>

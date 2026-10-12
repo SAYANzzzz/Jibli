@@ -29,12 +29,12 @@ export default function GraduationInvitations() {
     "Hi Jibli! I want a personalised graduation invitation.",
     `Design: ${selected.title} (${selected.style})`, "Price: 10 TND",
     `Graduate name: ${details.name || "Not decided"}`,
-    `School / degree: ${details.school || "Not decided"}`,
+    details.school?.trim() ? `School / degree: ${details.school.trim()}` : "",
     `Date: ${details.date || "Not decided"}`,
     `Time: ${details.time || "Not decided"}`,
     `Address: ${details.venue || "Not decided"}`,
     `Language: ${details.language}`,
-    `Hosts: ${details.hosts || "Not decided"}`, `RSVP / contact: ${details.contact || "Not decided"}`,
+    details.hosts?.trim() ? `Hosts: ${details.hosts.trim()}` : "", details.contact?.trim() ? `RSVP / contact: ${details.contact.trim()}` : "",
     selected.needsPhoto ? "Photo: I will send the graduate photo in this chat." : "",
     details.note ? `Extra request: ${details.note}` : "",
   ].filter(Boolean).join("\n"))}` : "";
@@ -74,22 +74,23 @@ export default function GraduationInvitations() {
         <div className="weddingOrderGrid">
           <div className="weddingSelectedDesign"><AnimatedInvitation key={selected.id} image={`/invitations/graduations/${selected.id}.jfif`} title={selected.title} details={details} onMoodChange={(mood) => setDetails((current) => ({ ...current, mood }))} /><div><strong>{selected.title}</strong><span>{selected.description}</span>{selected.needsPhoto ? <p>{copy("Send the graduate photo in the WhatsApp chat after submitting.")} </p> : null}</div></div>
           <form className="invitationForm weddingOrderForm" onSubmit={(event) => event.preventDefault()}>
-              <label>{copy("Names of the hosts")} <input maxLength={160} value={details.hosts || ""} onChange={(event) => setDetails((current) => ({ ...current, hosts: event.target.value }))} /></label>
+
             <div className="invitationFormRow">
               <label>{copy("Graduate name")} <input required maxLength={160} value={details.name} onChange={(event) => update("name", event.target.value)} placeholder={copy("Example: Aymen & Balkis")} /></label>
-              <label>{copy("School / degree")} <input value={details.school} onChange={(event) => update("school", event.target.value)} placeholder={copy("School, university or degree")} /></label>
+
             </div>
             <div className="invitationFormRow">
-              <label>{copy("Celebration date")} <input type="date" value={details.date} onChange={(event) => update("date", event.target.value)} /></label>
-              <label>{copy("Celebration time")} <input type="time" value={details.time} onChange={(event) => update("time", event.target.value)} /></label>
+              <label>{copy("Celebration date")} <input required type="date" value={details.date} onChange={(event) => update("date", event.target.value)} /></label>
+              <label>{copy("Celebration time")} <input required type="time" value={details.time} onChange={(event) => update("time", event.target.value)} /></label>
             </div>
-            <label>{copy("Address and city")} <input value={details.venue} onChange={(event) => update("venue", event.target.value)} placeholder={copy("Street address, city")} /></label>
+            <label>{copy("Address and city")} <input required maxLength={240} value={details.venue} onChange={(event) => update("venue", event.target.value)} placeholder={copy("Street address, city")} /></label>
             <div className="invitationFormRow">
               <label>{copy("Invitation language")} <select value={details.language} onChange={(event) => update("language", event.target.value)}><option value="French / Arabic">{copy("French / Arabic")}</option><option value="Arabic">{copy("Arabic")}</option><option value="French">{copy("French")}</option><option value="English">{copy("English")}</option></select></label>
-              <label>{copy("RSVP / contact")} <input value={details.contact} onChange={(event) => update("contact", event.target.value)} placeholder={copy("Phone, website or social handle")} /></label>
+
             </div>
-            <label>{copy("Special wording or changes")} <textarea value={details.note} onChange={(event) => update("note", event.target.value)} placeholder={copy("Graduation year, colours, special wording, event programme...")} /></label>
-            <PaymentButton productKey={`invitation:graduations:${selected.id}`} requestUrl={whatsappUrl} invitation={{ image: `/invitations/graduations/${selected.id}.jfif`, title: selected.title, mood: details.mood, details, certificate: selected.id.includes("certificate") || selected.id.includes("weekly-star") }} />
+
+            <details className="invitationOptionalDetails"><summary>{copy("Optional details")}</summary><label>{copy("Names of the hosts")} <input maxLength={160} value={details.hosts || ""} onChange={(event) => setDetails((current) => ({ ...current, hosts: event.target.value }))} /></label><label>{copy("School / degree")} <input maxLength={160} value={details.school} onChange={(event) => update("school", event.target.value)} placeholder={copy("School, university or degree")} /></label><label>{copy("RSVP / contact")} <input maxLength={160} value={details.contact} onChange={(event) => update("contact", event.target.value)} placeholder={copy("Phone, website or social handle")} /></label><label>{copy("Special wording or changes")} <textarea maxLength={1500} value={details.note} onChange={(event) => update("note", event.target.value)} placeholder={copy("Graduation year, colours, special wording, event programme...")} /></label></details>
+<PaymentButton productKey={`invitation:graduations:${selected.id}`} requestUrl={whatsappUrl} invitation={{ image: `/invitations/graduations/${selected.id}.jfif`, title: selected.title, mood: details.mood, details, certificate: selected.id.includes("certificate") || selected.id.includes("weekly-star") }} />
             <p><Check size={15} />{copy("You approve the final proof before it is delivered.")} </p>
           </form>
         </div>
