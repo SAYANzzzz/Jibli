@@ -58,45 +58,6 @@ export default function AnimatedInvitation({ image, title, details: savedDetails
   useEffect(() => {
     if (opened && !opening) story.current?.focus({ preventScroll: true });
   }, [opened, opening]);
-  useEffect(() => {
-    const root = story.current;
-    if (!opened || opening || !root) return;
-    let previousWheel = 0;
-    let lockedUntil = 0;
-    let accumulated = 0;
-    let direction = 0;
-    const wheel = (event: WheelEvent) => {
-      if (event.ctrlKey || Math.abs(event.deltaX) > Math.abs(event.deltaY) || !event.deltaY) return;
-      const panels = [...root.querySelectorAll<HTMLElement>(".inviteOriginalArtwork, .inviteStoryPanel")];
-      if (!panels.length) return;
-      const top = root.getBoundingClientRect().top;
-      const inset = 0;
-      const positions = panels.map((panel) => panel.getBoundingClientRect().top - top + root.scrollTop - inset);
-      const current = positions.reduce((best, position, index) => Math.abs(position - root.scrollTop) < Math.abs(positions[best] - root.scrollTop) ? index : best, 0);
-      const nextDirection = event.deltaY > 0 ? 1 : -1;
-      const next = Math.max(0, Math.min(panels.length - 1, current + nextDirection));
-      const timestamp = performance.now();
-      const gap = timestamp - previousWheel;
-      previousWheel = timestamp;
-      // Use a bounded cooldown: ongoing mouse-wheel input must never lock navigation.
-      if (timestamp < lockedUntil) {
-        event.preventDefault();
-        return;
-      }
-      // Let the surrounding page scroll once the first/last section is reached.
-      if (next === current) return;
-      event.preventDefault();
-      if (gap > 180 || direction !== nextDirection) accumulated = 0;
-      direction = nextDirection;
-      accumulated += Math.abs(event.deltaY) * (event.deltaMode === 1 ? 16 : event.deltaMode === 2 ? root.clientHeight : 1);
-      if (accumulated < 14) return;
-      accumulated = 0;
-      lockedUntil = timestamp + 650;
-      root.scrollTo({ top: Math.max(0, positions[next]), behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth" });
-    };
-    root.addEventListener("wheel", wheel, { passive: false, capture: true });
-    return () => root.removeEventListener("wheel", wheel, true);
-  }, [opened, opening]);
 
   useEffect(() => {
     if (!expanded) return;

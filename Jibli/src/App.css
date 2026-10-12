@@ -5961,3 +5961,78 @@ td {
   .animatedInvite.inviteStory .inviteStage:has(.isOpening) > .inviteReveal { animation:none; }
   .animatedInvite.inviteStory .isOpening :is(.inviteWaxSeal,.inviteEnvelopeGreeting,strong,.inviteOpenHint,.inviteEnvelopeFlap) { animation:none; }
 }
+
+/* Keep invitation navigation native so touch, wheel and keyboard scrolling
+   can move continuously through artwork and event details. */
+.animatedInvite.inviteStory .inviteReveal {
+  height: min(780px, 85svh);
+  min-height: min(480px, 70svh);
+  max-height: none;
+  overflow-x: hidden;
+  overflow-y: auto;
+  overscroll-behavior-y: auto;
+  -webkit-overflow-scrolling: touch;
+  touch-action: pan-y pinch-zoom;
+  scroll-snap-type: none;
+  scroll-padding: 0;
+  scroll-behavior: auto;
+}
+
+.animatedInvite.inviteStory :is(.inviteOriginalArtwork, .inviteStoryPanel) {
+  scroll-snap-align: none;
+  scroll-snap-stop: normal;
+}
+
+.animatedInvite.inviteStory .inviteEventDetails {
+  overflow: visible;
+}
+
+.animatedInvite.inviteStory .inviteStoryPanel {
+  height: auto;
+  min-height: 0;
+  max-height: none;
+  overflow: visible;
+  flex-shrink: 0;
+}
+
+.guestInvitation .animatedInvite.inviteStory:not(.inviteExpanded) .inviteReveal {
+  height: auto;
+  min-height: 0;
+  overflow: visible;
+  touch-action: auto;
+}
+
+.animatedInvite.inviteStory.inviteExpanded {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  height: 100dvh;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.animatedInvite.inviteStory.inviteExpanded .inviteStage {
+  display: flex;
+  flex: 1 1 auto;
+  height: auto;
+  min-height: 0;
+  min-width: 0;
+  overflow: hidden;
+}
+
+.animatedInvite.inviteStory.inviteExpanded .inviteStage .inviteReveal {
+  flex: 1 1 auto;
+  height: 100%;
+  min-height: 0;
+  max-height: 100%;
+}
+
+.animatedInvite.inviteStory.inviteExpanded .inviteStoryPanel {
+  overflow: visible;
+}
+
+.animatedInvite.inviteStory.inviteExpanded .inviteEnvelope {
+  flex: 1 1 auto;
+  height: 100%;
+  min-height: 0;
+}
