@@ -69,7 +69,7 @@ export default function Payment() {
         <p>{copy("Your reference")} <strong>{payment.authorization}</strong>{copy("is saved. Tap below to send your payment details to Jibli on WhatsApp.")} </p>
         <a className="primaryBtn" href={whatsappMessage(payment)} target="_blank" rel="noreferrer">{copy("Send on WhatsApp")} </a>
       </>}
-      {payment.delivery && <DeliveryContent content={payment.delivery} />}
+      {payment.delivery && <DeliveryContent content={payment.delivery} invitation={parseInvitation(payment.details).invitation} />}
       <p><Link to="/tracking">{copy("View your orders and payment updates")} </Link></p>
     </section>}
     {error && <p role="alert" className="d17Error">{error}</p>}

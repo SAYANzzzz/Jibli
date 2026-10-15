@@ -3,7 +3,7 @@ import { invitationMotionProfiles } from "../invitationMotionProfiles";
 
 // Local texture deformation moves pixels already in the artwork, without
 // duplicating a character or adding unrelated decorative illustrations.
-export default function LivingArtwork({ image, title, paused, paperTheme = "" }: { image: string; title: string; paused: boolean; paperTheme?: string }) {
+export default function LivingArtwork({ image, title, paused, paperTheme = "", onError }: { image: string; title: string; paused: boolean; paperTheme?: string; onError?: () => void }) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const pausedRef = useRef(paused);
   useEffect(() => { pausedRef.current = paused; }, [paused]);
@@ -444,7 +444,7 @@ export default function LivingArtwork({ image, title, paused, paperTheme = "" }:
       shaders.forEach((shader) => gl.deleteShader(shader));
     };
   }, [image, paperTheme]);
-  return <div className="livingArtwork"><img className="inviteArtwork" src={image} alt={title} /><canvas ref={canvasRef} aria-hidden="true" />
+  return <div className="livingArtwork"><img className="inviteArtwork" src={image} alt={title} onError={onError} /><canvas ref={canvasRef} aria-hidden="true" />
     {image.endsWith("/family-roots.jfif") && <svg className="treeLeaves" viewBox="0 0 736 1030" aria-hidden="true">
       {[{ x: 195, y: 285, dx: -110 }, { x: 235, y: 405, dx: -140 }, { x: 290, y: 220, dx: -125 }, { x: 515, y: 285, dx: 115 }, { x: 510, y: 435, dx: 145 }, { x: 430, y: 225, dx: 140 }, { x: 170, y: 460, dx: -100 }, { x: 565, y: 375, dx: 95 }].map((leaf, index) => <g key={index} transform={`translate(${leaf.x} ${leaf.y})`}>
         <g className="treeLeaf" style={{ animationPlayState: paused ? "paused" : "running", animationDelay: `${-index * 1.4}s`, animationDuration: `${8 + index % 3}s`, "--leaf-out": `${leaf.dx}px` } as React.CSSProperties}>

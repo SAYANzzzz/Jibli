@@ -5,7 +5,12 @@ import { useTranslation } from "../i18n/useTranslation";
 export default function PaymentButton({ productKey, requestUrl, orderId, invitation }: { productKey: string; requestUrl?: string; orderId?: string; invitation?: InvitationData }) {
   const { language } = useTranslation();
   return <button type="button" className="primaryBtn invitationWhatsappBtn" onClick={(event) => {
-    if (!event.currentTarget.closest("form")?.reportValidity() && event.currentTarget.closest("form")) return;
+    const form = event.currentTarget.closest("form");
+    form?.querySelectorAll<HTMLInputElement>('input[required]:not([type=date]):not([type=time]):not([type=number])').forEach((input) => {
+      input.setCustomValidity(input.value.trim() ? "" : language === "fr" ? "Veuillez remplir ce champ." : language === "ar" ? "يرجى ملء هذا الحقل." : "Please fill in this field.");
+      input.addEventListener("input", () => input.setCustomValidity(""), { once: true });
+    });
+    if (form && !form.reportValidity()) return;
     const details = requestUrl ? new URL(requestUrl, window.location.origin).searchParams.get("text") ?? "" : "";
     const collection = invitation?.image.split("/")[2];
     const mood = invitation?.mood || (collection === "birthdays" ? "confetti" : collection === "family" ? "garden" : collection === "openings" || collection === "graduations" ? "midnight" : "champagne");

@@ -1,0 +1,90 @@
+.simpleAdminPage { background:#0b1020; color:#e8edf8; --surface:#131c30; --surface-alt:#19243b; --border:#2b3750; --text:#e8edf8; --text-muted:#a5b2ca; --ink:#e8edf8; --accent:#93b7ff; }
+.simpleAdminMain { width:min(100% - 64px,1240px); padding-top:40px; }
+.simpleAdminHeader { display:flex; justify-content:space-between; align-items:center; gap:28px; }
+.simpleAdminHeader .eyebrow,.simpleAdminPage .d17Orders > .tableTop .eyebrow { color:#93b7ff; font-size:11px; letter-spacing:.13em; }
+.simpleAdminHeader h1 { margin:12px 0; color:#f3f6ff; font-size:clamp(29px,3.5vw,44px); line-height:1.15; letter-spacing:-.04em; }
+.simpleAdminHeader p { max-width:630px; font-size:15px; line-height:1.7; }
+.adminReviewShortcut { display:inline-flex; align-items:center; gap:12px; flex-shrink:0; color:#b9cdff; font-size:13px; font-weight:600; }
+.simpleAdminStats { grid-template-columns:repeat(4,minmax(0,1fr)); gap:16px; margin:30px 0 24px; }
+.simpleAdminStats > a { display:grid; grid-template-columns:1fr auto; gap:9px; padding:22px; background:linear-gradient(135deg,#192740,#131c30); border:1px solid #30405e; border-radius:16px; color:#e8edf8; text-decoration:none; transition:border-color .15s,background .15s; }
+.simpleAdminStats > a:hover { border-color:#93b7ff; background:#1b2b47; }
+.simpleAdminStats svg { grid-column:2; grid-row:1 / 3; color:#93b7ff; }
+.simpleAdminStats span { font-size:13px; }
+.simpleAdminStats strong { grid-column:1; margin:0; color:#f3f6ff; font-size:34px; line-height:1.2; font-variant-numeric:tabular-nums; }
+.simpleAdminStats small { grid-column:1 / -1; color:#8d9db8; font-size:12px; }
+.adminQueueNav { display:flex; flex-wrap:wrap; gap:8px; padding:0 0 24px; }
+.adminQueueNav a { padding:9px 14px; border:1px solid #2b3750; border-radius:8px; color:#b5c4dd; font-size:12px; font-weight:600; }
+.adminQueueNav a:first-child { background:#213452; color:#c7d9ff; border-color:#405d8d; }
+.simpleAdminPage :is(#d17-review,.simpleAdminPanel) { scroll-margin-top:110px; }
+.simpleAdminPage :is(.simpleAdminPanel,.d17Orders) { background:#111a2c; border:1px solid #2b3750; border-radius:16px; padding:26px; box-shadow:none; }
+.simpleAdminPage :is(.simpleAdminPanel,.d17Orders) h2 { color:#edf2ff; font-size:22px; letter-spacing:-.025em; }
+.simpleAdminPage .tableTop { gap:18px; align-items:center; }
+.simpleAdminPage .tableTop p { color:#a5b2ca; font-size:13px; line-height:1.6; margin:6px 0 0; }
+.simpleAdminPage :is(.outlineBtn,.primaryBtn,.primaryMiniBtn,.confirmOrderBtn,.removeOrderBtn) { border-radius:8px; font-size:13px; }
+.simpleAdminPage :is(button,a,input,textarea,select):focus-visible { outline:2px solid #93b7ff; outline-offset:4px; }
+.simpleAdminPage button:disabled { opacity:.6; cursor:wait; }
+.simpleAdminPage .d17Panel { background:#162139; border:1px solid #30415f; border-inline-start:3px solid #758bb0; border-radius:12px; margin:18px 0 0; padding:22px; }
+.simpleAdminPage .d17Panel[data-status=pending_verification] { border-inline-start-color:#e9ba6a; }
+.simpleAdminPage .d17Panel[data-status=delivered] { border-inline-start-color:#7ac7a4; }
+.simpleAdminPage .d17Panel h3 { font-size:20px; margin-bottom:8px; }
+.simpleAdminPage .d17Panel p { font-size:13px; }
+.simpleAdminPage .d17Panel > strong { color:#d7e4ff; font-size:24px; }
+.adminPaymentQueues { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:10px; margin:22px 0; }
+.adminPaymentQueues button { display:flex; align-items:center; gap:12px; padding:14px; text-align:start; background:#19253b; border:1px solid #30405b; border-radius:10px; color:#aebed7; cursor:pointer; }
+.adminPaymentQueues button[aria-pressed=true] { background:#253e62; border-color:#93b7ff; color:#edf2ff; }
+.adminPaymentQueues strong { color:#e8edf8; font-size:23px; }
+.adminPaymentQueues span { font-size:12px; }
+.simpleAdminPage .d17Orders > .invitationFormRow { margin:0 0 14px; }
+.simpleAdminPage .d17Orders > .invitationFormRow label,.adminPaymentKind,.adminManagedFilters label { display:grid; gap:7px; color:#aebed7; font-size:12px; font-weight:600; }
+.simpleAdminPage :is(.d17Orders > .invitationFormRow,.adminManagedFilters,.adminPaymentKind,.adminOrderSearch) :is(input,select) { min-width:0; width:100%; min-height:42px; padding:10px 12px; border:1px solid #354563; border-radius:8px; background:#0e1728; color:#e8edf8; font:inherit; font-size:13px; }
+.adminPaymentKind { max-width:240px; }
+.adminPaymentKind option { text-transform:capitalize; }
+.adminResultCount { display:flex; align-items:center; gap:16px; color:#a5b2ca; font-size:12px; }
+.adminResultCount button { padding:4px; background:transparent; border:0; color:#aac7ff; text-decoration:underline; cursor:pointer; font:inherit; }
+.adminProductHeading { display:flex; align-items:center; justify-content:space-between; gap:12px; margin:42px 0 20px; }
+.adminProductHeading h2 { color:#edf2ff; margin:6px 0 0; font-size:26px; letter-spacing:-.03em; }
+.adminProductHeading > span { color:#a5b2ca; font-size:12px; }
+.adminOrderSearch { max-width:100%; margin:0 0 18px; }
+.adminOrderSearch > span { display:flex; align-items:center; gap:8px; color:#afbed6; font-size:12px; }
+.simpleAdminPage .simpleOrderCard { border:1px solid #30405e; border-radius:12px; background:#162139; box-shadow:none; padding:22px; }
+.simpleAdminPage .simpleOrderTop h3 { color:#edf2ff; font-size:20px; }
+.simpleAdminPage :is(.simpleOrderTop p,.simpleOrderTop > strong) { font-size:12px; line-height:1.6; }
+.simpleAdminPage .simpleItemRow { border-radius:8px; background:#111a2c; }
+.simpleAdminPage .adminNotesBox input { width:100%; min-width:0; padding:11px; background:#0e1728; color:#edf2ff; border:1px solid #354563; border-radius:8px; font:inherit; }
+.simpleAdminPage :is(.adminNotesBox textarea,.orderProcessForm input,.orderProcessForm select,.orderProcessForm textarea) { background:#0e1728; color:#edf2ff; border:1px solid #354563; border-radius:8px; }
+.simpleAdminPage :is(.adminNotesBox label,.orderProcessForm label) { color:#aebed7; font-size:12px; }
+.simpleAdminPage .managedOrderRow { background:#162139; border:1px solid #30405e; border-radius:12px; padding:20px; display:flex; flex-direction:column; gap:20px; }
+.simpleAdminPage .managedOrderItemFields { min-width:0; }
+.simpleAdminPage .managedOrderItemFields input { min-width:0; max-width:100%; color:#e8edf8; background:#111a2c; border:1px solid #354563; border-radius:6px; padding:8px; }
+.simpleAdminPage .managedOrderItemEditRow { border-radius:8px; background:#111a2c; }
+.simpleAdminPage .confirmedOrderActions { padding-top:14px; border-top:1px solid #30405e; flex-wrap:wrap; }
+.simpleAdminPage .confirmedOrderActions .badge { margin-inline-end:auto; }
+.adminManagedFilters { display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1fr) auto; align-items:end; gap:14px; margin:22px 0; }
+.adminManagedFilters > span { align-self:center; color:#a5b2ca; font-size:12px; }
+.adminLoadMore { display:flex; justify-content:space-between; align-items:center; gap:14px; margin-top:22px; color:#a5b2ca; font-size:12px; }
+.simpleAdminPage .compactEmpty { padding:30px 16px; color:#a5b2ca; text-align:center; }
+@keyframes adminRefresh { to { transform:rotate(360deg); } }
+.adminRefreshing { animation:adminRefresh 1s linear infinite; }
+@media(max-width:900px) {
+  .simpleAdminHeader { align-items:flex-start; flex-direction:column; gap:16px; }
+  .simpleAdminStats,.adminPaymentQueues { grid-template-columns:repeat(2,minmax(0,1fr)); }
+  .simpleAdminPage .managedOrderItemFields { grid-template-columns:1fr 1fr; }
+  .simpleAdminPage .orderProcessForm { grid-template-columns:repeat(2,minmax(0,1fr)); }
+}
+@media(max-width:560px) {
+  .simpleAdminMain { width:calc(100% - 28px); padding-top:26px; }
+  .simpleAdminStats { gap:10px; }
+  .simpleAdminStats > a { padding:16px; }
+  .simpleAdminStats small { font-size:11px; }
+  .simpleAdminPage :is(.simpleAdminPanel,.d17Orders) { padding:16px; border-radius:12px; }
+  .simpleAdminPage :is(.simpleOrderCard,.d17Panel,.managedOrderRow) { padding:15px; }
+  .simpleAdminPage :is(.tableTop,.simpleOrderTop,.simpleItemRow,.adminLoadMore) { flex-wrap:wrap; }
+  .simpleAdminPage .d17Orders > .invitationFormRow,.adminManagedFilters { grid-template-columns:minmax(0,1fr); }
+  .simpleAdminPage .invitationForm { padding:14px; }
+  .simpleAdminPage .managedOrderItemEditRow { flex-direction:column; }
+  .simpleAdminPage .managedOrderItemFields { grid-template-columns:minmax(0,1fr); }
+  .simpleAdminPage .d17Actions { flex-wrap:wrap; }
+  .adminProductHeading { align-items:flex-start; }
+  .adminQueueNav a { flex:1 1 42%; text-align:center; }
+}
+@media(prefers-reduced-motion:reduce) { .adminRefreshing { animation:none; } }

@@ -23,6 +23,8 @@ for filename, collection in collections.items():
         image = next((p for p in paths if p.suffix == ".png"), paths[0])
         designs.append((key, "/" + image.relative_to(ROOT / "Jibli/public").as_posix()))
 
+if os.getenv('INVITATION_DESIGN'):
+    designs = [row for row in designs if row[0] == os.environ['INVITATION_DESIGN']]
 results, failures, errors = [], [], []
 payload = {}
 with sync_playwright() as p:
@@ -90,6 +92,6 @@ with sync_playwright() as p:
                         page.screenshot(path=str(OUT / f"failure-{key}-{width}-{scenario}.png"))
             print(f"Checked {key} at {width}px; failures={len(failures)}", flush=True)
     browser.close()
-(OUT / "invitation-matrix.json").write_text(json.dumps({"passed":results,"failures":failures},indent=2),encoding="utf-8")
+(OUT / ("invitation-matrix-" + os.environ['INVITATION_DESIGN'] + ".json" if os.getenv('INVITATION_DESIGN') else "invitation-matrix.json")).write_text(json.dumps({"passed":results,"failures":failures},indent=2),encoding="utf-8")
 print(f"Passed {len(results)}; failed {len(failures)}",flush=True)
 assert not failures, json.dumps(failures[:10],indent=2)

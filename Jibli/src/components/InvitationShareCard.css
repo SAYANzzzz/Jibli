@@ -1,0 +1,18 @@
+.invitationShareCard { margin:22px 0; padding:22px; border:1px solid #557a72; border-radius:14px; background:#122c2b; color:#edf8f4; text-align:start; }
+.invitationShareHeading { display:flex; align-items:center; gap:10px; }
+.invitationShareHeading strong { font-size:18px; color:#edf8f4; }
+.invitationReadyDot { width:8px; height:8px; border-radius:50%; background:#88dfb6; flex:none; }
+.invitationShareCard p,.invitationShareCard small { color:#b9d6cd; font-size:13px; line-height:1.7; }
+.invitationShareCard label { display:grid; gap:8px; margin:16px 0; font-size:12px; font-weight:600; color:#c6e5da; }
+.invitationShareCard :is(input,textarea) { width:100%; min-width:0; box-sizing:border-box; padding:12px; border:1px solid #456b62; border-radius:8px; background:#0b201f; color:#f0faf6; -webkit-text-fill-color:#f0faf6; font:400 13px/1.7 system-ui,sans-serif; }
+.invitationShareCard textarea { resize:vertical; white-space:pre-wrap; }
+.invitationShareActions { display:flex; flex-wrap:wrap; gap:10px; margin:14px 0; }
+.invitationShareCard .invitationShareActions :is(a,button) { display:inline-flex; align-items:center; justify-content:center; gap:8px; min-height:42px; padding:10px 14px; border-radius:8px; font-size:12px; }
+.invitationShareCard .outlineBtn { background:transparent; border:1px solid #608b7d; color:#d2efe4; }
+.invitationShareCard .primaryBtn { background:#b9e5ce; border:1px solid #b9e5ce; color:#123b2d; box-shadow:none; }
+.invitationAudience { display:flex; flex-wrap:wrap; gap:8px; margin-top:24px; padding-top:18px; border-top:1px solid #36584f; }
+.invitationAudience button { padding:9px 12px; border:1px solid #557a6d; border-radius:8px; background:transparent; color:#c6dfd5; cursor:pointer; font:inherit; font-size:12px; }
+.invitationAudience button[aria-pressed=true] { background:#315b4d; border-color:#a0cdb9; color:#fff; }
+.invitationShareCard .invitationShareNotice { margin-bottom:0; min-height:1em; }
+.invitationShareCard :is(a,button,input,textarea):focus-visible { outline:2px solid #b9e5ce; outline-offset:3px; }
+@media(max-width:560px) { .invitationShareCard { padding:16px; } .invitationShareActions > * { flex:1 1 100%; } }

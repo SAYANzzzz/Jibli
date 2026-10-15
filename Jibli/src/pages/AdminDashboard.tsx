@@ -1,11 +1,12 @@
 import PaymentOrders from "../components/PaymentOrders";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
-import { CheckCircle2, ExternalLink, RefreshCw, Trash2 } from "lucide-react";
+import { ArrowDown, CheckCircle2, Clock3, ExternalLink, Inbox, PackageCheck, RefreshCw, Search, Trash2 } from "lucide-react";
 import { deleteAdminOrder, getAdminOrders, updateAdminOrderItem, updateAdminOrderStatus } from "../api";
 import type { CartItem, Order } from "../api";
 import { PROCESS_STAGES, STATUS_LABELS } from "../orderStatus";
 import Navbar from "../components/Navbar";
+import "./AdminDashboard.css";
 
 type OrderDraft = {
   status: string;
@@ -22,6 +23,7 @@ function formatDate(value: string) {
     year: "numeric",
     hour: "2-digit",
     minute: "2-digit",
+    timeZone: "Africa/Tunis",
   }).format(new Date(value));
 }
 
@@ -138,6 +140,11 @@ function AdminDashboard() {
   const [itemFileDrafts, setItemFileDrafts] = useState<Record<string, File | null>>({});
   const [savingItemId, setSavingItemId] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
+  const [refreshKey, setRefreshKey] = useState(0);
+  const [refreshing, setRefreshing] = useState(false);
+  const [statusFilter, setStatusFilter] = useState("");
+  const [sortOrder, setSortOrder] = useState("newest");
+  const [visibleLimit, setVisibleLimit] = useState(10);
 
   const acceptOrders = useCallback((response: { orders: Order[] }) => {
     setOrders(response.orders); setErrorMessage(""); setIsLoading(false);
@@ -188,7 +195,17 @@ function AdminDashboard() {
 
   const visibleNewRequests = newRequests.filter(matchesSearch);
   const visibleWaitingPaymentOrders = waitingPaymentOrders.filter(matchesSearch);
-  const visibleConfirmedOrders = confirmedOrders.filter(matchesSearch);
+  const visibleConfirmedOrders = confirmedOrders.filter(matchesSearch)
+    .filter((order) => !statusFilter || order.status === statusFilter)
+    .sort((a, b) => sortOrder === "oldest"
+      ? Date.parse(a.created_at) - Date.parse(b.created_at)
+      : Date.parse(b.created_at) - Date.parse(a.created_at));
+
+  const refreshDashboard = async () => {
+    setRefreshing(true);
+    setRefreshKey((key) => key + 1);
+    try { await loadOrders(); } finally { setRefreshing(false); }
+  };
 
   const notifyCustomer = (order: Order, message: string) => {
     const phone = sanitizePhoneForWhatsApp(order.profiles?.phone);
@@ -349,47 +366,38 @@ function AdminDashboard() {
   return (
     <div className="simpleAdminPage">
       <Navbar hidePrimaryNav>
-        <button className="outlineBtn" type="button" onClick={loadOrders}>
-          <RefreshCw size={16} />
-          Refresh
+        <button className="outlineBtn" type="button" onClick={refreshDashboard} disabled={refreshing}>
+          <RefreshCw size={16} className={refreshing ? "adminRefreshing" : undefined} />
+          {refreshing ? "Refreshing…" : "Refresh dashboard"}
         </button>
         <Link to="/" className="primaryBtn">Website</Link>
       </Navbar>
 
       <main className="simpleAdminMain">
-        <PaymentOrders admin />
         <section className="simpleAdminHeader">
-          <span className="eyebrow">Admin only</span>
-          <h1>Order requests</h1>
-          <p>Review product requests here. Check D17 references in the payment section before confirming payment.</p>
+          <div><span className="eyebrow">Jibli workspace · Admin only</span>
+          <h1>Your business, at a glance.</h1>
+          <p>Review payments, prepare invitations, and keep every order moving.</p></div>
+          <a className="adminReviewShortcut" href="#d17-review">Review D17 payments <ArrowDown size={16} /></a>
         </section>
 
+        <section className="simpleAdminStats" aria-label="Product order overview" aria-busy={isLoading}>
+          <a href="#admin-new"><Inbox size={20} /><span>New requests</span><strong>{isLoading ? "—" : newRequests.length}</strong><small>Review & quote</small></a>
+          <a href="#admin-waiting"><Clock3 size={20} /><span>Waiting payment</span><strong>{isLoading ? "—" : waitingPaymentOrders.length}</strong><small>Follow up with customers</small></a>
+          <a href="#admin-managed"><PackageCheck size={20} /><span>In progress</span><strong>{isLoading ? "—" : confirmedOrders.filter((order) => !["delivered", "cancelled"].includes(order.status)).length}</strong><small>Prepare & track</small></a>
+          <a href="#admin-managed" onClick={() => { setStatusFilter("delivered"); setVisibleLimit(10); }}><CheckCircle2 size={20} /><span>Delivered</span><strong>{isLoading ? "—" : orders.filter((order) => order.status === "delivered").length}</strong><small>Completed product orders</small></a>
+        </section>
+
+        <nav className="adminQueueNav" aria-label="Dashboard sections"><a href="#d17-review">Payments & digital delivery</a><a href="#admin-new">New requests</a><a href="#admin-waiting">Waiting payment</a><a href="#admin-managed">Manage orders</a></nav>
+        <PaymentOrders admin refreshKey={refreshKey} />
+
+        <div className="adminProductHeading"><div><span className="eyebrow">Product orders</span><h2>Requests & fulfilment</h2></div><span>{orders.length} total orders</span></div>
         <label className="adminOrderSearch">
-          <span>Find an order</span>
-          <input
-            type="search"
-            value={searchQuery}
-            onChange={(event) => setSearchQuery(event.target.value)}
-            placeholder="Customer, phone, order ID, product or link"
-          />
+          <span><Search size={16} /> Find a product order</span>
+          <input type="search" value={searchQuery} onChange={(event) => { setSearchQuery(event.target.value); setVisibleLimit(10); }} placeholder="Customer, phone, order ID, product or link" />
         </label>
 
-        <section className="simpleAdminStats">
-          <div>
-            <span>New requests</span>
-            <strong>{newRequests.length}</strong>
-          </div>
-          <div>
-            <span>Waiting payment</span>
-            <strong>{waitingPaymentOrders.length}</strong>
-          </div>
-          <div>
-            <span>Confirmed</span>
-            <strong>{confirmedOrders.length}</strong>
-          </div>
-        </section>
-
-        {errorMessage && <div className="noticeBox warning adminNotice">{errorMessage}</div>}
+        {errorMessage && <div role="alert" className="noticeBox warning adminNotice">{errorMessage}</div>}
         {notifyWarning && <div className="noticeBox warning adminNotice">{notifyWarning}</div>}
 
         {pendingNotify && (
@@ -412,7 +420,7 @@ function AdminDashboard() {
           </div>
         )}
 
-        <section className="simpleAdminPanel">
+        <section className="simpleAdminPanel" id="admin-new">
           <div className="tableTop">
             <div>
               <h2>New WhatsApp requests</h2>
@@ -531,7 +539,7 @@ function AdminDashboard() {
           )}
         </section>
 
-        <section className="simpleAdminPanel">
+        <section className="simpleAdminPanel" id="admin-waiting">
           <div className="tableTop">
             <div>
               <h2>Waiting for payment</h2>
@@ -608,19 +616,24 @@ function AdminDashboard() {
           )}
         </section>
 
-        <section className="simpleAdminPanel">
+        <section className="simpleAdminPanel" id="admin-managed">
           <div className="tableTop">
             <div>
-              <h2>Already confirmed</h2>
-              <p className="mutedText">These orders are now visible to users in tracking.</p>
+              <h2>Manage orders</h2>
+              <p className="mutedText">Update fulfilment, item photos, and customer tracking.</p>
             </div>
           </div>
 
+          <div className="adminManagedFilters">
+            <label>Order status<select aria-label="Order status" value={statusFilter} onChange={(event) => { setStatusFilter(event.target.value); setVisibleLimit(10); }}><option value="">All managed statuses</option>{PROCESS_STAGES.filter((stage) => stage.value !== "waiting_confirmation").map((stage) => <option value={stage.value} key={stage.value}>{stage.label}</option>)}</select></label>
+            <label>Sort by<select aria-label="Sort by" value={sortOrder} onChange={(event) => { setSortOrder(event.target.value); setVisibleLimit(10); }}><option value="newest">Newest first</option><option value="oldest">Oldest first</option></select></label>
+            <span role="status">{visibleConfirmedOrders.length} matching orders</span>
+          </div>
           {visibleConfirmedOrders.length === 0 ? (
-            <div className="compactEmpty">No confirmed orders yet.</div>
+            <div className="compactEmpty">{searchQuery || statusFilter ? "No orders match your filters. Try another search or status." : "No confirmed orders yet."}</div>
           ) : (
             <div className="adminCompactList">
-              {visibleConfirmedOrders.slice(0, 10).map((order) => (
+              {visibleConfirmedOrders.slice(0, visibleLimit).map((order) => (
                 <div className="adminCompactRow managedOrderRow" key={order.id}>
                   <div className="managedOrderInfo">
                     <div>
@@ -648,6 +661,7 @@ function AdminDashboard() {
                               <ExternalLink size={13} />
                             </a>
                             <input
+                              aria-label={`Item ${index + 1} name for order ${order.id.slice(0, 8)}`}
                               value={itemNameDrafts[item.id] ?? item.product_name ?? ""}
                               onChange={(event) =>
                                 setItemNameDrafts((current) => ({ ...current, [item.id]: event.target.value }))
@@ -655,6 +669,7 @@ function AdminDashboard() {
                               placeholder="Item name shown to the customer"
                             />
                             <input
+                              aria-label={`Item ${index + 1} photo for order ${order.id.slice(0, 8)}`}
                               type="file"
                               accept="image/*"
                               onChange={(event) =>
@@ -751,6 +766,7 @@ function AdminDashboard() {
               ))}
             </div>
           )}
+          {visibleConfirmedOrders.length > visibleLimit && <div className="adminLoadMore"><span>Showing {visibleLimit} of {visibleConfirmedOrders.length} orders</span><button type="button" className="outlineBtn" onClick={() => setVisibleLimit((limit) => limit + 10)}>Show more orders</button></div>}
         </section>
       </main>
     </div>

@@ -29,6 +29,11 @@
 .guestInvitation { position:static; max-width:520px; margin:24px auto; border-radius:18px; box-shadow:0 20px 80px #0005; }
 .guestInvitation .inviteReveal { height:auto; max-height:none; overflow:visible; }
 .guestInvitation .animatedInviteToolbar { display:none; }
+.guestInvitationStatus { padding:24px; color:#edf2ff; font-size:15px; line-height:1.7; }
+.inviteStory .inviteUtilityBar button { touch-action:manipulation; }
+@supports(padding:env(safe-area-inset-top)) {
+  .animatedInvite.inviteExpanded .inviteUtilityBar { padding-top:max(8px,env(safe-area-inset-top)); padding-inline-start:max(12px,env(safe-area-inset-left)); padding-inline-end:max(12px,env(safe-area-inset-right)); }
+}
 .invitationEditor { margin:20px 0; padding:16px; border:1px solid #58617b; border-radius:12px; }
 .invitationEditor summary { cursor:pointer; font-weight:600; margin-bottom:12px; }
 .invitationEditor .weddingSelectedDesign { position:static; }
@@ -70,6 +75,7 @@ textarea {
 
 .navbar {
   position: relative;
+  z-index: 200;
   height: 90px;
   background: rgba(16, 26, 56, 0.7);
   backdrop-filter: blur(14px);
@@ -5202,7 +5208,7 @@ td {
 .inviteStory :is(.inviteEnvelope strong,.inviteEnvelopeGreeting,.inviteOpenHint,.inviteWelcomeKicker,.inviteStoryTitle p,.inviteOriginalArtwork .inviteSectionNumber) { color:var(--ink); }
 .inviteOriginalArtwork { padding:32px 18px; background:var(--paper-deep); text-align:center; }
 .inviteOriginalArtworkFrame { overflow:hidden; border-radius:12px; box-shadow:0 12px 30px #00000020; background:var(--paper); }
-.inviteOriginalArtworkFrame :is(img,svg) { display:block; width:100%; height:auto; }
+.inviteOriginalArtworkFrame :is(img,svg):not(.lucide) { display:block; width:100%; height:auto; }
 .inviteOriginalArtworkFrame .livingArtwork canvas { width:100%; height:100%; }
 .inviteStory[data-layout=editorial] .inviteStoryTitle { border-radius:4px; min-height:470px; border-inline:0; border-width:2px; box-shadow:none; }
 .inviteStory[data-layout=editorial] .inviteStoryTitle h2 { font:500 clamp(32px,5vw,46px)/1.18 system-ui,sans-serif; letter-spacing:-.04em; }
@@ -5323,7 +5329,7 @@ td {
   max-height:100%;
 }
 .inviteStory .inviteMainPicture .livingArtwork { width:100%; height:100%; }
-.inviteStory .inviteMainPicture :is(img,svg) { display:block; width:100%; height:100%; object-fit:contain; }
+.inviteStory .inviteMainPicture :is(img,svg):not(.lucide) { display:block; width:100%; height:100%; object-fit:contain; }
 .inviteStory .inviteMainPicture .livingArtwork canvas { width:100%; height:100%; }
 .inviteStory .inviteStoryPanel,
 .inviteStory[data-layout=certificate] .inviteStoryPanel {
@@ -5598,7 +5604,7 @@ td {
   mask-image:linear-gradient(to bottom,#000 0%,#000 calc(100% - 36px),transparent 100%);
 }
 .inviteStory .inviteMainPicture .livingArtwork { width:100%; height:auto; }
-.inviteStory .inviteMainPicture :is(img,svg) { width:100%; height:auto; object-fit:contain; }
+.inviteStory .inviteMainPicture :is(img,svg):not(.lucide) { width:100%; height:auto; object-fit:contain; }
 .inviteStory .inviteMainPicture .livingArtwork canvas { width:100%; height:100%; }
 .animatedInvite.inviteStory .inviteEventDetails { margin-top:-1px; padding-top:8px; }
 .inviteStory .inviteEventDetails::before { inset:0 18px; border-inline-width:1px; opacity:.45; }
@@ -5771,7 +5777,7 @@ td {
   border:1px solid color-mix(in srgb,var(--foil) 35%,transparent);
 }
 .inviteStory .invitePersonalisedCover h2 {
-  margin:0;font:400 clamp(24px,6vw,46px)/1.3 Georgia,serif;
+  margin:0;max-width:100%;font:400 clamp(24px,9cqw,46px)/1.3 Georgia,serif;
   overflow-wrap:anywhere;text-wrap:balance;color:var(--ink);
 }
 .invitePersonalisedCover p,.invitePersonalisedCover span {
@@ -5962,6 +5968,18 @@ td {
   .animatedInvite.inviteStory .isOpening :is(.inviteWaxSeal,.inviteEnvelopeGreeting,strong,.inviteOpenHint,.inviteEnvelopeFlap) { animation:none; }
 }
 
+/* Keep subscription and gift-card brand marks fully visible. */
+.gamingGameImageWrap img.gamingBrandLogo,
+.gamingOffersHeroImage.gamingBrandLogo {
+  object-fit: contain;
+  padding: 24px;
+  background: #f5f5f7;
+  box-sizing: border-box;
+}
+
+.gamingGameImageWrap img.gamingFcLogo,
+.gamingOffersHeroImage.gamingFcLogo { object-fit: contain; padding: 20px; box-sizing: border-box; background: #111b13; }
+
 /* Keep invitation navigation native so touch, wheel and keyboard scrolling
    can move continuously through artwork and event details. */
 .animatedInvite.inviteStory .inviteReveal {
@@ -6036,3 +6054,21 @@ td {
   height: 100%;
   min-height: 0;
 }
+
+/* Personalised covers contain UI icons, not full-size artwork SVGs. */
+.inviteStory .inviteMainPicture .invitePersonalisedCover > svg {
+  width:24px; height:24px; flex:none;
+}
+.inviteStory .inviteMainPicture .inviteOriginalArtworkFrame:has(.invitePersonalisedCover) {
+  mask-image:none;
+}
+#root .invitationForm .invitationCertificateToggle {
+  display:flex; align-items:center; gap:10px;
+}
+#root .invitationForm .invitationCertificateToggle input {
+  width:18px; height:18px; margin:0; padding:0; flex:none;
+}
+.invitationPublishHelp { padding:16px; border:1px solid var(--border); border-radius:10px; color:var(--text); }
+.invitationPublishHelp p { margin:8px 0 0; font-size:13px; line-height:1.6; }
+.invitationEditor .invitationForm { min-width:0; }
+.invitationEditor .weddingSelectedDesign { width:100%; max-width:520px; min-width:0; margin-inline:auto; }

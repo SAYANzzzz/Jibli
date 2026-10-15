@@ -96,13 +96,16 @@ export default function InvitationArtworkText({ image, details, locale, caption 
     return () => { cancelled = true; source.onload = null; };
   }, [image, slots, caption]);
 
-  const captionName = captionNameDesigns.has(key);
+  const personalisedName = (details.couple || details.name || "").trim();
+  // Very long names need a readable line below the artwork rather than tiny type.
+  const longName = Array.from(personalisedName).length > 80;
+  const captionName = captionNameDesigns.has(key) || longName;
   const captionAge = image.includes("/birthdays/") && Boolean(details.age?.trim());
   if (caption) {
     const name = (details.couple || details.name || "").trim();
     if (!(captionName && name) && !captionAge) return null;
     return <div className="inviteArtworkCaption" dir="auto">
-      {captionName && name && <strong>{name}</strong>}
+      {captionName && name && <strong style={longName ? { fontSize: "18px" } : undefined}>{name}</strong>}
       {captionAge && <span>{details.age}</span>}
     </div>;
   }
@@ -112,10 +115,10 @@ export default function InvitationArtworkText({ image, details, locale, caption 
     {slots.map((slot, index) => {
       // Dates and times have dedicated live sections, clear of the printed artwork.
       if (!certificate && slot.field !== "name" && slot.field !== "age") return null;
-      if ((slot.field === "name" && captionName) || (slot.field === "age" && image.includes("/birthdays/"))) return null;
-      const text = fieldValue(slot, details, locale);
+      if ((slot.field === "name" && captionName && !longName) || (slot.field === "age" && image.includes("/birthdays/"))) return null;
+      const text = slot.field === "name" && longName ? "" : fieldValue(slot, details, locale);
       const hasName = Boolean(details.couple?.trim() || details.name?.trim());
-      if (!text.trim() && !(slot.field === "name" && hasName && slot.part !== undefined)) return null;
+      if (!text.trim() && !(slot.field === "name" && (longName || hasName && slot.part !== undefined))) return null;
       const arabic = /[\u0600-\u06ff]/.test(text);
       const font = slot.font === "sans" ? "sans" : arabic ? "arabic" : slot.font === "arabic" ? "serif" : slot.font || "serif";
       const [left, top, width, height] = slot.box;

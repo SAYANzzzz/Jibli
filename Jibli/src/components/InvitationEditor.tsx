@@ -14,20 +14,22 @@ export default function InvitationEditor({ order, onSave }: { order: PaymentOrde
   const [certificate, setCertificate] = useState(initial?.certificate || false);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
+  const [notice, setNotice] = useState("");
   async function save(published: boolean) {
-    setBusy(true); setError("");
-    try { const result = await apiFetch(`/admin/payments/${order.id}/invitation`, { method: "PUT", body: JSON.stringify({ title, image, mood, details, certificate, published }) }); onSave(result.payment); }
+    setBusy(true); setError(""); setNotice("");
+    try { const result = await apiFetch(`/admin/payments/${order.id}/invitation`, { method: "PUT", body: JSON.stringify({ title, image, mood, details, certificate, published }) }); onSave(result.payment); setNotice(published ? "Published. Your invitation link and ready-to-send messages are in the sharing card above." : "Unpublished. The guest link is disabled until you publish again."); }
     catch (e) { setError(e instanceof Error ? e.message : "Could not save invitation."); }
     finally { setBusy(false); }
   }
   return <details className="invitationEditor"><summary>Edit & publish guest invitation</summary><form className="invitationForm" onSubmit={(e) => { e.preventDefault(); void save(true); }}>
+    <aside className="invitationPublishHelp"><strong>1. Personalise · 2. Publish · 3. Send</strong><p>Review the names and event details, then open the preview. Leave the artwork URL blank for a personalised card; add only finished artwork with the correct names.</p><p>Save &amp; publish creates a sharing card above this editor. Preview the guest link, then choose Send to client for the handoff message, or Share with guests for the invitation message. WhatsApp opens a draft for you to review and send. Guests need no account. Edits keep the same link; unpublishing disables it.</p></aside>
     <label>Invitation title<input required maxLength={160} value={title} onChange={(e) => setTitle(e.target.value)} /></label>
-    <label>Final artwork URL (optional)<input type="url" placeholder="https://… Leave blank for the personalised web design" value={image} onChange={(e) => setImage(e.target.value)} /></label>
-    <label><input type="checkbox" checked={certificate} onChange={(e) => setCertificate(e.target.checked)} /> Achievement certificate</label>
+    <label>Final artwork URL (optional)<input type="url" placeholder="https://… Leave blank for the personalised web design" maxLength={2000} value={image} onChange={(e) => setImage(e.target.value)} /></label>
+    <label className="invitationCertificateToggle"><input type="checkbox" checked={certificate} onChange={(e) => setCertificate(e.target.checked)} /> Achievement certificate</label>
     {Object.entries({ name: "Recipient / host name", couple: "Couple names", hosts: "Hosts / organisation", school: "School / achievement", date: "Date", time: "Time", venue: "Venue", language: "Language", contact: "Guest RSVP contact", note: "Public message" }).map(([key, label]) => <label key={key}>{label}<input type={key === "date" ? "date" : key === "time" ? "time" : "text"} required={key === "name" && !details.couple} maxLength={key === "note" ? 3000 : 160} value={details[key] || ""} onChange={(e) => setDetails((current) => ({ ...current, [key]: e.target.value }))} /></label>)}
     <label>Colour mood<select value={mood} onChange={(e) => setMood(e.target.value)}><option value="champagne">Champagne</option><option value="garden">Botanical</option><option value="midnight">Midnight</option><option value="confetti">Rose</option></select></label>
     <p>Only these public invitation fields appear to guests. Review the preview before publishing.</p>
     <div className="weddingSelectedDesign"><AnimatedInvitation key={`${image}-${certificate}`} title={title} image={image} details={{ ...details, mood }} onMoodChange={setMood} certificate={certificate} /></div>
-    {error && <p role="alert">{error}</p>}<div className="d17Actions"><button className="primaryBtn" disabled={busy}>Save & publish</button><button type="button" className="outlineBtn" disabled={busy} onClick={() => save(false)}>Save & unpublish</button></div>
+    {error && <p role="alert">{error}</p>}{notice && <p role="status">{notice}</p>}<div className="d17Actions"><button className="primaryBtn" disabled={busy}>Save & publish</button><button type="button" className="outlineBtn" disabled={busy} onClick={() => save(false)}>Save & unpublish</button></div>
   </form></details>;
 }

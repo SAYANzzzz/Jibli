@@ -1,4 +1,5 @@
 import { useCommerceCopy } from "../i18n/commerceCopy";
+import { useTranslation } from "../i18n/useTranslation";
 import { useEffect, useRef, useState } from "react";
 import type { CSSProperties } from "react";
 import { getInvitationDesign } from "../invitationDesigns";
@@ -11,11 +12,14 @@ import { RotateCcw, MapPin, ArrowDown, CalendarDays, Sparkles, Clock3, Navigatio
 type Props = { image: string; title: string; details: Record<string, string>; onMoodChange?: (mood: string) => void; guest?: boolean; certificate?: boolean };
 
 export default function AnimatedInvitation({ image, title, details: savedDetails, guest = false, certificate: suppliedCertificate = false }: Props) {
+  const { language } = useTranslation();
   const design = getInvitationDesign(image);
   const kindergartenWelcome = design.key === "eid-school-welcome";
   const registration = design.key === "kindergarten-welcome" || design.key === "school-registration";
   const certificate = suppliedCertificate || design.layout === "certificate";
   const [expanded, setExpanded] = useState(false);
+  const [failedImage, setFailedImage] = useState("");
+  const showPersonalisedCover = !image || failedImage === image;
   const sampleDate = new Date();
   sampleDate.setMonth(sampleDate.getMonth() + 3);
   const sampleDateString = `${sampleDate.getFullYear()}-${String(sampleDate.getMonth() + 1).padStart(2, "0")}-${String(sampleDate.getDate()).padStart(2, "0")}`;
@@ -28,13 +32,19 @@ export default function AnimatedInvitation({ image, title, details: savedDetails
   };
   const guestLanguage = details.language?.startsWith("Arabic") ? "ar" : details.language?.startsWith("French") ? "fr" : "en";
   const copy = useCommerceCopy(guest ? guestLanguage : undefined);
-  const locale = guest ? guestLanguage : document.documentElement.lang || "en";
+  const locale = guest ? guestLanguage : language;
   const [opened, setOpened] = useState(false);
   const [opening, setOpening] = useState(false);
   const story = useRef<HTMLDivElement>(null);
   const [motionPaused, setMotionPaused] = useState(false);
+  useEffect(() => {
+    if (!opening) return;
+    // Pausing or disabling CSS animations must not leave the revealed card inert.
+    const timer = window.setTimeout(() => setOpening(false), 2000);
+    return () => window.clearTimeout(timer);
+  }, [opening]);
   const collection = image.split("/")[2];
-  const mood = "original";
+  const mood = image ? "original" : savedDetails.mood || "champagne";
   const [now, setNow] = useState(() => Date.now());
   useEffect(() => {
     if (!opened || !details.date) return;
@@ -58,7 +68,6 @@ export default function AnimatedInvitation({ image, title, details: savedDetails
   useEffect(() => {
     if (opened && !opening) story.current?.focus({ preventScroll: true });
   }, [opened, opening]);
-
   useEffect(() => {
     if (!expanded) return;
     const previous = document.body.style.overflow;
@@ -126,11 +135,11 @@ export default function AnimatedInvitation({ image, title, details: savedDetails
   const firstWeekday = validDate ? (new Date(Date.UTC(year, month - 1, 1)).getUTCDay() + 6) % 7 : 0;
   const daysInMonth = validDate ? new Date(Date.UTC(year, month, 0)).getUTCDate() : 0;
 
-  const artwork = !image ? <div className="invitePersonalisedCover"><Sparkles size={24} aria-hidden="true" /><p>{title}</p><h2 dir="auto">{name}</h2><span>{copy("You are warmly invited")}</span></div> : image === "/invitations/others/kindergarten-welcome.jfif" ? <CharacterInvitation title={title} paused={motionPaused} /> : image === "/invitations/others/school-registration.jfif" ? <SchoolRegistrationMotion title={title} paused={motionPaused} /> : <LivingArtwork image={image} title={guest ? title : `${title} design reference`} paused={motionPaused} />;
+  const artwork = showPersonalisedCover ? <div className="invitePersonalisedCover"><Sparkles size={24} aria-hidden="true" /><p>{title}</p><h2 dir="auto">{name}</h2><span>{certificate ? details.school : copy("You are warmly invited")}</span></div> : image === "/invitations/others/kindergarten-welcome.jfif" ? <CharacterInvitation title={title} paused={motionPaused} /> : image === "/invitations/others/school-registration.jfif" ? <SchoolRegistrationMotion title={title} paused={motionPaused} /> : <LivingArtwork image={image} title={guest ? title : `${title} design reference`} paused={motionPaused} onError={() => setFailedImage(image)} />;
 
   const floral = ["arabesque-burgundy", "arabic-satin", "blush-embossed", "garden-couple", "classic-ivory", "photo-frame", "blue-florals", "nouveau-florals", "green-tradition", "family-roots"].includes(design.key);
   const driftingLeaves = floral ? <div className="inviteFloralMotion" aria-hidden="true">{Array.from({ length: 6 }, (_, index) => <span key={index} className={`inviteDriftingLeaf inviteDriftingLeaf-${index}`} />)}</div> : null;
-  return <section style={{ ...design.colours, "--story-artwork": `url("${image}")` } as CSSProperties} role={expanded ? "dialog" : undefined} aria-modal={expanded || undefined} data-layout={certificate ? "certificate" : design.layout} data-design={design.key} data-collection={collection} className={`animatedInvite inviteStory inviteMood-${mood} ${opened ? "isOpen" : ""} ${expanded ? "inviteExpanded" : ""}`} data-motion-paused={motionPaused} dir={locale === "ar" ? "rtl" : "ltr"} aria-label="Interactive invitation preview">
+  return <section style={{ ...(image ? design.colours : {}), "--story-artwork": `url("${image}")` } as CSSProperties} role={expanded ? "dialog" : undefined} aria-modal={expanded || undefined} data-layout={certificate ? "certificate" : design.layout} data-design={design.key} data-collection={collection} className={`animatedInvite inviteStory inviteMood-${mood} ${opened ? "isOpen" : ""} ${expanded ? "inviteExpanded" : ""}`} data-motion-paused={motionPaused} dir={locale === "ar" ? "rtl" : "ltr"} aria-label="Interactive invitation preview">
     <div className="inviteUtilityBar"><button type="button" className="inviteExpandButton" aria-pressed={expanded} onClick={() => setExpanded(!expanded)}>{expanded ? <X size={14} /> : <Maximize2 size={14} />}{copy(expanded ? "Close preview" : "Full screen")}</button><button type="button" className="inviteMotionToggle" aria-pressed={motionPaused} onClick={() => setMotionPaused(!motionPaused)}>{copy(motionPaused ? "Resume animation" : "Pause animation")}</button></div>
     <div className="animatedInviteToolbar"><span><Sparkles size={13} />{copy("Invitation preview")} </span>{opened && <button type="button" onClick={() => { setOpening(false); setOpened(false); }}><RotateCcw size={14} />{copy("Replay")} </button>}</div>
 
@@ -144,7 +153,7 @@ export default function AnimatedInvitation({ image, title, details: savedDetails
     </button>}
     {opened && <>
     <div ref={story} inert={opening} className="inviteReveal" tabIndex={0} aria-label="Scroll through your invitation">
-      <section className="inviteOriginalArtwork inviteMainPicture"><div className="inviteOriginalArtworkFrame">{artwork}<InvitationArtworkText image={image} details={savedDetails} locale={guestLanguage} /></div><InvitationArtworkText image={image} details={savedDetails} locale={guestLanguage} caption /></section>
+      <section className="inviteOriginalArtwork inviteMainPicture"><div className="inviteOriginalArtworkFrame">{artwork}{!showPersonalisedCover && <InvitationArtworkText image={image} details={savedDetails} locale={guestLanguage} />}</div>{!showPersonalisedCover && <InvitationArtworkText image={image} details={savedDetails} locale={guestLanguage} caption />}</section>
       <div className="inviteEventDetails">
         {!certificate && validDate && <section className="inviteStoryPanel inviteStorySchedule">{driftingLeaves}
         {!certificate && details.hosts?.trim() && <p className="inviteHostCredit">{copy("Invitation by")} <strong dir="auto">{details.hosts.trim()}</strong></p>}
