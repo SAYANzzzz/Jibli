@@ -37,8 +37,17 @@ export default function Payment() {
     event.preventDefault(); if (!payment) return;
     if (authorization.trim() !== repeatAuthorization.trim()) { setError("The authorization numbers do not match. Check your D17 receipt."); return; }
     setBusy(true); setError("");
-    try { setPayment((await apiFetch(`/payments/${payment.id}/reference`, { method: "POST", body: JSON.stringify({ authorization: authorization.trim() }) })).payment); }
-    catch (e) { setError(e instanceof Error ? e.message : "Could not submit payment."); }
+    // Reserve the tab during the click so browsers allow the later redirect.
+    const whatsappTab = window.open("about:blank", "_blank");
+    if (whatsappTab) whatsappTab.opener = null;
+    try {
+      const saved: PaymentOrder = (await apiFetch(`/payments/${payment.id}/reference`, { method: "POST", body: JSON.stringify({ authorization: authorization.trim() }) })).payment;
+      setPayment(saved);
+      const url = whatsappMessage(saved);
+      if (whatsappTab && !whatsappTab.closed) whatsappTab.location.replace(url);
+      else window.location.assign(url);
+    }
+    catch (e) { whatsappTab?.close(); setError(e instanceof Error ? e.message : "Could not submit payment."); }
     finally { setBusy(false); }
   }
   return <div><Navbar><ProfileNavLink /></Navbar><main className="d17Page">
@@ -58,6 +67,10 @@ export default function Payment() {
         <ol className="d17Steps"><li>{copy("Open D17 and transfer")} <strong>{payment.amount}{copy("TND")} </strong>{copy("to")} <strong>92001397</strong>.</li><li>{copy("On your successful transfer receipt, find")} <strong>{copy("Numéro autorisation")} </strong>.</li><li>{copy("Copy that number exactly below, keeping any leading zeros.")} </li></ol>
         <p>{copy("Only pay once. If your reference was rejected, check the receipt or contact Jibli before making another transfer.")} </p>
         <form className="invitationForm" onSubmit={submit}>
+          <figure className="d17ReceiptExample">
+            <figcaption><strong>{copy("Where to find your authorization number")}</strong><p id="d17-authorization-example">{copy("Example only: 000000 is circled in red. Enter the number from your own D17 receipt.")}</p></figcaption>
+            <a href="/payments/d17-authorization-example.png" target="_blank" rel="noreferrer" aria-label={copy("Open the full receipt example")}><img src="/payments/d17-authorization-example.png" alt={copy("D17 receipt example: recipient 92001397 and authorization number 000000 circled in red")} loading="lazy" /></a>
+          </figure>
           <label>{copy("Numéro d’autorisation")} <input required inputMode="numeric" pattern="[0-9]{1,30}" maxLength={30} autoComplete="off" value={authorization} onChange={(e) => setAuthorization(e.target.value)} placeholder={copy("Number from your D17 receipt")} /></label>
           <label>{copy("Confirm the authorization number")} <input required inputMode="numeric" pattern="[0-9]{1,30}" maxLength={30} autoComplete="off" value={repeatAuthorization} onChange={(e) => setRepeatAuthorization(e.target.value)} placeholder={copy("Enter the same number again")} /></label>
           <p>{copy("Enter the authorization number, not your phone number or D17 PIN. Jibli will verify the transfer manually.")} </p>
@@ -66,7 +79,7 @@ export default function Payment() {
       </>}
       {payment.status === "pending_verification" && <>
         <div className="d17Delivery" role="status"><h3>{copy("Jibli is reviewing your order")} </h3><p>{copy("We have received your payment reference. Our team will check your payment and contact you on WhatsApp within")} <strong>{copy("5 to 60 minutes")} </strong>.</p></div>
-        <p>{copy("Your reference")} <strong>{payment.authorization}</strong>{copy("is saved. Tap below to send your payment details to Jibli on WhatsApp.")} </p>
+        <p>{copy("Your reference")} <strong>{payment.authorization}</strong>{" "}{copy("is saved. WhatsApp opens automatically after confirmation. Tap Send in WhatsApp to send your payment details to Jibli.")} </p>
         <a className="primaryBtn" href={whatsappMessage(payment)} target="_blank" rel="noreferrer">{copy("Send on WhatsApp")} </a>
       </>}
       {payment.delivery && <DeliveryContent content={payment.delivery} invitation={parseInvitation(payment.details).invitation} />}

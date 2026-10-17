@@ -50,7 +50,7 @@ export const invitationTextLayouts: Record<string, TextSlot[]> = {
   "pink-night": [name([30, 11, 68, 16], 9, { font: "script", color: "#c96e96", background: "#111111" }), date([58, 38, 36, 6], 3.5, { color: "#eee", background: "#171717" }), time([60, 44, 34, 5], 3.5, { color: "#eee", background: "#171717" }), venue([71, 57, 26, 12], 3.5)],
   "pink-sparkle": [name([12, 72, 80, 8], 6, { font: "script" }), slot("age", [2, 69, 22, 11], 7), date([18, 80, 68, 5]), time([20, 85, 64, 5]), venue([10, 91, 80, 7])],
   "silver-fourteen": [name([7, 81, 80, 6], 5, { font: "script" }), slot("age", [68, 32, 30, 26], 19), date([13, 86, 70, 5]), time([15, 91, 66, 4]), venue([13, 95, 70, 4])],
-  "tiffs-party": [name([8, 11, 61, 14], 8, { font: "serif" }), slot("age", [20, 37, 28, 8], 7), date([5, 58, 44, 7]), time([5, 65, 44, 5]), venue([5, 74, 43, 12], 3)],
+  "tiffs-party": [name([8, 12, 61, 10], 8, { font: "serif" }), slot("age", [20, 37, 28, 8], 7), date([5, 58, 44, 7]), time([5, 65, 44, 5]), venue([5, 74, 43, 12], 3)],
   "family-roots": [name([12, 64, 76, 8], 6, { font: "serif" }), date([17, 76, 66, 7]), time([20, 83, 60, 5]), venue([16, 89, 68, 7])],
   "gathering-brunch": [name([18, 13, 65, 8], 6, { font: "serif" }), date([7, 43, 45, 5]), time([50, 43, 44, 5]), venue([17, 89, 68, 8])],
   "green-tradition": [name([10, 20, 80, 31], 10, { font: "serif" }), date([16, 62, 47, 8], 4, { background: "#627435", color: "#fff" }), time([62, 62, 25, 8], 4, { background: "#627435", color: "#fff" }), venue([13, 75, 76, 6])],

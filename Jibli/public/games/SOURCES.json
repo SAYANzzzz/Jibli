@@ -1,0 +1,127 @@
+{
+  "pubg-mobile": {
+    "page": "https://www.pubgmobile.com/en-US/home.shtml",
+    "image": "https://www.pubgmobile.com/images/event/home/share.jpg",
+    "file": "pubg-mobile.jpg"
+  },
+  "fortnite": {
+    "page": "https://www.fortnite.com/",
+    "image": "https://cdn2.unrealengine.com/links-admin-EN_FN_OG_42-10_C1SX_DiscoverTile_1920x1080-fdc0df7f.jpg",
+    "file": "fortnite.jpg"
+  },
+  "fc-mobile": {
+    "page": "https://www.ea.com/games/ea-sports-fc/fc-mobile",
+    "image": "https://drop-assets.ea.com/images/y23a6T6TNkkiCIjBrAG3X/5ae5d0308068513a7c8d033e54540a2f/NewBootsIconKV_B.png",
+    "file": "fc-mobile.jpg"
+  },
+  "call-of-duty-mobile": {
+    "page": "https://www.callofduty.com/mobile",
+    "image": "https://imgs.callofduty.com/content/dam/atvi/callofduty/cod-touchui/mobile/meta/CODM_Meta.webp",
+    "file": "call-of-duty-mobile.webp"
+  },
+  "mobile-legends": {
+    "page": "https://www.mobilelegends.com/",
+    "image": "https://akmweb.youngjoygame.com/web/gms/image/c3d1596795b86dc26e5f1ef2d48c3dfd.jpg",
+    "file": "mobile-legends.jpg"
+  },
+  "genshin-impact": {
+    "page": "https://genshin.hoyoverse.com/en/",
+    "image": "https://upload-static.hoyoverse.com/hk4e/upload/fb/common.jpg",
+    "file": "genshin-impact.jpg"
+  },
+  "honkai-star-rail": {
+    "page": "https://hsr.hoyoverse.com/en-us/",
+    "image": "https://fastcdn.hoyoverse.com/mi18n/hkrpg_global/m20260904hy5hcii9ds/upload/f0981b5c04af1c7a720d0bd65d958c52_1494770406828241360.png",
+    "file": "honkai-star-rail.png"
+  },
+  "brawl-stars": {
+    "page": "https://supercell.com/en/games/brawlstars/",
+    "image": "https://supercell.com/images/b524ca49e8549e5d3f5485452da7f26c/cropped.png",
+    "file": "brawl-stars.png"
+  },
+  "clash-of-clans": {
+    "page": "https://supercell.com/en/games/clashofclans/",
+    "image": "https://supercell.com/images/4c0ab0c1fb2958e72103f81632fee096/og_clashofclans.f3149338.jpg",
+    "file": "clash-of-clans.jpg"
+  },
+  "clash-royale": {
+    "page": "https://supercell.com/en/games/clashroyale/",
+    "image": "https://supercell.com/images/8654bffbaa77efb91243d3706b739c25/og_clashroyale.d235f90b.jpg",
+    "file": "clash-royale.jpg"
+  },
+  "playstation": {
+    "page": "https://www.playstation.com/en-us/playstation-gift-cards/",
+    "image": "https://gmedia.playstation.com/is/image/SIEPDC/gift-cards-digital-card-keyart-01-en-20oct22?$facebook$",
+    "file": "playstation.png"
+  },
+  "xbox": {
+    "page": "https://www.microsoft.com/en-us/p/xbox-gift-card-digital-code/cfq7ttc0k63h/0003",
+    "image": "https://img-prod-cms-rt-microsoft-com.akamaized.net/cms/api/am/imageFileData/RE1XYr1?aim=true&b=%23FFFFFFFF&f=jpg&h=540&m=6&o=f&q=90&ver=d999&w=540",
+    "file": "xbox.jpg"
+  },
+  "gemini": {
+    "page": "https://gemini.google.com",
+    "image": "https://www.google.com/s2/favicons?domain=gemini.google.com&sz=256",
+    "file": "gemini.png"
+  },
+  "claude": {
+    "page": "https://claude.ai",
+    "image": "https://www.google.com/s2/favicons?domain=claude.ai&sz=256",
+    "file": "claude.png"
+  },
+  "chatgpt": {
+    "page": "https://chatgpt.com",
+    "image": "https://www.google.com/s2/favicons?domain=chatgpt.com&sz=256",
+    "file": "chatgpt.png"
+  },
+  "notion": {
+    "page": "https://notion.so",
+    "image": "https://www.google.com/s2/favicons?domain=notion.so&sz=256",
+    "file": "notion.png"
+  },
+  "canva": {
+    "page": "https://canva.com",
+    "image": "https://www.google.com/s2/favicons?domain=canva.com&sz=256",
+    "file": "canva.png"
+  },
+  "capcut": {
+    "page": "https://capcut.com",
+    "image": "https://www.google.com/s2/favicons?domain=capcut.com&sz=256",
+    "file": "capcut.png"
+  },
+  "youtube-premium": {
+    "page": "https://youtube.com",
+    "image": "https://www.google.com/s2/favicons?domain=youtube.com&sz=256",
+    "file": "youtube-premium.png"
+  },
+  "discord-nitro": {
+    "page": "https://discord.com",
+    "image": "https://www.google.com/s2/favicons?domain=discord.com&sz=256",
+    "file": "discord-nitro.png"
+  },
+  "apple-gift-card": {
+    "page": "https://apple.com",
+    "image": "https://www.google.com/s2/favicons?domain=apple.com&sz=256",
+    "file": "apple-gift-card.png"
+  },
+  "nintendo-gift-card": {
+    "page": "https://nintendo.com",
+    "image": "https://www.google.com/s2/favicons?domain=nintendo.com&sz=256",
+    "file": "nintendo-gift-card.png"
+  },
+  "google-play-gift-card": {
+    "page": "https://play.google.com",
+    "image": "https://www.google.com/s2/favicons?domain=play.google.com&sz=256",
+    "file": "google-play-gift-card.png"
+  },
+  "amazon-gift-card": {
+    "page": "https://amazon.com",
+    "image": "https://www.google.com/s2/favicons?domain=amazon.com&sz=256",
+    "file": "amazon-gift-card.png"
+  },
+  "ea-sports-fc": {
+    "page": "https://www.ea.com/games/ea-sports-fc",
+    "image": "https://drop-assets.ea.com/images/W7jZ4vGojPtXKtHG0UAQQ/5e4c25d06e2346d2ef1f0db4e130b812/ea-primary-fc-logo-hero-med.svg",
+    "file": "ea-sports-fc.svg"
+  }
+}

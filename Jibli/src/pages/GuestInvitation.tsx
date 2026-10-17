@@ -1,27 +1,39 @@
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import AnimatedInvitation from "../components/AnimatedInvitation";
 import { API_URL } from "../api";
 import type { InvitationData } from "../invitationData";
 import { useCommerceCopy } from "../i18n/commerceCopy";
+import { resolveInvitationImage } from "../invitationTemplates";
+import { invitationSharePath, invitationToken } from "../../shared/invitation-links.mjs";
+import { useLocation } from "react-router-dom";
 
 export default function GuestInvitation() {
-  const { token } = useParams();
+  const { token: legacyToken } = useParams();
+  const { pathname } = useLocation();
+  const token = invitationToken(pathname) || legacyToken;
   return <GuestInvitationContent key={token} token={token} />;
 }
 
 function GuestInvitationContent({ token }: { token: string | undefined }) {
+  const navigate = useNavigate();
+  const { pathname } = useLocation();
   const copy = useCommerceCopy();
   const [invitation, setInvitation] = useState<InvitationData | null>(null);
   const [error, setError] = useState("");
   const [attempt, setAttempt] = useState(0);
+  useEffect(() => {
+    if (invitation && pathname.startsWith("/invite/")) {
+      navigate(invitationSharePath(pathname, invitation), { replace: true });
+    }
+  }, [invitation, pathname, navigate]);
   useEffect(() => {
     const controller = new AbortController();
     let active = true;
     const timeout = window.setTimeout(() => controller.abort(), 65000);
     fetch(`${API_URL}/invitations/${token}`, { signal: controller.signal, cache: "no-store" })
       .then(async (response) => { if (!response.ok) throw new Error(response.status === 404 ? "This invitation is not available. Please contact your host." : "Could not load your invitation. Check your connection and try again."); return response.json(); })
-      .then((result) => { if (active) setInvitation(result.invitation); })
+      .then((result) => { if (active) setInvitation({ ...result.invitation, image: resolveInvitationImage(result.invitation) }); })
       .catch((e) => { if (active) setError(e instanceof Error && e.message.startsWith("This invitation") ? e.message : "Could not load your invitation. Check your connection and try again."); })
       .finally(() => window.clearTimeout(timeout));
     return () => { active = false; window.clearTimeout(timeout); controller.abort(); };

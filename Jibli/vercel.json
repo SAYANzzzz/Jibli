@@ -2,7 +2,10 @@
   "framework": "vite",
   "buildCommand": "npm run build",
   "outputDirectory": "dist",
+  "functions": { "api/invitation.mjs": { "includeFiles": "dist/index.html", "maxDuration": 30 } },
   "rewrites": [
+    { "source": "/invite/:token", "destination": "/api/invitation?token=:token" },
+    { "source": "/invitation/:slug", "destination": "/api/invitation?slug=:slug" },
     { "source": "/(.*)", "destination": "/index.html" }
   ]
 }

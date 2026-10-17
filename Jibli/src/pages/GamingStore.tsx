@@ -17,24 +17,25 @@ type GamingGame = {
   id: string;
   name: string;
   category: string;
-  image?: string;
-  badge?: string;
+  image: string;
+  logo?: boolean;
   tiers: GamingTier[];
 };
 
 const GAMING_CATALOG: GamingGame[] = [
-  { id: "pubg-mobile", name: "PUBG Mobile", category: "Game top-up", badge: "PUBG", tiers: [{ label: "Available packages" }] },
-  { id: "fortnite", name: "Fortnite", category: "Game top-up", badge: "FN", tiers: [{ label: "Available packages" }] },
-  { id: "fc-mobile", name: "EA SPORTS FC Mobile", category: "Game top-up", badge: "FC", tiers: [{ label: "Available packages" }] },
-  { id: "call-of-duty-mobile", name: "Call of Duty: Mobile", category: "Game top-up", badge: "COD", tiers: [{ label: "Available packages" }] },
-  { id: "mobile-legends", name: "Mobile Legends: Bang Bang", category: "Game top-up", badge: "ML", tiers: [{ label: "Available packages" }] },
-  { id: "genshin-impact", name: "Genshin Impact", category: "Game top-up", badge: "GI", tiers: [{ label: "Available packages" }] },
-  { id: "honkai-star-rail", name: "Honkai: Star Rail", category: "Game top-up", badge: "HSR", tiers: [{ label: "Available packages" }] },
-  { id: "brawl-stars", name: "Brawl Stars", category: "Game top-up", badge: "BS", tiers: [{ label: "Available packages" }] },
-  { id: "clash-of-clans", name: "Clash of Clans", category: "Game top-up", badge: "COC", tiers: [{ label: "Available packages" }] },
-  { id: "clash-royale", name: "Clash Royale", category: "Game top-up", badge: "CR", tiers: [{ label: "Available packages" }] },
-  { id: "playstation", name: "PlayStation Store", category: "Gift card", badge: "PS", tiers: [{ label: "Available packages" }] },
-  { id: "xbox", name: "Xbox", category: "Gift card", badge: "XBOX", tiers: [{ label: "Available packages" }] },
+  { id: "ea-sports-fc", name: "FIFA / EA SPORTS FC", category: "Game code", image: "/games/ea-sports-fc.svg", tiers: [{ label: "Available packages" }] },
+  { id: "pubg-mobile", name: "PUBG Mobile", category: "Game top-up", image: "/games/pubg-mobile.jpg", tiers: [{ label: "Available packages" }] },
+  { id: "fortnite", name: "Fortnite", category: "Game top-up", image: "/games/fortnite.jpg", tiers: [{ label: "Available packages" }] },
+  { id: "fc-mobile", name: "EA SPORTS FC Mobile", category: "Game top-up", image: "/games/fc-mobile.jpg", tiers: [{ label: "Available packages" }] },
+  { id: "call-of-duty-mobile", name: "Call of Duty: Mobile", category: "Game top-up", image: "/games/call-of-duty-mobile.webp", tiers: [{ label: "Available packages" }] },
+  { id: "mobile-legends", name: "Mobile Legends: Bang Bang", category: "Game top-up", image: "/games/mobile-legends.jpg", tiers: [{ label: "Available packages" }] },
+  { id: "genshin-impact", name: "Genshin Impact", category: "Game top-up", image: "/games/genshin-impact.jpg", tiers: [{ label: "Available packages" }] },
+  { id: "honkai-star-rail", name: "Honkai: Star Rail", category: "Game top-up", image: "/games/honkai-star-rail.png", tiers: [{ label: "Available packages" }] },
+  { id: "brawl-stars", name: "Brawl Stars", category: "Game top-up", image: "/games/brawl-stars.png", tiers: [{ label: "Available packages" }] },
+  { id: "clash-of-clans", name: "Clash of Clans", category: "Game top-up", image: "/games/clash-of-clans.jpg", tiers: [{ label: "Available packages" }] },
+  { id: "clash-royale", name: "Clash Royale", category: "Game top-up", image: "/games/clash-royale.jpg", tiers: [{ label: "Available packages" }] },
+  { id: "playstation", name: "PlayStation Store", category: "Gift card", image: "/games/playstation.png", tiers: [{ label: "Available packages" }] },
+  { id: "xbox", name: "Xbox", category: "Gift card", image: "/games/xbox.jpg", tiers: [{ label: "Available packages" }] },
 
   {
     id: "riot-points",
@@ -163,11 +164,23 @@ const GAMING_CATALOG: GamingGame[] = [
       { label: "50 USD Steam Key" },
     ],
   },
+  { id: "chatgpt", name: "ChatGPT", category: "Subscription", image: "/games/chatgpt.png", logo: true, tiers: [{ label: "Available packages" }] },
+  { id: "claude", name: "Claude", category: "Subscription", image: "/games/claude.png", logo: true, tiers: [{ label: "Available packages" }] },
+  { id: "canva", name: "Canva", category: "Subscription", image: "/games/canva.png", logo: true, tiers: [{ label: "Available packages" }] },
+  { id: "gemini", name: "Google Gemini", category: "Subscription", image: "/games/gemini.png", logo: true, tiers: [{ label: "Available packages" }] },
+  { id: "notion", name: "Notion", category: "Subscription", image: "/games/notion.png", logo: true, tiers: [{ label: "Available packages" }] },
+  { id: "capcut", name: "CapCut", category: "Subscription", image: "/games/capcut.png", logo: true, tiers: [{ label: "Available packages" }] },
+  { id: "youtube-premium", name: "YouTube Premium", category: "Subscription", image: "/games/youtube-premium.png", logo: true, tiers: [{ label: "Available packages" }] },
+  { id: "discord-nitro", name: "Discord Nitro", category: "Subscription", image: "/games/discord-nitro.png", logo: true, tiers: [{ label: "Available packages" }] },
+  { id: "apple-gift-card", name: "Apple Gift Card", category: "Gift card", image: "/games/apple-gift-card.png", logo: true, tiers: [{ label: "Available packages" }] },
+  { id: "google-play-gift-card", name: "Google Play Gift Card", category: "Gift card", image: "/games/google-play-gift-card.png", logo: true, tiers: [{ label: "Available packages" }] },
+  { id: "amazon-gift-card", name: "Amazon Gift Card", category: "Gift card", image: "/games/amazon-gift-card.png", logo: true, tiers: [{ label: "Available packages" }] },
+  { id: "nintendo-gift-card", name: "Nintendo eShop Gift Card", category: "Gift card", image: "/games/nintendo-gift-card.png", logo: true, tiers: [{ label: "Available packages" }] },
 ];
 
 function buildWhatsappUrl(gameName: string, tierLabel: string, language: string) {
   const message = language === "fr"
-    ? `Bonjour Jibli ! Quel est le prix pour ${gameName} ?\nOption : ${tierLabel}\nPouvez-vous confirmer les offres disponibles pour ma plateforme et ma r?gion ?`
+    ? `Bonjour Jibli ! Quel est le prix pour ${gameName} ?\nOption : ${tierLabel}\nPouvez-vous confirmer les offres disponibles pour ma plateforme et ma région ?`
     : language === "ar"
       ? `?????? ????! ???? ????? ??? ${gameName}.\n??????: ${tierLabel}\n?? ?????? ????? ??????? ???????? ?????? ????????`
       : `Hi Jibli! What is the price for ${gameName}?\nOption: ${tierLabel}\nPlease confirm the available packages for my platform and region.`;
@@ -175,8 +188,8 @@ function buildWhatsappUrl(gameName: string, tierLabel: string, language: string)
 }
 
 const PRICE_COPY = {
-  en: { ask: "Ask for a price on WhatsApp", browse: "Explore games", action: "View packages", hero: "Gaming prices on WhatsApp", note: "Contact us for current prices and availability. Tell us your platform and account region.", packages: "Available packages", other: "Ask about another game" },
-  fr: { ask: "Demander le prix sur WhatsApp", browse: "D?couvrir les jeux", action: "Voir les offres", hero: "Prix gaming sur WhatsApp", note: "Contactez-nous pour les prix et la disponibilit?. Pr?cisez votre plateforme et la r?gion de votre compte.", packages: "Offres disponibles", other: "Demander un autre jeu" },
+  en: { ask: "Ask for a price on WhatsApp", browse: "Explore the catalog", action: "View packages", hero: "Gaming prices on WhatsApp", note: "Contact us for current prices and availability. Tell us your platform and account region.", packages: "Available packages", other: "Ask about another product" },
+  fr: { ask: "Demander le prix sur WhatsApp", browse: "Découvrir le catalogue", action: "Voir les offres", hero: "Prix gaming sur WhatsApp", note: "Contactez-nous pour les prix et la disponibilité. Précisez votre plateforme et la région de votre compte.", packages: "Offres disponibles", other: "Demander un autre produit" },
   ar: { ask: "???? ?? ????? ??? ??????", browse: "???? ???????", action: "??? ???????", hero: "????? ??????? ??? ??????", note: "????? ???? ?????? ??????? ???????. ?????? ?????? ?????? ?????.", packages: "??????? ????????", other: "???? ?? ???? ????" },
 };
 
@@ -233,11 +246,7 @@ function GamingStore() {
                 onClick={() => openGame(game.id)}
               >
                 <div className="gamingGameImageWrap">
-                  {game.image ? (
-                    <img src={game.image} alt="" />
-                  ) : (
-                    <span className="gamingGameFallback"><Gamepad2 size={32} aria-hidden="true" /><span>{game.badge || game.name.slice(0, 1)}</span></span>
-                  )}
+                  <img src={game.image} alt={`${game.name} logo / artwork`} className={game.logo ? "gamingBrandLogo" : game.id === "ea-sports-fc" ? "gamingFcLogo" : undefined} loading="lazy" />
                 </div>
                 <strong>{game.name}</strong>
                 <span className="platformBadge">{categoryLabel(game.category)}</span>
@@ -254,11 +263,7 @@ function GamingStore() {
             <div className="card gamingOffersCard">
               <div className="gamingOffersHero">
                 <div className="gamingOffersHeroImageWrap">
-                  {selectedGame.image ? (
-                    <img src={selectedGame.image} alt="" className="gamingOffersHeroImage" />
-                  ) : (
-                    <span className="gamingGameFallback"><Gamepad2 size={32} aria-hidden="true" /><span>{selectedGame.badge || selectedGame.name.slice(0, 1)}</span></span>
-                  )}
+                  <img src={selectedGame.image} alt={`${selectedGame.name} logo / artwork`} className={`gamingOffersHeroImage${selectedGame.logo ? " gamingBrandLogo" : selectedGame.id === "ea-sports-fc" ? " gamingFcLogo" : ""}`} />
                 </div>
                 <div>
                   <span className="platformBadge">{categoryLabel(selectedGame.category)}</span>

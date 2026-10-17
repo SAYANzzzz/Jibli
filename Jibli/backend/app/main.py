@@ -1,4 +1,5 @@
 from typing import Annotated
+import os
 from uuid import uuid4
 
 from fastapi import Depends, FastAPI, File, Form, HTTPException, UploadFile, status
@@ -41,7 +42,8 @@ app.add_middleware(
 
 @app.get("/health")
 def health() -> dict:
-  return {"status": "ok"}
+  revision = os.getenv("RENDER_GIT_COMMIT")
+  return {"status": "ok", **({"revision": revision} if revision else {})}
 
 
 async def read_validated_image(image: UploadFile) -> bytes:

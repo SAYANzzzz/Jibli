@@ -1,5 +1,11 @@
 import { supabase } from "./supabase";
 
+export function safeNextPath(value: string | null, fallback = "/"): string {
+  if (!value?.startsWith("/") || value.startsWith("//") || value.includes("\\") || Array.from(value).some((char) => char.charCodeAt(0) < 32 || char.charCodeAt(0) === 127)) return fallback;
+  const target = new URL(value, window.location.origin);
+  return target.origin === window.location.origin ? `${target.pathname}${target.search}${target.hash}` : fallback;
+}
+
 // Supabase's error shape isn't always what supabase-js expects (e.g. a
 // backend/SMTP failure can come back with a body it doesn't parse into a
 // proper .message), which can otherwise surface as a blank or "{}" error to
@@ -51,10 +57,10 @@ export async function ensureUserProfile(metadata?: { full_name?: string; phone?:
       email: user.email ?? "",
       full_name: fullName,
       phone,
-      role: "user",
     },
     {
       onConflict: "id",
+      ignoreDuplicates: true,
     },
   );
 

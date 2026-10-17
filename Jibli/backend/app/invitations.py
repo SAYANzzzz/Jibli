@@ -17,8 +17,9 @@ from .supabase_client import get_supabase_admin
 
 router = APIRouter(route_class=PaymentRoute)
 PUBLIC_FIELDS = {"name", "couple", "hosts", "school", "age", "date", "time", "venue", "language", "rsvp", "contact", "note"}
-PHOTO_FIELDS = {"venuePhoto1", "venuePhoto2", "venuePhoto3"}
+PHOTO_FIELDS = {"venuePhoto1", "venuePhoto2", "venuePhoto3", "birthdayPhoto"}
 PUBLIC_FIELDS |= PHOTO_FIELDS
+PUBLIC_FIELDS |= {"birthdayPhotoX", "birthdayPhotoY", "birthdayPhotoZoom"}
 PUBLIC_FIELDS.add("mapsUrl")
 
 
@@ -86,6 +87,14 @@ class InvitationIn(BaseModel):
         for key in PHOTO_FIELDS:
             if result.get(key) and not re.fullmatch(r"https://[^\s]+", result[key]):
                 raise ValueError("Venue photos must use HTTPS URLs.")
+        for key, minimum, maximum in [("birthdayPhotoX", 0, 100), ("birthdayPhotoY", 0, 100), ("birthdayPhotoZoom", 1, 3)]:
+            if result.get(key):
+                try:
+                    number = float(result[key])
+                except ValueError:
+                    raise ValueError("Invalid birthday photo crop.")
+                if not minimum <= number <= maximum:
+                    raise ValueError("Invalid birthday photo crop.")
         if not (result.get("name") or result.get("couple")):
             raise ValueError("Add the recipient or host name.")
         if result.get("date"):

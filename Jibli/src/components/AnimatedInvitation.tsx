@@ -1,3 +1,8 @@
+import { isGoogleMapsLink, invitationMapQuery, invitationDirectionsUrl } from "../invitationMaps";
+import InvitationEnvelopeArtwork from "./InvitationEnvelopeArtwork";
+import BirthdayArtwork from "./BirthdayArtwork";
+import { birthdayDesignKey, birthdayHasAge, birthdayLayouts } from "../birthdayPersonalisation";
+import { venuePhotoKeys } from "../invitationPhotos";
 import { useCommerceCopy } from "../i18n/commerceCopy";
 import { useTranslation } from "../i18n/useTranslation";
 import { useEffect, useRef, useState } from "react";
@@ -7,7 +12,7 @@ import CharacterInvitation from "./CharacterInvitation";
 import LivingArtwork from "./LivingArtwork";
 import InvitationArtworkText from "./InvitationArtworkText";
 import SchoolRegistrationMotion from "./SchoolRegistrationMotion";
-import { RotateCcw, MapPin, ArrowDown, CalendarDays, Sparkles, Clock3, Navigation, Maximize2, X } from "lucide-react";
+import { MapPin, ArrowDown, CalendarDays, Sparkles, Clock3, Navigation } from "lucide-react";
 
 type Props = { image: string; title: string; details: Record<string, string>; onMoodChange?: (mood: string) => void; guest?: boolean; certificate?: boolean };
 
@@ -17,7 +22,6 @@ export default function AnimatedInvitation({ image, title, details: savedDetails
   const kindergartenWelcome = design.key === "eid-school-welcome";
   const registration = design.key === "kindergarten-welcome" || design.key === "school-registration";
   const certificate = suppliedCertificate || design.layout === "certificate";
-  const [expanded, setExpanded] = useState(false);
   const [failedImage, setFailedImage] = useState("");
   const showPersonalisedCover = !image || failedImage === image;
   const sampleDate = new Date();
@@ -35,12 +39,96 @@ export default function AnimatedInvitation({ image, title, details: savedDetails
   const locale = guest ? guestLanguage : language;
   const [opened, setOpened] = useState(false);
   const [opening, setOpening] = useState(false);
+  const [preparing, setPreparing] = useState(false);
+  const artworkReady = useRef<Promise<void>>(Promise.resolve());
   const story = useRef<HTMLDivElement>(null);
-  const [motionPaused, setMotionPaused] = useState(false);
+  useEffect(() => {
+    if (!image) { artworkReady.current = Promise.resolve(); return; }
+    const picture = new Image();
+    picture.src = image;
+    artworkReady.current = picture.decode().catch(() => { /* The artwork renderer supplies its fallback. */ });
+  }, [image]);
+  useEffect(() => {
+    const root = story.current;
+    if (!opened || !root) return;
+    let gestureTimer = 0;
+    let navigating = false;
+    let accumulated = 0;
+    let swipe: { x: number; y: number; top: number; panel: HTMLElement | null; panelTop: number } | null = null;
+    const touchStart = (event: TouchEvent) => {
+      const touch = event.touches[0];
+      const panel = (event.target as Element).closest<HTMLElement>(".inviteStoryPanel");
+      swipe = event.touches.length === 1 ? { x: touch.clientX, y: touch.clientY, top: root.scrollTop, panel, panelTop: panel?.scrollTop || 0 } : null;
+    };
+    const touchEnd = (event: TouchEvent) => {
+      const start = swipe;
+      swipe = null;
+      if (!start || event.touches.length || !event.changedTouches[0]) return;
+      if (start.panel?.querySelector(".inviteStoryPhotos")) return;
+      const touch = event.changedTouches[0];
+      const distance = start.y - touch.clientY;
+      if (Math.abs(distance) < 40 || Math.abs(distance) < Math.abs(start.x - touch.clientX)) return;
+      if (start.panel && start.panel.scrollHeight > start.panel.clientHeight + 16 &&
+        (distance > 0 ? start.panelTop + start.panel.clientHeight < start.panel.scrollHeight - 2 : start.panelTop > 2)) return;
+      const top = root.getBoundingClientRect().top;
+      const positions = [...root.querySelectorAll<HTMLElement>(".inviteMainPicture, .inviteStoryPanel")].map((chapter) => chapter.getBoundingClientRect().top - top + root.scrollTop);
+      const current = positions.reduce((best, value, index) => Math.abs(value - start.top) < Math.abs(positions[best] - start.top) ? index : best, 0);
+      const next = Math.max(0, Math.min(positions.length - 1, current + Math.sign(distance)));
+      root.scrollTo({ top: positions[next], behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "instant" : "smooth" });
+    };
+    const touchMove = (event: TouchEvent) => {
+      if (!swipe || event.touches.length !== 1) { swipe = null; return; }
+      if (swipe.panel?.querySelector(".inviteStoryPhotos")) return;
+      const distance = swipe.y - event.touches[0].clientY;
+      if (Math.abs(distance) < 8 || Math.abs(distance) < Math.abs(swipe.x - event.touches[0].clientX)) return;
+      if (swipe.panel && swipe.panel.scrollHeight > swipe.panel.clientHeight + 16 &&
+        (distance > 0 ? swipe.panelTop + swipe.panel.clientHeight < swipe.panel.scrollHeight - 2 : swipe.panelTop > 2)) return;
+      // Let the chapter transition own this swipe rather than native inertia.
+      event.preventDefault();
+    };
+    const wheel = (event: WheelEvent) => {
+      if (event.ctrlKey || Math.abs(event.deltaX) > Math.abs(event.deltaY)) return;
+      if ((event.target as Element).closest(".inviteStoryVenue")?.querySelector(".inviteStoryPhotos")) return;
+      if (navigating) {
+        event.preventDefault();
+        window.clearTimeout(gestureTimer);
+        gestureTimer = window.setTimeout(() => { navigating = false; accumulated = 0; }, 350);
+        return;
+      }
+      const panel = (event.target as Element).closest<HTMLElement>(".inviteStoryPanel");
+      if (panel && panel.scrollHeight > panel.clientHeight + 16 &&
+        (event.deltaY > 0 ? panel.scrollTop + panel.clientHeight < panel.scrollHeight - 2 : panel.scrollTop > 2)) return;
+      event.preventDefault();
+      window.clearTimeout(gestureTimer);
+      gestureTimer = window.setTimeout(() => { navigating = false; accumulated = 0; }, 350);
+      if (navigating) return;
+      accumulated += event.deltaY * (event.deltaMode === 1 ? 16 : event.deltaMode === 2 ? root.clientHeight : 1);
+      if (Math.abs(accumulated) < 18) return;
+      const chapters = [...root.querySelectorAll<HTMLElement>(".inviteMainPicture, .inviteStoryPanel")];
+      const top = root.getBoundingClientRect().top;
+      const positions = chapters.map((chapter) => chapter.getBoundingClientRect().top - top + root.scrollTop);
+      const current = positions.reduce((best, value, index) => Math.abs(value - root.scrollTop) < Math.abs(positions[best] - root.scrollTop) ? index : best, 0);
+      const next = Math.max(0, Math.min(chapters.length - 1, current + Math.sign(accumulated)));
+      navigating = true;
+      root.scrollTo({ top: positions[next], behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "instant" : "smooth" });
+    };
+    root.addEventListener("wheel", wheel, { passive: false });
+    root.addEventListener("touchstart", touchStart, { passive: true });
+    root.addEventListener("touchmove", touchMove, { passive: false });
+    root.addEventListener("touchend", touchEnd, { passive: true });
+    return () => {
+      root.removeEventListener("wheel", wheel);
+      root.removeEventListener("touchstart", touchStart);
+      root.removeEventListener("touchmove", touchMove);
+      root.removeEventListener("touchend", touchEnd);
+      window.clearTimeout(gestureTimer);
+    };
+  }, [opened]);
+  const [motionPaused] = useState(() => window.matchMedia("(prefers-reduced-motion: reduce)").matches);
   useEffect(() => {
     if (!opening) return;
     // Pausing or disabling CSS animations must not leave the revealed card inert.
-    const timer = window.setTimeout(() => setOpening(false), 2000);
+    const timer = window.setTimeout(() => setOpening(false), 1700);
     return () => window.clearTimeout(timer);
   }, [opening]);
   const collection = image.split("/")[2];
@@ -69,29 +157,11 @@ export default function AnimatedInvitation({ image, title, details: savedDetails
     if (opened && !opening) story.current?.focus({ preventScroll: true });
   }, [opened, opening]);
   useEffect(() => {
-    if (!expanded) return;
+    if (!guest) return;
     const previous = document.body.style.overflow;
     document.body.style.overflow = "hidden";
-    const root = story.current?.closest<HTMLElement>(".animatedInvite") || document.querySelector<HTMLElement>(".inviteExpanded");
-    const trigger = root?.querySelector<HTMLButtonElement>(".inviteExpandButton");
-    const priorFocus = document.activeElement;
-    trigger?.focus();
-    const close = (event: KeyboardEvent) => {
-      if (event.key === "Escape") setExpanded(false);
-      if (event.key !== "Tab" || !root) return;
-      const focusable = [...root.querySelectorAll<HTMLElement>('button:not(:disabled), a[href], [tabindex="0"], iframe')].filter((element) => element.getClientRects().length > 0);
-      const first = focusable[0];
-      const last = focusable[focusable.length - 1];
-      if (event.shiftKey && document.activeElement === first) { event.preventDefault(); last?.focus(); }
-      if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first?.focus(); }
-    };
-    document.addEventListener("keydown", close);
-    return () => {
-      document.body.style.overflow = previous;
-      document.removeEventListener("keydown", close);
-      if (priorFocus instanceof HTMLElement && priorFocus.isConnected) priorFocus.focus({ preventScroll: true });
-    };
-  }, [expanded]);
+    return () => { document.body.style.overflow = previous; };
+  }, [guest]);
   useEffect(() => {
     const root = story.current;
     if (!opened || !root) return;
@@ -101,7 +171,7 @@ export default function AnimatedInvitation({ image, title, details: savedDetails
       root.style.setProperty("--chapter-height", `${Math.max(200, root.clientHeight)}px`);
       const ratio = picture?.naturalWidth && picture.naturalHeight
         ? picture.naturalWidth / picture.naturalHeight
-        : svg?.viewBox.baseVal.height ? svg.viewBox.baseVal.width / svg.viewBox.baseVal.height : .7;
+        : svg?.dataset.artworkRatio ? Number(svg.dataset.artworkRatio) : svg?.viewBox.baseVal.height ? svg.viewBox.baseVal.width / svg.viewBox.baseVal.height : .7;
       root.style.setProperty("--artwork-ratio", String(ratio));
     };
     measure();
@@ -119,13 +189,10 @@ export default function AnimatedInvitation({ image, title, details: savedDetails
   const calendarText = (value: string) => value.replace(/\\/g, "\\\\").replace(/\n/g, "\\n").replace(/,/g, "\\,").replace(/;/g, "\\;");
   const calendarDate = validDate ? details.date.replaceAll("-", "") : "";
   const calendarTitle = `${copy(collection === "weddings" ? "Wedding" : collection === "engagements" ? "Engagement" : collection === "birthdays" ? "Birthday" : "Invitation")} - ${name}`;
-  const calendarTimestamp = (stamp: number) => new Date(stamp).toISOString().replace(/[-:]/g, "").replace(/\.\d{3}/, "");
   const nextCalendarDay = validDate ? new Date(Date.UTC(...(() => {
     const [y, m, d] = details.date.split("-").map(Number);
     return [y, m - 1, d + 1] as const;
   })())).toISOString().slice(0, 10).replaceAll("-", "") : "";
-  const calendarDates = validDate && details.time ? `${calendarTimestamp(eventTime)}/${calendarTimestamp(eventTime)}` : `${calendarDate}/${nextCalendarDay}`;
-  const googleCalendarUrl = `https://calendar.google.com/calendar/render?${new URLSearchParams({ action: "TEMPLATE", text: calendarTitle, dates: calendarDates, ctz: "Africa/Tunis", location: details.venue || "", details: details.note || title })}`;
   const calendar = ["BEGIN:VCALENDAR", "VERSION:2.0", "PRODID:-//Jibli//Invitation//EN", "BEGIN:VEVENT", `UID:${calendarDate}-${encodeURIComponent(name)}@jibli`, `DTSTAMP:${new Date(now).toISOString().replace(/[-:]/g, "").replace(/\.\d{3}/, "")}`, validDate && details.time ? `DTSTART:${new Date(eventTime).toISOString().replace(/[-:]/g, "").replace(/\.\d{3}/, "")}` : `DTSTART;VALUE=DATE:${calendarDate}`, `SUMMARY:${calendarText(calendarTitle)}`, `LOCATION:${calendarText(details.venue || "")}`, `DESCRIPTION:${calendarText(details.note || title)}`, ...(!details.time && validDate ? [`DTEND;VALUE=DATE:${nextCalendarDay}`] : []), "END:VEVENT", "END:VCALENDAR"].join("\r\n");
   const eventDate = validDate ? new Date(eventTime) : null;
   const formattedTime = eventDate && details.time ? new Intl.DateTimeFormat(locale, { hour: "2-digit", minute: "2-digit", timeZone: "Africa/Tunis" }).format(eventDate) : "";
@@ -138,22 +205,45 @@ export default function AnimatedInvitation({ image, title, details: savedDetails
   const artwork = showPersonalisedCover ? <div className="invitePersonalisedCover"><Sparkles size={24} aria-hidden="true" /><p>{title}</p><h2 dir="auto">{name}</h2><span>{certificate ? details.school : copy("You are warmly invited")}</span></div> : image === "/invitations/others/kindergarten-welcome.jfif" ? <CharacterInvitation title={title} paused={motionPaused} /> : image === "/invitations/others/school-registration.jfif" ? <SchoolRegistrationMotion title={title} paused={motionPaused} /> : <LivingArtwork image={image} title={guest ? title : `${title} design reference`} paused={motionPaused} onError={() => setFailedImage(image)} />;
 
   const floral = ["arabesque-burgundy", "arabic-satin", "blush-embossed", "garden-couple", "classic-ivory", "photo-frame", "blue-florals", "nouveau-florals", "green-tradition", "family-roots"].includes(design.key);
+  const personalisedBirthday = !!birthdayLayouts[birthdayDesignKey(image)] && (!!details.birthdayPhoto || (birthdayHasAge(image) && !!details.age));
+  const coverArtwork = personalisedBirthday ? <BirthdayArtwork image={image} title={title} details={details}/> : artwork;
   const driftingLeaves = floral ? <div className="inviteFloralMotion" aria-hidden="true">{Array.from({ length: 6 }, (_, index) => <span key={index} className={`inviteDriftingLeaf inviteDriftingLeaf-${index}`} />)}</div> : null;
-  return <section style={{ ...(image ? design.colours : {}), "--story-artwork": `url("${image}")` } as CSSProperties} role={expanded ? "dialog" : undefined} aria-modal={expanded || undefined} data-layout={certificate ? "certificate" : design.layout} data-design={design.key} data-collection={collection} className={`animatedInvite inviteStory inviteMood-${mood} ${opened ? "isOpen" : ""} ${expanded ? "inviteExpanded" : ""}`} data-motion-paused={motionPaused} dir={locale === "ar" ? "rtl" : "ltr"} aria-label="Interactive invitation preview">
-    <div className="inviteUtilityBar"><button type="button" className="inviteExpandButton" aria-pressed={expanded} onClick={() => setExpanded(!expanded)}>{expanded ? <X size={14} /> : <Maximize2 size={14} />}{copy(expanded ? "Close preview" : "Full screen")}</button><button type="button" className="inviteMotionToggle" aria-pressed={motionPaused} onClick={() => setMotionPaused(!motionPaused)}>{copy(motionPaused ? "Resume animation" : "Pause animation")}</button></div>
-    <div className="animatedInviteToolbar"><span><Sparkles size={13} />{copy("Invitation preview")} </span>{opened && <button type="button" onClick={() => { setOpening(false); setOpened(false); }}><RotateCcw size={14} />{copy("Replay")} </button>}</div>
-
+  const hasVenue = !certificate && !!(details.venue || isGoogleMapsLink(details.mapsUrl || ""));
+  const photoCollage = venuePhotoKeys.some((key) => details[key]) ? <div className="inviteStoryPhotos">
+    <div className="invitePhotoCollage" data-photo-count={venuePhotoKeys.filter((key) => details[key]).length}>
+      {venuePhotoKeys.filter((key) => details[key]).map((key, index) => <figure className="invitePolaroid" key={key}><img src={details[key]} alt={`${copy("Invitation photo")} ${index + 1}`} loading="lazy" /></figure>)}
+    </div>
+  </div> : null;
+  return <section style={{ ...(image ? design.colours : {}), "--story-artwork": `url("${image}")` } as CSSProperties} data-layout={certificate ? "certificate" : design.layout} data-design={design.key} data-collection={collection} className={`animatedInvite inviteStory inviteMood-${mood} ${opened ? "isOpen" : ""} ${guest ? "inviteGuestFullscreen" : ""}`} data-motion-paused={motionPaused} dir={locale === "ar" ? "rtl" : "ltr"} aria-label="Interactive invitation preview">
     {isSample && <p className="inviteSampleNotice">{copy("Sample event details - fill in the form to personalise your preview.")}</p>}
     <div className="inviteStage">
-    {(!opened || opening) && <button type="button" className={`inviteEnvelope ${opening ? "isOpening" : ""}`} disabled={opening} onAnimationEnd={(event) => { if (event.target === event.currentTarget) setOpening(false); }} onClick={() => { setNow(Date.now()); setOpening(!motionPaused); setOpened(true); }} aria-label={`Open invitation: ${title}`}>
+    {(!opened || opening) && <button type="button" className={`inviteEnvelope ${opening ? "isOpening" : ""}`} disabled={opening || preparing} aria-busy={preparing} onAnimationEnd={(event) => { if (event.target === event.currentTarget && event.animationName === "inviteEnvelopeUnseal") setOpening(false); }} onClick={async (event) => {
+      const envelope = event.currentTarget;
+      setPreparing(true);
+      await artworkReady.current;
+      const bounds = envelope.getBoundingClientRect();
+      envelope.parentElement?.style.setProperty("--opening-height", `${bounds.height}px`);
+      envelope.parentElement?.style.setProperty("--opening-width", `${bounds.width}px`);
+      setPreparing(false); setNow(Date.now()); setOpening(!motionPaused); setOpened(true);
+    }} aria-label={`Open invitation: ${title}`}>
+      <InvitationEnvelopeArtwork />
       <span className="inviteEnvelopePaper" aria-hidden="true"><span>{initials}</span></span><span className="inviteEnvelopeFold" /><span className="inviteEnvelopePocket" /><span className="inviteEnvelopeFlap" /><span className="inviteEnvelopeBorder" />
       <span className="inviteWaxSeal"><img className="inviteSealLogo" src="/jibli-seal-logo.png" alt="Jibli" /></span>
-      <span className="inviteEnvelopeGreeting">{copy("A little invitation for you by")} </span>
-      <strong dir="auto">{details.hosts?.trim() || name}</strong><span className="inviteOpenHint">{copy("Open invitation")} <ArrowDown size={14} /></span>
+      <span className="inviteEnvelopeCaption"><span className="inviteEnvelopeGreeting">{copy("A little invitation for you by")} </span>
+      <strong dir="auto">{details.hosts?.trim() || name}</strong><span className="inviteOpenHint">{copy(preparing ? "Opening your invitation…" : "Open invitation")} <ArrowDown size={14} /></span></span>
     </button>}
     {opened && <>
     <div ref={story} inert={opening} className="inviteReveal" tabIndex={0} aria-label="Scroll through your invitation">
-      <section className="inviteOriginalArtwork inviteMainPicture"><div className="inviteOriginalArtworkFrame">{artwork}{!showPersonalisedCover && <InvitationArtworkText image={image} details={savedDetails} locale={guestLanguage} />}</div>{!showPersonalisedCover && <InvitationArtworkText image={image} details={savedDetails} locale={guestLanguage} caption />}</section>
+      <section className="inviteOriginalArtwork inviteMainPicture"><div className="inviteOriginalArtworkFrame">{coverArtwork}{!showPersonalisedCover && <InvitationArtworkText image={image} details={savedDetails} locale={guestLanguage} />}</div>{!showPersonalisedCover && <InvitationArtworkText image={image} details={savedDetails} locale={guestLanguage} caption />}
+        <button type="button" className="inviteSwipeIndicator" onClick={() => {
+          const root = story.current;
+          const next = root?.querySelector<HTMLElement>(".inviteStoryPanel");
+          if (root && next) root.scrollTo({ top: next.getBoundingClientRect().top - root.getBoundingClientRect().top + root.scrollTop, behavior: motionPaused ? "instant" : "smooth" });
+        }}>
+          <span>{locale === "ar" ? "اسحب للأسفل لاكتشاف المزيد" : locale === "fr" ? "Faites défiler pour découvrir" : "Swipe down to discover"}</span>
+          <ArrowDown size={18} aria-hidden="true" />
+        </button>
+      </section>
       <div className="inviteEventDetails">
         {!certificate && validDate && <section className="inviteStoryPanel inviteStorySchedule">{driftingLeaves}
         {!certificate && details.hosts?.trim() && <p className="inviteHostCredit">{copy("Invitation by")} <strong dir="auto">{details.hosts.trim()}</strong></p>}
@@ -175,15 +265,24 @@ export default function AnimatedInvitation({ image, title, details: savedDetails
               return <span role="cell" key={column} className={date === day ? "isEventDay" : undefined} aria-label={date === day ? new Intl.DateTimeFormat(locale, {dateStyle: "full", timeZone: "Africa/Tunis"}).format(new Date(eventTime)) : undefined}>{date > 0 && date <= daysInMonth ? date : ""}</span>;
             })}</div>)}
           </div>
-          <a className="inviteLocation inviteCalendar" href={googleCalendarUrl} target="_blank" rel="noopener noreferrer"><CalendarDays size={15} />{copy("Save the date")}</a>
-          <a className="inviteCalendarDownload" download="jibli-invitation.ics" href={`data:text/calendar;charset=utf-8,${encodeURIComponent(calendar)}`}>{copy("Apple / Outlook calendar (.ics)")}</a>
+          <a className="inviteLocation inviteCalendar" download="jibli-invitation.ics" href={`data:text/calendar;charset=utf-8,${encodeURIComponent(calendar)}`} aria-describedby="invite-calendar-help"><CalendarDays size={15} />{copy("Save the date")}</a>
+          <p id="invite-calendar-help" className="inviteCalendarHelp">{copy("Open the downloaded .ics file with your calendar app to add this event.")}</p>
         </section>}
         {!certificate && Number.isFinite(eventTime) && eventTime > now && <section className="inviteStoryPanel inviteStoryCountdown">{driftingLeaves}<span className="inviteSectionNumber">03 / {copy(kindergartenWelcome ? "See you soon" : registration ? "Registration countdown" : "Every second brings us closer")}</span><p>{copy(kindergartenWelcome ? "Counting down to our return to kindergarten" : registration ? "Counting down to registration opening" : "Counting down to our special day")} </p><div className="inviteCountdown" aria-label="Event countdown">{units.map((value, index) => <div key={index}><strong>{String(value).padStart(2, "0")}</strong><span>{copy(["Days", "Hours", "Minutes", "Seconds"][index])}</span></div>)}</div></section>}
-        {!certificate && details.venue && <section className="inviteStoryPanel inviteStoryVenue">{driftingLeaves}<span className="inviteSectionNumber">04 / {copy(kindergartenWelcome || registration ? "Our kindergarten" : "The place")}</span><div className="inviteVenueIllustration" aria-hidden="true"><MapPin size={38} /></div><h3>{copy(kindergartenWelcome || registration ? "Visit our kindergarten" : "Meet us here")} </h3><p dir="auto">{details.venue}</p><a className="inviteLocation" href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(details.venue)}`} target="_blank" rel="noreferrer"><Navigation size={15} />{copy("Get directions")} </a>
-          <iframe className="inviteVenueMap" title={`${copy(kindergartenWelcome || registration ? "Visit our kindergarten" : "Meet us here")}: ${details.venue}`} src={`https://maps.google.com/maps?q=${encodeURIComponent(details.venue)}&output=embed`} loading="lazy" referrerPolicy="no-referrer-when-downgrade" />
+        {!hasVenue && photoCollage && <section className="inviteStoryPanel">{driftingLeaves}{photoCollage}</section>}
+        {hasVenue && <section className="inviteStoryPanel inviteStoryVenue">{driftingLeaves}<span className="inviteSectionNumber">04 / {copy(kindergartenWelcome || registration ? "Our kindergarten" : "The place")}</span><div className="inviteVenueIllustration" aria-hidden="true"><MapPin size={38} /></div><h3>{copy(kindergartenWelcome || registration ? "Visit our kindergarten" : "Meet us here")} </h3><p className="inviteVenueName" dir="auto">{details.venue}</p>
+          {photoCollage}
+          <a className="inviteLocation" href={invitationDirectionsUrl(details.mapsUrl || "", details.venue || "")} target="_blank" rel="noreferrer"><Navigation size={15} />{copy("Get directions")} </a>
+          {invitationMapQuery(details.mapsUrl || "", details.venue || "") && <iframe className="inviteVenueMap" title={`${copy(kindergartenWelcome || registration ? "Visit our kindergarten" : "Meet us here")}: ${details.venue}`} src={`https://maps.google.com/maps?q=${encodeURIComponent(invitationMapQuery(details.mapsUrl || "", details.venue || ""))}&output=embed`} loading="lazy" referrerPolicy="no-referrer-when-downgrade" />}
         </section>}
         {details.note && <section className="inviteStoryPanel"><p className="invitePersonalNote" dir="auto">{details.note}</p></section>}
         {!certificate && (details.rsvp || details.contact) && <section className="inviteStoryPanel"><h3>{copy(kindergartenWelcome ? "Contact our kindergarten" : registration ? "Registration enquiries" : "RSVP / contact")} </h3><p dir="auto">{details.rsvp || details.contact}</p></section>}
+        <section className="inviteStoryPanel inviteStoryClosing">
+          <img className="inviteClosingLogo" src="/Logo.png" alt="Jibli" width="180" height="72" loading="lazy" />
+          <h3>{copy("Discover Jibli invitations")}</h3>
+          <a className="inviteLocation inviteClosingLink" href="https://www.jiblitunisia.com/invitations" target="_blank" rel="noopener noreferrer">{copy("Explore invitations")} <ArrowDown size={15} aria-hidden="true" /></a>
+          <span className="inviteClosingAddress" dir="ltr">www.jiblitunisia.com/invitations</span>
+        </section>
       </div>
     </div></>}
     </div>

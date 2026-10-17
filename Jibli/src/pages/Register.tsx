@@ -2,7 +2,7 @@ import { useState } from "react";
 import type { FormEvent } from "react";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { KeyRound, Mail, Phone, ShieldCheck, User } from "lucide-react";
-import { ensureUserProfile, getAuthErrorMessage, resendSignupOtp, signUp, verifySignupOtp } from "../auth";
+import { ensureUserProfile, getAuthErrorMessage, resendSignupOtp, safeNextPath, signUp, verifySignupOtp } from "../auth";
 import logo from "../assets/Fast-Logo.gif";
 import { useTranslation } from "../i18n/useTranslation";
 
@@ -10,7 +10,7 @@ function Register() {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
-  const nextPath = searchParams.get("next") ?? "/request";
+  const nextPath = safeNextPath(searchParams.get("next"), "/request");
   const loginPath = `/login?next=${encodeURIComponent(nextPath)}`;
   const prefillEmail = searchParams.get("email") ?? "";
   const accountNotFound = searchParams.get("reason") === "notfound";

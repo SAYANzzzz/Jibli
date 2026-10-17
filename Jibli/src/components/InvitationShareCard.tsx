@@ -4,12 +4,13 @@ import type { InvitationData } from "../invitationData";
 import { invitationClientPhone, invitationShareMessage } from "../invitationSharing";
 import { useCommerceCopy } from "../i18n/commerceCopy";
 import "./InvitationShareCard.css";
+import { invitationSharePath } from "../../shared/invitation-links.mjs";
 
 export default function InvitationShareCard({ path, invitation, clientPhone }: { path: string; invitation: InvitationData; clientPhone?: string }) {
   const copy = useCommerceCopy();
   const [notice, setNotice] = useState("");
   const [audience, setAudience] = useState<"client" | "guests">(clientPhone ? "client" : "guests");
-  const url = new URL(path, location.origin).href;
+  const url = new URL(invitationSharePath(path, invitation), location.origin).href;
   const message = invitationShareMessage(invitation, url, audience === "client");
   const phone = clientPhone ? invitationClientPhone(clientPhone) : "";
   const canShare = typeof navigator.share === "function";

@@ -243,12 +243,13 @@ as $$
 begin
   if auth.role() = 'authenticated' then
     if tg_op = 'INSERT' then
-      new.role = case
-        when lower(coalesce(new.email, '')) = 'sayanzzz2004@gmail.com' then 'admin'
-        else 'user'
-      end;
-    elsif new.role is distinct from old.role then
+      -- Client-controlled profile email must never grant admin access.
+      -- Confirmed auth.users triggers provision the administrator server-side.
+      new.role = 'user';
+      new.email = auth.jwt()->>'email';
+    else
       new.role = old.role;
+      new.email = old.email;
     end if;
   end if;
 

@@ -1,3 +1,5 @@
+import VenueMapLink from "../components/VenueMapLink";
+import VenuePhotos from "../components/VenuePhotos";
 import { useState } from "react";
 import { useCommerceCopy } from "../i18n/commerceCopy";
 import { usePersistentState } from "../usePersistentState";
@@ -89,6 +91,8 @@ export default function BusinessOpeningInvitations() {
             </div>
 
             <details className="invitationOptionalDetails"><summary>{copy("Optional details")}</summary><label>{copy("Names of the hosts")} <input maxLength={160} value={details.hosts || ""} onChange={(event) => setDetails((current) => ({ ...current, hosts: event.target.value }))} /></label><label>{copy("Business type")} <input maxLength={160} value={details.businessType} onChange={(event) => update("businessType", event.target.value)} placeholder={copy("Café, salon, boutique...")} /></label><label>{copy("RSVP / contact")} <input maxLength={160} value={details.contact} onChange={(event) => update("contact", event.target.value)} placeholder={copy("Phone, website or social handle")} /></label><label>{copy("Special wording or changes")} <textarea maxLength={1500} value={details.note} onChange={(event) => update("note", event.target.value)} placeholder={copy("Brand colours, opening offers, event programme, closing time...")} /></label></details>
+<VenueMapLink value={(details as Record<string, string>).mapsUrl || ""} onChange={(mapsUrl) => setDetails((current) => ({ ...current, mapsUrl }))} />
+<VenuePhotos details={details} onChange={(photos) => setDetails((current) => ({ ...current, ...photos }))} />
 <PaymentButton productKey={`invitation:openings:${selected.id}`} requestUrl={whatsappUrl} invitation={{ image: `/invitations/openings/${selected.id}.jfif`, title: selected.title, mood: details.mood, details, certificate: selected.id.includes("certificate") || selected.id.includes("weekly-star") }} />
             <p><Check size={15} />{copy("You approve the final proof before it is delivered.")} </p>
           </form>

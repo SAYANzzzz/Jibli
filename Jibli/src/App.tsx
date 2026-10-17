@@ -189,6 +189,7 @@ function App() {
       <Suspense fallback={<div className="routeLoading">Loading?</div>}><Routes>
         <Route path="/" element={<Home />} />
         <Route path="/invite/:token" element={<GuestInvitation />} />
+        <Route path="/invitation/:slug" element={<GuestInvitation />} />
         <Route path="/auth/callback" element={<AuthCallback />} />
         <Route path="/reset-password" element={<ResetPassword />} />
         <Route

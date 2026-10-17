@@ -1,3 +1,5 @@
+import VenueMapLink from "../components/VenueMapLink";
+import VenuePhotos from "../components/VenuePhotos";
 import { useCommerceCopy } from "../i18n/commerceCopy";
 import { usePersistentState } from "../usePersistentState";
 import AnimatedInvitation from "../components/AnimatedInvitation";
@@ -111,7 +113,9 @@ function WeddingInvitations() {
                   <label>{copy("RSVP / contact")} <input maxLength={160} value={details.rsvp} onChange={(event) => updateDetail("rsvp", event.target.value)} placeholder={copy("Phone number or name")} /></label>
                   <label>{copy("Special wording or changes")} <textarea maxLength={1500} value={details.note} onChange={(event) => updateDetail("note", event.target.value)} placeholder={copy("Quran verse, family names, dress code...")} /></label>
                 </details>
-                <PaymentButton productKey={`invitation:weddings:${selected.id}`} requestUrl={weddingWhatsappUrl(selected, details)} invitation={{ image: selected.image, title: selected.title, mood: details.mood, details, certificate: selected.id.includes("certificate") || selected.id.includes("weekly-star") }} />
+                <VenueMapLink value={(details as Record<string, string>).mapsUrl || ""} onChange={(mapsUrl) => setDetails((current) => ({ ...current, mapsUrl }))} />
+<VenuePhotos details={details} onChange={(photos) => setDetails((current) => ({ ...current, ...photos }))} />
+<PaymentButton productKey={`invitation:weddings:${selected.id}`} requestUrl={weddingWhatsappUrl(selected, details)} invitation={{ image: selected.image, title: selected.title, mood: details.mood, details, certificate: selected.id.includes("certificate") || selected.id.includes("weekly-star") }} />
                 <p><Check size={15} />{copy("You approve the final proof before it is delivered.")} </p>
               </form>
             </div>

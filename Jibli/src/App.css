@@ -1,4 +1,4 @@
-:root {
+﻿:root {
   --bg: #070b1e;
   --surface: #101a38;
   --surface-alt: #16214a;
@@ -4590,7 +4590,7 @@ td {
 }
 
 .gamingTierFeatures li::before {
-  content: "✓ ";
+  content: "âœ“ ";
   color: var(--accent);
   font-weight: 800;
 }
@@ -4836,6 +4836,11 @@ td {
 .d17Amount span { font-size: 22px; }
 .d17Steps { padding-left: 22px; line-height: 1.8; }
 .d17Steps li { margin: 12px 0; }
+.d17ReceiptExample { margin:0 0 20px; padding:16px; border:1px solid #d8dce5; border-radius:12px; background:#f8fafc; color:#17202c; }
+.d17ReceiptExample figcaption p { margin:8px 0 16px; line-height:1.6; }
+.d17ReceiptExample a { display:block; width:fit-content; max-width:100%; margin-inline:auto; }
+.d17ReceiptExample img { display:block; width:100%; max-width:360px; height:auto; border-radius:8px; }
+.d17ReceiptExample a:focus-visible { outline:3px solid #164d78; outline-offset:4px; }
 .d17Actions { display: flex; gap: 12px; flex-wrap: wrap; margin: 16px 0; }
 .d17Orders { margin-bottom: 40px; }
 .d17Delivery { padding: 18px; background: #21372e; border: 1px solid #4c7b62; border-radius: 8px; }
@@ -6072,3 +6077,369 @@ td {
 .invitationPublishHelp p { margin:8px 0 0; font-size:13px; line-height:1.6; }
 .invitationEditor .invitationForm { min-width:0; }
 .invitationEditor .weddingSelectedDesign { width:100%; max-width:520px; min-width:0; margin-inline:auto; }
+
+/* Wide, responsive invitation viewer: one complete chapter at a time. */
+.weddingOrderGrid { grid-template-columns:minmax(0,1.35fr) minmax(320px,.85fr); gap:clamp(20px,3vw,48px); }
+.weddingSelectedDesign:has(.animatedInvite) { min-width:0; width:100%; }
+.invitationEditor .weddingSelectedDesign { max-width:1100px; width:100%; }
+.guestInvitation { width:min(1100px,calc(100% - 32px)); max-width:1100px; }
+.animatedInvite.inviteStory .inviteReveal,
+.guestInvitation .animatedInvite.inviteStory:not(.inviteExpanded) .inviteReveal,
+.animatedInvite.inviteStory[data-layout=certificate]:not(.inviteExpanded) .inviteReveal {
+  height:min(850px,calc(100svh - 150px)); min-height:min(360px,65svh);
+  overflow-x:hidden; overflow-y:auto; scroll-snap-type:y mandatory;
+  scroll-padding:0; overscroll-behavior-y:contain; touch-action:pan-y pinch-zoom;
+}
+.animatedInvite.inviteStory .inviteEventDetails { display:contents; }
+.animatedInvite.inviteStory :is(.inviteMainPicture,.inviteStoryPanel),
+.animatedInvite.inviteStory[data-layout=certificate] .inviteMainPicture {
+  box-sizing:border-box; height:var(--chapter-height,650px); min-height:var(--chapter-height,650px);
+  max-height:var(--chapter-height,650px); margin:0;
+  scroll-snap-align:start; scroll-snap-stop:always;
+}
+.animatedInvite.inviteStory .inviteStoryPanel {
+  overflow-y:auto; padding:clamp(18px,3svh,32px) clamp(20px,8%,90px);
+}
+.animatedInvite.inviteStory .inviteMainPicture { display:flex; flex-direction:column; gap:0; padding:0; overflow:hidden; justify-content:center; }
+.animatedInvite.inviteStory .inviteMainPicture .inviteOriginalArtworkFrame {
+  width:min(100%,calc((var(--chapter-height,650px) - 64px) * var(--artwork-ratio,.8)));
+  aspect-ratio:var(--artwork-ratio,.8); height:auto; max-height:calc(var(--chapter-height,650px) - 64px); flex:none;
+}
+.animatedInvite.inviteStory .inviteMainPicture :is(img,svg):not(.lucide) { width:100%; height:100%; object-fit:contain; }
+.animatedInvite.inviteStory .inviteMainPicture .livingArtwork { width:100%; height:100%; }
+.animatedInvite.inviteStory .inviteArtworkCaption { box-sizing:border-box; min-height:48px; margin:0; padding:10px 16px; }
+.animatedInvite.inviteStory .inviteArtworkCaption strong { font-size:clamp(18px,3vw,28px); }
+.animatedInvite.inviteStory.inviteExpanded { width:min(100%,1100px)!important; }
+.animatedInvite.inviteStory.inviteExpanded .inviteStage .inviteReveal { height:100%; min-height:0; padding:0; }
+@media(max-width:900px) { .weddingOrderGrid { grid-template-columns:minmax(0,1fr); } }
+@media(max-width:560px) {
+  .guestInvitation { width:100%; margin:0; }
+  .animatedInvite.inviteStory .inviteUtilityBar { padding-inline:12px; }
+  .animatedInvite.inviteStory .inviteStoryPanel { padding-inline:20px; }
+}
+
+/* Keep the envelope seal and invitation text in a shared responsive layout. */
+.animatedInvite.inviteStory .inviteEnvelope {
+  box-sizing:border-box; display:flex; flex-direction:column; align-items:center;
+  justify-content:safe center; gap:clamp(6px,1.6svh,16px);
+  height:min(850px,calc(100svh - 150px)); min-height:min(360px,65svh);
+  padding:clamp(12px,3svh,32px) clamp(16px,5%,56px); overflow-y:auto;
+  background:repeating-linear-gradient(0deg,#ffffff04 0 1px,transparent 1px 3px),linear-gradient(125deg,var(--stock-light),var(--stock) 48%,var(--stock-dark));
+}
+.animatedInvite.inviteStory .inviteEnvelope::after { display:none; }
+.animatedInvite.inviteStory .inviteEnvelopeFold,
+.animatedInvite.inviteStory .inviteEnvelopePocket { display:block; }
+.animatedInvite.inviteStory .inviteEnvelopeFlap,
+.animatedInvite.inviteStory .isOpening .inviteEnvelopeFlap {
+  inset:0 0 auto; width:100%; height:44%; clip-path:polygon(0 0,100% 0,50% 100%);
+  transform-origin:50% 0; background:linear-gradient(155deg,var(--stock-light),var(--stock) 80%);
+  filter:drop-shadow(0 2px 2px #00000016);
+}
+.animatedInvite.inviteStory .isOpening .inviteEnvelopeFlap { animation:inviteTailoredFlap 1s .15s ease-in-out both; }
+.animatedInvite.inviteStory .inviteWaxSeal {
+  position:relative; inset:auto; flex:none; width:clamp(64px,12svh,124px); height:clamp(64px,12svh,124px);
+  aspect-ratio:1; margin:0 0 clamp(4px,1svh,12px); transform:none;
+}
+.animatedInvite.inviteStory .inviteSealLogo { display:block; width:57%; height:57%; max-width:100%; max-height:100%; }
+.animatedInvite.inviteStory .inviteEnvelopeGreeting { flex:none; margin:0; max-width:100%; font-size:clamp(12px,1.8svh,15px); line-height:1.5; }
+.animatedInvite.inviteStory .inviteEnvelope > strong {
+  flex:none; width:100%; max-width:640px; margin:0; text-align:center;
+  font-size:clamp(20px,4svh,36px); line-height:1.3; overflow-wrap:anywhere; text-wrap:balance;
+}
+.animatedInvite.inviteStory .inviteEnvelope .inviteOpenHint {
+  flex:none; margin:clamp(4px,1svh,12px) 0 0; min-height:32px; padding:6px 14px;
+  font-size:11px; line-height:1.5; letter-spacing:.08em;
+}
+.animatedInvite.inviteStory.inviteExpanded .inviteEnvelope { height:100%; min-height:0; }
+
+.animatedInvite.inviteStory:not(.inviteExpanded) .inviteEnvelope:not(.isOpening) { height:min(850px,calc(100svh - 150px)); min-height:min(360px,65svh); }
+
+/* Shared invitations always fill the viewport, without preview controls. */
+.guestInvitation { width:100%; max-width:none; margin:0; border:0; border-radius:0; box-shadow:none; }
+.guestInvitation .animatedInvite.inviteStory {
+  position:fixed; inset:0; z-index:100; display:flex; flex-direction:column;
+  width:100%; max-width:none; height:100vh; height:100dvh; min-height:0;
+  margin:0; border:0; border-radius:0; overflow:hidden;
+}
+.guestInvitation .animatedInvite.inviteStory .inviteStage { flex:1 1 auto; display:flex; flex-direction:column; height:100%; min-height:0; overflow:hidden; }
+.guestInvitation .animatedInvite.inviteStory .inviteStage .inviteReveal { flex:1 1 auto; width:100%; height:100%; min-height:0; max-height:none; padding:0; }
+.guestInvitation .animatedInvite.inviteStory:not(.inviteExpanded) .inviteEnvelope:not(.isOpening),
+.guestInvitation .animatedInvite.inviteStory .inviteEnvelope.isOpening { flex:1 1 auto; width:100%; height:100%; min-height:0; }
+.guestInvitation .animatedInvite.inviteStory .inviteEnvelope { padding-top:max(16px,env(safe-area-inset-top)); padding-bottom:max(16px,env(safe-area-inset-bottom)); }
+
+/* Readable event information, shared by every invitation design and language. */
+.animatedInvite.inviteStory .inviteStoryPanel {
+  font:400 clamp(18px,1.4vw,22px)/1.65 Arial,Helvetica,sans-serif;
+  color:var(--ink); text-align:center;
+  padding:clamp(24px,4svh,48px) clamp(18px,5vw,72px);
+  gap:12px;
+}
+.animatedInvite.inviteStory .inviteStoryPanel > :where(:not(.inviteFloralMotion)) {
+  max-width:720px; margin-inline:auto;
+}
+.animatedInvite.inviteStory .inviteStoryPanel :is(p,.invitePersonalNote,.inviteHostCredit) {
+  font:inherit; line-height:1.7; color:var(--ink); opacity:1;
+  margin-block:0 12px; padding:0; overflow-wrap:anywhere; text-wrap:pretty;
+}
+.animatedInvite.inviteStory .inviteStoryPanel .inviteSectionNumber {
+  font:600 14px/1.6 Arial,Helvetica,sans-serif; color:var(--ink);
+  opacity:1; letter-spacing:.04em;
+}
+.animatedInvite.inviteStory[dir=rtl] .inviteStoryPanel .inviteSectionNumber { letter-spacing:0; }
+.animatedInvite.inviteStory .inviteStoryPanel h3 {
+  font:600 clamp(28px,2.8vw,40px)/1.4 Georgia,'Times New Roman',serif;
+  color:var(--ink); margin:8px auto 20px; text-wrap:balance;
+}
+.animatedInvite.inviteStory[dir=rtl] .inviteStoryPanel h3 { font-family:Arial,Helvetica,sans-serif; line-height:1.6; }
+.animatedInvite.inviteStory .inviteDateDisplay { margin:0 auto 12px; gap:8px; }
+.animatedInvite.inviteStory .inviteDateDisplay > span { font:500 clamp(18px,1.6vw,24px)/1.6 Arial,Helvetica,sans-serif; opacity:1; }
+.animatedInvite.inviteStory .inviteDateDisplay > strong { font:700 clamp(64px,10svh,100px)/1.1 Arial,Helvetica,sans-serif; color:var(--ink); }
+.animatedInvite.inviteStory .inviteTimeDisplay {
+  width:100%; max-width:480px; padding:16px 12px; gap:8px 12px; margin:0 auto;
+}
+.animatedInvite.inviteStory .inviteTimeDisplay > strong { font:600 clamp(24px,2vw,30px)/1.4 Arial,Helvetica,sans-serif; }
+.animatedInvite.inviteStory .inviteTimeDisplay > span { font:400 15px/1.6 Arial,Helvetica,sans-serif; opacity:1; }
+.animatedInvite.inviteStory .inviteEventRibbon { font:500 18px/1.7 Arial,Helvetica,sans-serif; margin:8px auto 0; color:var(--ink); }
+.animatedInvite.inviteStory .inviteMonthGrid { width:100%; max-width:560px; margin:0 auto 20px; padding:12px 0; }
+.animatedInvite.inviteStory .inviteMonthRow { gap:4px; margin:6px 0; }
+.animatedInvite.inviteStory .inviteMonthRow > span {
+  font:500 18px/1.4 Arial,Helvetica,sans-serif; min-height:40px; padding:0; opacity:1;
+}
+.animatedInvite.inviteStory .inviteMonthRow > [role=columnheader] { font-size:14px; font-weight:600; min-height:36px; }
+.animatedInvite.inviteStory .inviteMonthRow .isEventDay {
+  justify-self:center; width:40px; height:40px; min-height:40px;
+  border-radius:50%; background:var(--ink); color:var(--paper); outline-color:var(--ink); font-weight:700;
+}
+.animatedInvite.inviteStory .inviteMonthRow .isEventDay::after { display:none; }
+.animatedInvite.inviteStory .inviteStoryPanel .inviteLocation {
+  width:fit-content; max-width:100%; align-self:center; min-height:48px;
+  padding:12px 24px; margin:0 auto 12px; border-radius:12px;
+  font:600 17px/1.5 Arial,Helvetica,sans-serif; color:var(--paper); background:var(--ink);
+}
+.animatedInvite.inviteStory .inviteStoryPanel .inviteCalendarDownload { font:500 16px/1.6 Arial,Helvetica,sans-serif; padding:8px; text-decoration:underline; text-underline-offset:4px; }
+.animatedInvite.inviteStory .inviteVenueIllustration { width:56px; height:56px; margin:4px auto; }
+.animatedInvite.inviteStory .inviteStoryVenue .inviteVenueMap {
+  width:100%; max-width:720px; height:clamp(220px,32svh,320px); min-height:220px;
+  margin:8px auto 0; border-radius:16px;
+}
+.animatedInvite.inviteStory .inviteCountdown { max-width:600px; margin:12px auto; gap:12px; }
+.animatedInvite.inviteStory .inviteCountdown strong { font:700 clamp(32px,4vw,56px)/1.2 Arial,Helvetica,sans-serif; }
+.animatedInvite.inviteStory .inviteCountdown span { font:500 clamp(14px,1.2vw,18px)/1.6 Arial,Helvetica,sans-serif; opacity:1; }
+@media(max-width:400px) {
+  .animatedInvite.inviteStory .inviteMonthRow { gap:0; }
+  .animatedInvite.inviteStory .inviteMonthRow > [role=columnheader] { font-size:12px; }
+  .animatedInvite.inviteStory .inviteMonthRow .isEventDay { width:34px; height:34px; min-height:34px; }
+  .animatedInvite.inviteStory .inviteCountdown { gap:4px; }
+}
+.animatedInvite.inviteStory .inviteStoryPanel::before { inset:0; }
+/* Keep decorative motion visible without competing with event text. */
+.animatedInvite.inviteStory .inviteStoryPanel::before { opacity:.45; }
+.animatedInvite.inviteStory .inviteStoryPanel .inviteEventRibbon { background:var(--paper); border-radius:12px; padding:8px 12px; }
+
+
+/* Keep the venue name, client photos and map in one centered column. */
+.animatedInvite.inviteStory .inviteStoryVenue .inviteVenueName {
+  position:relative; inset:auto; transform:none; float:none; align-self:center;
+  width:100%; max-width:560px; margin:0 auto 16px; text-align:center;
+}
+.animatedInvite.inviteStory .inviteStoryVenue .inviteVenuePhotos {
+  display:grid; gap:12px; width:100%; max-width:560px; margin:0 auto 16px; flex-shrink:0;
+}
+.inviteVenuePhotos:empty { display:none !important; }
+.inviteVenuePhotos img { display:block; width:100%; height:auto; max-height:320px; object-fit:contain; border-radius:16px; background:var(--paper-deep); }
+.animatedInvite.inviteStory .inviteStoryVenue .inviteVenueMap { max-width:560px; flex-shrink:0; }
+.venuePhotoUpload { min-width:0; border:1px solid #d8c9c1; border-radius:12px; padding:16px; margin-block:16px; }
+.venuePhotoUpload p { font-size:14px; line-height:1.6; }
+.venuePhotoPreviews { display:flex; gap:12px; flex-wrap:wrap; }
+.venuePhotoPreviews > div { display:grid; gap:8px; width:130px; }
+.venuePhotoPreviews img { width:130px; height:100px; object-fit:cover; border-radius:10px; }
+.birthdayPhotoThumbnail { display:block; width:100px; height:120px; object-fit:cover; border-radius:10px; margin-block:12px; }
+.birthdayPhotoUpload input[type=range] { width:100%; padding:0; min-height:40px; accent-color:#642c32; }
+.birthdayPersonalisedArtwork { display:block; width:100%; height:100%; }
+.venuePhotoPreviews button { padding:8px; cursor:pointer; }
+
+/* Show complete game artwork and brand marks throughout the store. */
+.gamingGameImageWrap img,
+.gamingOffersHeroImage { object-fit:contain; }
+.gamingGameImageWrap::after { display:none; }
+.gamingGameCard:hover .gamingGameImageWrap img { transform:none; }
+
+/* Reference-inspired folded paper and a cream Jibli wax seal, in every palette. */
+.animatedInvite.inviteStory .inviteEnvelope {
+  --stock:var(--envelope-colour,var(--foil));
+  --stock-light:color-mix(in srgb,var(--stock) 88%,white);
+  --stock-dark:color-mix(in srgb,var(--stock) 74%,black);
+  position:relative; isolation:isolate; display:block; width:100%; max-width:480px;
+  margin-inline:auto; padding:0; overflow:hidden; border:0; border-radius:3px;
+  background:var(--stock); box-shadow:0 20px 55px #0002,inset 0 0 0 1px #ffffff15;
+}
+.animatedInvite.inviteStory .inviteEnvelope::before,
+.animatedInvite.inviteStory .inviteEnvelope::after,
+.animatedInvite.inviteStory .inviteEnvelope :is(.inviteEnvelopePaper,.inviteEnvelopeFold,.inviteEnvelopePocket,.inviteEnvelopeFlap,.inviteEnvelopeBorder) { display:none; }
+.inviteEnvelopeCraft { position:absolute; inset:0; width:100%; height:100%; z-index:0; pointer-events:none; }
+.animatedInvite.inviteStory .inviteEnvelope .inviteWaxSeal {
+  display:grid; place-items:center; position:absolute; inset:40.5% auto auto 18%;
+  width:33%; height:auto; aspect-ratio:1; margin:0; z-index:2;
+  border:1px solid #ddd3ac; border-radius:44% 48% 39% 46% / 45% 39% 49% 46%;
+  background:radial-gradient(ellipse at 24% 12%,#fffceb,transparent 48%),linear-gradient(145deg,#f0ebd4,#d6ceb0 54%,#f9f3db 78%,#bcaf88);
+  box-shadow:3px 9px 12px #0006,inset 3px 5px 6px #fff9,inset -3px -4px 5px #a2956d99;
+  transform:rotate(-9deg); transition:filter .25s;
+}
+.animatedInvite.inviteStory .inviteEnvelope .inviteWaxSeal::before {
+  inset:13%; border:1px solid #b8aa8266; border-radius:50%;
+  background:radial-gradient(ellipse at 40% 30%,#f3edd5,#ded6b7 78%,#c9bf9a);
+  box-shadow:0 -3px 4px #a69a7380,0 2px 3px #fff9,inset 0 3px 5px #b1a47d88,inset 0 -2px 3px #fff9;
+}
+.animatedInvite.inviteStory .inviteEnvelope .inviteSealLogo {
+  width:58%; height:58%; opacity:.88; object-fit:contain;
+  filter:sepia(.7) drop-shadow(0 1px 0 #fffc); mix-blend-mode:multiply; transform:rotate(9deg);
+}
+.animatedInvite.inviteStory .inviteEnvelopeCaption {
+  position:absolute; z-index:3; inset:auto 8% 7%; display:flex; flex-direction:column;
+  align-items:center; gap:12px; color:var(--envelope-ink,#fff4df); text-align:center;
+}
+.animatedInvite.inviteStory .inviteEnvelopeCaption .inviteEnvelopeGreeting {
+  font:italic clamp(12px,1.8svh,16px)/1.5 Georgia,serif; color:inherit; opacity:.85; margin:0;
+}
+.animatedInvite.inviteStory .inviteEnvelopeCaption > strong {
+  width:100%; margin:0; color:inherit; font:400 clamp(24px,4svh,40px)/1.3 'Invitation Script',Georgia,serif;
+  overflow-wrap:anywhere; text-wrap:balance;
+}
+.animatedInvite.inviteStory .inviteEnvelopeCaption .inviteOpenHint {
+  display:inline-flex; align-items:center; gap:10px; color:inherit;
+  border:1px solid color-mix(in srgb,var(--envelope-ink,#fff4df) 42%,transparent);
+  border-radius:30px; margin:8px 0 0; padding:10px 20px; min-height:44px;
+  background:#ffffff09; font:500 11px/1.4 Arial,sans-serif; letter-spacing:.12em;
+}
+.animatedInvite.inviteStory .inviteEnvelope:hover .inviteWaxSeal { transform:rotate(-9deg); filter:brightness(1.04); }
+.animatedInvite.inviteStory .inviteEnvelope:focus-visible { outline:3px solid var(--foil); outline-offset:5px; }
+.animatedInvite.inviteStory .isOpening .inviteEnvelopeCraftFlap { transform-origin:100% 50%; animation:inviteReferenceFlapOpen 1s .15s ease-in-out both; }
+.animatedInvite.inviteStory .isOpening .inviteEnvelopeCaption { animation:inviteTextHandoff .4s ease-out both; }
+.guestInvitation .animatedInvite.inviteStory .inviteEnvelope { max-width:min(100%,calc(100dvh * .64)); align-self:center; }
+@media(prefers-reduced-motion:reduce) {
+  .animatedInvite.inviteStory .isOpening :is(.inviteEnvelopeCraftFlap,.inviteEnvelopeCaption) { animation:none; }
+}
+
+/* Keep the closed envelope's measured geometry until the reveal completes. */
+.animatedInvite.inviteStory .inviteStage:has(> .inviteEnvelope.isOpening) {
+  height:var(--opening-height); min-height:var(--opening-height); overflow:hidden;
+}
+.animatedInvite.inviteStory .inviteStage > .inviteEnvelope.isOpening {
+  position:absolute; inset:0 auto auto 50%; width:var(--opening-width);
+  height:var(--opening-height); min-height:0; max-width:none; margin:0;
+  transform:translate3d(-50%,0,0); transform-origin:center; z-index:5;
+  animation:inviteEnvelopeUnseal 1.4s cubic-bezier(.22,.61,.36,1) both;
+  will-change:transform,opacity; pointer-events:none;
+}
+.animatedInvite.inviteStory .inviteStage:has(> .isOpening) > .inviteReveal {
+  height:var(--opening-height); min-height:0; opacity:1;
+  animation:inviteLetterAppear 1.4s cubic-bezier(.22,.61,.36,1) both;
+  will-change:opacity; transform:none;
+}
+.animatedInvite.inviteStory .isOpening .inviteEnvelopeCraftFlap {
+  transform-box:view-box; transform-origin:100% 50%;
+  animation:inviteFlapUnfold .75s .12s cubic-bezier(.22,.61,.36,1) both;
+}
+.animatedInvite.inviteStory .isOpening .inviteWaxSeal {
+  animation:inviteWaxRelease .32s ease-out both;
+}
+.animatedInvite.inviteStory .isOpening .inviteEnvelopeCaption {
+  animation:inviteTextHandoff .28s ease-out both;
+}
+.animatedInvite.inviteStory .isOpening .inviteEnvelopeCaption :is(strong,.inviteEnvelopeGreeting,.inviteOpenHint) { animation:none; }
+@keyframes inviteEnvelopeUnseal {
+  0%,35% { opacity:1; transform:translate3d(-50%,0,0); }
+  100% { opacity:0; transform:translate3d(-50%,12px,0); }
+}
+@keyframes inviteLetterAppear { 0%,30% { opacity:0; } 85%,100% { opacity:1; } }
+@keyframes inviteFlapUnfold {
+  0% { transform:perspective(1200px) rotateY(0); opacity:1; }
+  100% { transform:perspective(1200px) rotateY(100deg); opacity:0; }
+}
+@keyframes inviteWaxRelease {
+  from { opacity:1; transform:rotate(-9deg) scale(1); }
+  to { opacity:0; transform:rotate(-9deg) scale(1.04); }
+}
+@media(prefers-reduced-motion:reduce) {
+  .animatedInvite.inviteStory .inviteStage > .inviteEnvelope.isOpening,
+  .animatedInvite.inviteStory .inviteStage:has(> .isOpening) > .inviteReveal { animation:none; }
+}
+
+/* Every invitation ends with the Jibli collection link. */
+.animatedInvite.inviteStory .inviteStoryClosing { gap:20px; }
+.animatedInvite.inviteStory .inviteStoryClosing .inviteClosingLogo {
+  display:block; width:180px; max-width:65%; height:auto; object-fit:contain;
+  padding:12px 18px; border-radius:14px; background:#fff; box-sizing:content-box;
+}
+.animatedInvite.inviteStory .inviteStoryClosing .inviteClosingLink { margin-bottom:0; }
+.inviteClosingLink svg { transform:rotate(-135deg); }
+.inviteClosingAddress { font:400 13px/1.6 Arial,sans-serif; overflow-wrap:anywhere; color:var(--ink); }
+
+/* A shared cue on every invitation cover, with a tap alternative to swiping. */
+.animatedInvite.inviteStory .inviteMainPicture { position:relative; padding-bottom:64px; }
+.animatedInvite.inviteStory .inviteMainPicture .inviteOriginalArtworkFrame {
+  width:min(100%,calc((var(--chapter-height,650px) - 128px) * var(--artwork-ratio,.8)));
+  max-height:calc(var(--chapter-height,650px) - 128px);
+}
+.inviteStory .inviteSwipeIndicator {
+  position:absolute; bottom:8px; inset-inline:12px; z-index:5;
+  display:flex; flex-direction:row; align-items:center; justify-content:center; gap:12px;
+  width:fit-content; max-width:calc(100% - 24px); min-height:48px; margin-inline:auto;
+  padding:10px 20px; border:1px solid var(--ink);
+  border-radius:28px; background:var(--ink); color:var(--paper); cursor:pointer;
+  box-shadow:0 4px 14px color-mix(in srgb,var(--ink) 22%,transparent);
+  font:600 14px/1.5 system-ui,sans-serif; text-align:center;
+}
+.animatedInvite.inviteStory .inviteSwipeIndicator span { color:inherit; font:inherit; opacity:1; letter-spacing:0; }
+.animatedInvite.inviteStory .inviteSwipeIndicator svg { width:20px; height:20px; color:inherit; stroke-width:2.5; }
+.inviteSwipeIndicator:hover { filter:brightness(1.12); }
+.animatedInvite.inviteStory .inviteArtworkCaption {
+  color:var(--ink); text-align:center; padding:10px 20px 14px;
+}
+.animatedInvite.inviteStory .inviteArtworkCaption strong {
+  display:block; color:var(--ink); font-family:Georgia,'Times New Roman',serif;
+  font-size:clamp(20px,3vw,28px); font-weight:600; line-height:1.4;
+  letter-spacing:.01em; text-wrap:balance; overflow-wrap:anywhere;
+}
+.animatedInvite.inviteStory .inviteArtworkCaption strong:lang(ar),
+.animatedInvite.inviteStory[dir=rtl] .inviteArtworkCaption strong {
+  font-family:'Invitation Ruqaa','Traditional Arabic',serif; font-weight:700; letter-spacing:0;
+}
+.inviteSwipeIndicator svg { flex-shrink:0; animation:inviteScrollNudge 1.8s ease-in-out infinite; }
+.inviteSwipeIndicator:focus-visible { outline:2px solid var(--ink); outline-offset:3px; }
+@media(prefers-reduced-motion:reduce) { .inviteSwipeIndicator svg { animation:none; } }
+
+/* Two overlapping prints above a third, like a keepsake Polaroid collage. */
+.animatedInvite.inviteStory .inviteStoryPhotos { justify-content:safe center; }
+.inviteStoryPhotos { display:flex; flex-direction:column; align-items:center; width:100%; }
+.animatedInvite.inviteStory .inviteStoryVenue:has(.inviteStoryPhotos) {
+  justify-content:flex-start; height:auto; min-height:var(--chapter-height,650px);
+  max-height:none; overflow:visible; gap:8px; padding-block:20px;
+}
+.animatedInvite.inviteStory .inviteStoryVenue:has(.inviteStoryPhotos) h3 { margin:4px auto 8px; }
+.animatedInvite.inviteStory .inviteStoryVenue:has(.inviteStoryPhotos) .invitePhotoCollage { max-width:min(340px,40svh); }
+.animatedInvite.inviteStory .inviteStoryVenue:has(.inviteStoryPhotos) .inviteVenueMap { height:clamp(150px,22svh,220px); min-height:150px; }
+.animatedInvite.inviteStory .inviteStoryPhotos .invitePhotoCollage {
+  display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); align-items:start;
+  width:100%; max-width:min(440px,63svh); padding:18px 20px 24px; box-sizing:border-box;
+  gap:0 8px; direction:ltr; isolation:isolate; flex-shrink:0;
+}
+.invitePhotoCollage .invitePolaroid {
+  position:relative; margin:0; padding:8px 8px 26px; background:#fffdf7;
+  box-shadow:0 6px 18px #0003,0 1px 3px #0002; transform:rotate(-8deg);
+  box-sizing:border-box; width:100%; min-width:0; z-index:1;
+}
+.invitePhotoCollage .invitePolaroid:nth-child(2) { transform:rotate(9deg); margin-top:6px; }
+.invitePhotoCollage .invitePolaroid:nth-child(3) {
+  grid-column:1 / -1; width:55%; justify-self:center; margin-top:-24%;
+  transform:rotate(-2deg); z-index:2;
+}
+.invitePhotoCollage .invitePolaroid img {
+  display:block; width:100%; aspect-ratio:4 / 5; height:auto; object-fit:cover; object-position:center;
+}
+.invitePhotoCollage[data-photo-count="1"] { grid-template-columns:minmax(0,1fr); max-width:270px !important; }
+.invitePhotoCollage[data-photo-count="1"] .invitePolaroid { transform:rotate(-4deg); }
+@media(max-width:480px) {
+  .animatedInvite.inviteStory .inviteStoryPhotos .invitePhotoCollage { padding-inline:14px; }
+  .invitePhotoCollage .invitePolaroid { padding:6px 6px 20px; }
+}

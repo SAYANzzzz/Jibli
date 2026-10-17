@@ -6,6 +6,7 @@ export default function PaymentButton({ productKey, requestUrl, orderId, invitat
   const { language } = useTranslation();
   return <button type="button" className="primaryBtn invitationWhatsappBtn" onClick={(event) => {
     const form = event.currentTarget.closest("form");
+    if (form?.querySelector(".venuePhotoUpload:disabled")) return;
     form?.querySelectorAll<HTMLInputElement>('input[required]:not([type=date]):not([type=time]):not([type=number])').forEach((input) => {
       input.setCustomValidity(input.value.trim() ? "" : language === "fr" ? "Veuillez remplir ce champ." : language === "ar" ? "يرجى ملء هذا الحقل." : "Please fill in this field.");
       input.addEventListener("input", () => input.setCustomValidity(""), { once: true });

@@ -2,7 +2,7 @@ import { useState } from "react";
 import type { FormEvent } from "react";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { KeyRound, User } from "lucide-react";
-import { ensureUserProfile, getAuthErrorMessage, sendPasswordReset, signIn, signInWithProvider } from "../auth";
+import { ensureUserProfile, getAuthErrorMessage, safeNextPath, sendPasswordReset, signIn, signInWithProvider } from "../auth";
 import logo from "../assets/Fast-Logo.gif";
 import { useTranslation } from "../i18n/useTranslation";
 
@@ -13,7 +13,7 @@ function Login() {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
-  const nextPath = "/";
+  const nextPath = safeNextPath(searchParams.get("next"));
   const registerPath = `/register?next=${encodeURIComponent(nextPath)}`;
   const accountExists = searchParams.get("reason") === "exists";
   const [errorMessage, setErrorMessage] = useState("");

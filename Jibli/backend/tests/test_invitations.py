@@ -71,6 +71,16 @@ class InvitationTests(unittest.TestCase):
         for url in ["javascript:alert(1)", "//example.com/photo", "data:image/png;base64,abc"]:
             self.assertEqual(self.publish(details={**details, "venuePhoto1": url}).status_code, 422)
 
+    def test_birthday_photo_and_crop_survive_publication(self):
+        details = {"name": "Nour", "age": "7", "birthdayPhoto": "https://example.com/portrait.png", "birthdayPhotoX": "0", "birthdayPhotoY": "100", "birthdayPhotoZoom": "1.75"}
+        result = self.publish(image="/invitations/birthdays/disco-eighteen.jfif", details=details)
+        self.assertEqual(result.status_code, 200)
+        token = result.json()["url"].rsplit("/", 1)[1]
+        public = self.client.get(f"/invitations/{token}").json()["invitation"]["details"]
+        self.assertEqual(public, details)
+        for changes in [{"birthdayPhoto": "javascript:alert(1)"}, {"birthdayPhoto": "data:image/png;base64,abc"}, {"birthdayPhotoX": "-1"}, {"birthdayPhotoY": "101"}, {"birthdayPhotoZoom": "0"}, {"birthdayPhotoZoom": "NaN"}, {"birthdayPhotoX": "not-a-number"}]:
+            self.assertEqual(self.publish(details={**details, **changes}).status_code, 422, changes)
+
     def test_google_maps_links_survive_publication_and_are_validated(self):
         for link in ["https://maps.app.goo.gl/Example", "https://www.google.com/maps/place/Tunis", "https://maps.google.com/?q=36.8,10.1", "https://goo.gl/maps/Example"]:
             result = self.publish(details={**self.payload["details"], "mapsUrl": link})

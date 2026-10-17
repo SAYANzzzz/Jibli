@@ -1,11 +1,13 @@
+import { useCommerceCopy } from "../i18n/commerceCopy";
 import { useEffect, useState } from "react";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
-import { ensureUserProfile } from "../auth";
+import { ensureUserProfile, safeNextPath } from "../auth";
 import { supabase } from "../supabase";
 import logo from "../assets/Fast-Logo.gif";
 
 function AuthCallback() {
   const navigate = useNavigate();
+  const copy = useCommerceCopy();
   const [searchParams] = useSearchParams();
   const [errorMessage, setErrorMessage] = useState("");
 
@@ -13,9 +15,10 @@ function AuthCallback() {
     let isMounted = true;
 
     const finishLogin = async () => {
-      const nextPath = "/";
+      const nextPath = safeNextPath(searchParams.get("next"));
       const code = searchParams.get("code");
-      const authError = searchParams.get("error_description") || searchParams.get("error");
+      const hashParams = new URLSearchParams(window.location.hash.slice(1));
+      const authError = searchParams.get("error_description") || searchParams.get("error") || hashParams.get("error_description") || hashParams.get("error");
 
       if (authError) {
         throw new Error(authError);
@@ -68,12 +71,12 @@ function AuthCallback() {
 
       <div className="authCard">
         <img src={logo} alt="Jibli logo" className="authCardLogo" />
-        <h1>Finishing login</h1>
-        <p>Please wait while we connect your account.</p>
+        <h1>{copy("Finishing login")}</h1>
+        <p>{copy("Please wait while we connect your account.")}</p>
         {errorMessage && <div className="authError">{errorMessage}</div>}
         {errorMessage && (
           <Link to="/login" className="registerAccountBtn">
-            Back to login
+            {copy("Back to login")}
           </Link>
         )}
       </div>

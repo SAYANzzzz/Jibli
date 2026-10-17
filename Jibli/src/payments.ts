@@ -1,8 +1,10 @@
 import { parseInvitation } from "./invitationData";
 import { apiFetch } from "./api";
+import { invitationSharePath } from "../shared/invitation-links.mjs";
 
 export type PaymentDraft = { id: string; product_key: string; details: string; order_id?: string };
 export type PaymentOrder = {
+  product_key?: string;
   id: string; title: string; kind: string; amount: number; phone: string; details: string;
   authorization: string | null; status: string; delivery: string; review_note: string; created_at: string;
 };
@@ -17,12 +19,14 @@ export function startPayment(product_key: string, details: string, order_id?: st
   window.location.assign(`/payment?draft=${id}`);
 }
 export function whatsappMessage(payment: PaymentOrder, customer = false) {
+  const invitation = parseInvitation(payment.details).invitation;
+  const delivery = invitation ? invitationSharePath(payment.delivery, invitation) : payment.delivery;
   const phone = customer ? `216${payment.phone.replace(/^(?:\+?216)/, "")}` : "21692001397";
   const message = customer ? [
     `Jibli — order #${payment.id.slice(0, 8).toUpperCase()}`,
     payment.title, PAYMENT_LABELS[payment.status],
     payment.status === "confirmed" ? "Thank you! Your payment is verified. We are starting work on your order." : "",
-    payment.delivery.startsWith("/invite/") ? new URL(payment.delivery, location.origin).href : payment.delivery, payment.review_note,
+    delivery.startsWith("/invite/") || delivery.startsWith("/invitation/") ? new URL(delivery, location.origin).href : delivery, payment.review_note,
   ] : ["Jibli — D17 payment submitted", `Order: ${payment.id}`, payment.title,
     `Amount: ${payment.amount} TND`, "D17 recipient: 92001397", `Numéro d'autorisation: ${payment.authorization}`,
     `Customer WhatsApp: ${payment.phone}`, "Status: Pending manual verification", parseInvitation(payment.details).request];

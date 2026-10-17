@@ -1,6 +1,6 @@
 import { useEffect, useId, useRef } from "react";
 
-const SOURCE = "/invitations/others/kindergarten-welcome.jfif";
+const SOURCE = "/invitations/others/kindergarten-welcome.png";
 
 /** The original illustration is clipped into separate character layers. */
 export default function CharacterInvitation({ title, paused }: { title: string; paused: boolean }) {
