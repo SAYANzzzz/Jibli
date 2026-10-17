@@ -1,6 +1,6 @@
 import json
 import unittest
-from unittest.mock import patch
+from unittest.mock import patch, MagicMock
 from uuid import uuid4
 
 from fastapi import FastAPI
@@ -60,6 +60,39 @@ class InvitationTests(unittest.TestCase):
     def test_validates_content(self):
         for changes in [{"image": "javascript:alert(1)"}, {"image": "//evil.invalid/image"}, {"mood": "invalid"}, {"details": {"name": ""}}, {"details": {"name": "Amira", "date": "2027-99-99"}}, {"details": {"name": "Amira", "time": "99:99"}}]:
             self.assertEqual(self.publish(**changes).status_code, 422, changes)
+
+    def test_venue_photos_survive_publication_and_reject_unsafe_urls(self):
+        details = {**self.payload["details"], "venuePhoto1": "https://example.com/venue.jpg"}
+        result = self.publish(details=details)
+        self.assertEqual(result.status_code, 200)
+        token = result.json()["url"].rsplit("/", 1)[1]
+        guest = self.client.get(f"/invitations/{token}").json()["invitation"]
+        self.assertEqual(guest["details"]["venuePhoto1"], details["venuePhoto1"])
+        for url in ["javascript:alert(1)", "//example.com/photo", "data:image/png;base64,abc"]:
+            self.assertEqual(self.publish(details={**details, "venuePhoto1": url}).status_code, 422)
+
+    def test_google_maps_links_survive_publication_and_are_validated(self):
+        for link in ["https://maps.app.goo.gl/Example", "https://www.google.com/maps/place/Tunis", "https://maps.google.com/?q=36.8,10.1", "https://goo.gl/maps/Example"]:
+            result = self.publish(details={**self.payload["details"], "mapsUrl": link})
+            self.assertEqual(result.status_code, 200, link)
+            token = result.json()["url"].rsplit("/", 1)[1]
+            self.assertEqual(self.client.get(f"/invitations/{token}").json()["invitation"]["details"]["mapsUrl"], link)
+        for link in ["javascript:alert(1)", "https://example.com/maps", "https://google.com.evil.com/maps", "https://google.com/search", "https://user@google.com/maps", "http://maps.app.goo.gl/Example"]:
+            self.assertEqual(self.publish(details={**self.payload["details"], "mapsUrl": link}).status_code, 422, link)
+
+    def test_authenticated_photo_upload_and_validation(self):
+        storage = MagicMock()
+        bucket = storage.from_.return_value
+        bucket.get_public_url.return_value = "https://example.com/venue.png"
+        self.db.storage = storage
+        result = self.client.post("/invitations/photos", files={"image": ("venue.png", b"\x89PNG\r\n\x1a\nphoto", "image/png")})
+        self.assertEqual(result.status_code, 200)
+        self.assertEqual(result.json()["url"], "https://example.com/venue.png")
+        self.assertTrue(bucket.upload.call_args.args[0].startswith("invitation-venues/"))
+        for content, mime in [(b"<svg></svg>", "image/png"), (b"x" * (5 * 1024 * 1024 + 1), "image/jpeg")]:
+            self.assertEqual(self.client.post("/invitations/photos", files={"image": ("photo", content, mime)}).status_code, 422)
+        del self.app.dependency_overrides[get_current_user]
+        self.assertEqual(self.client.post("/invitations/photos", files={"image": ("venue.png", b"photo", "image/png")}).status_code, 401)
 
     def test_unpublished_and_missing_links_do_not_disclose_content(self):
         self.publish(published=False)

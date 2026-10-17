@@ -3,17 +3,48 @@ import json
 import re
 from datetime import date, datetime, timezone
 from secrets import token_hex
-from uuid import UUID
+from uuid import UUID, uuid4
+from urllib.parse import urlsplit
 
-from fastapi import APIRouter, Depends, HTTPException, Response
+from fastapi import APIRouter, Depends, HTTPException, Response, UploadFile, File, Query
+from fastapi.responses import RedirectResponse
+from .invitation_maps import navigation_url
 from pydantic import BaseModel, Field, field_validator
 
-from .auth import require_admin
+from .auth import require_admin, get_current_user
 from .payments import PaymentRoute
 from .supabase_client import get_supabase_admin
 
 router = APIRouter(route_class=PaymentRoute)
 PUBLIC_FIELDS = {"name", "couple", "hosts", "school", "age", "date", "time", "venue", "language", "rsvp", "contact", "note"}
+PHOTO_FIELDS = {"venuePhoto1", "venuePhoto2", "venuePhoto3"}
+PUBLIC_FIELDS |= PHOTO_FIELDS
+PUBLIC_FIELDS.add("mapsUrl")
+
+
+@router.get("/invitations/directions")
+def invitation_directions(link: str = Query(max_length=2000), venue: str = Query(default="", max_length=3000)):
+    return RedirectResponse(navigation_url(link, venue), status_code=302, headers={"Cache-Control": "no-store"})
+
+
+@router.post("/invitations/photos")
+async def upload_venue_photo(image: UploadFile = File(...), user: dict = Depends(get_current_user)):
+    contents = await image.read(5 * 1024 * 1024 + 1)
+    if len(contents) > 5 * 1024 * 1024:
+        raise HTTPException(422, "Photos must be no larger than 5 MB.")
+    kind = None
+    if contents.startswith(b"\xff\xd8\xff"):
+        kind = ("jpg", "image/jpeg")
+    elif contents.startswith(b"\x89PNG\r\n\x1a\n"):
+        kind = ("png", "image/png")
+    elif contents.startswith(b"RIFF") and contents[8:12] == b"WEBP":
+        kind = ("webp", "image/webp")
+    if not kind or image.content_type != kind[1]:
+        raise HTTPException(422, "Choose a JPG, PNG or WebP photo.")
+    path = f"invitation-venues/{user['id']}/{uuid4().hex}.{kind[0]}"
+    bucket = get_supabase_admin().storage.from_("order-photos")
+    bucket.upload(path, contents, {"content-type": kind[1]})
+    return {"url": bucket.get_public_url(path)}
 
 
 class InvitationIn(BaseModel):
@@ -45,6 +76,16 @@ class InvitationIn(BaseModel):
         if len(value) > 20 or any(len(v) > 3000 for v in value.values()):
             raise ValueError("Invitation text is too long.")
         result = {k: v.strip() for k, v in value.items() if k in PUBLIC_FIELDS}
+        if result.get("mapsUrl"):
+            link = urlsplit(result["mapsUrl"])
+            if len(result["mapsUrl"]) > 2000 or link.scheme != "https" or link.username or link.password or link.port or not (
+                link.hostname in {"maps.app.goo.gl", "maps.google.com"} or
+                (link.hostname in {"google.com", "www.google.com", "goo.gl"} and re.match(r"^/maps(?:/|$)", link.path))
+            ):
+                raise ValueError("Paste a valid Google Maps HTTPS link.")
+        for key in PHOTO_FIELDS:
+            if result.get(key) and not re.fullmatch(r"https://[^\s]+", result[key]):
+                raise ValueError("Venue photos must use HTTPS URLs.")
         if not (result.get("name") or result.get("couple")):
             raise ValueError("Add the recipient or host name.")
         if result.get("date"):
