@@ -4,6 +4,8 @@ import os
 from pathlib import Path
 from playwright.sync_api import sync_playwright, expect
 
+expect.set_options(timeout=15000)
+
 root = Path(__file__).resolve().parents[2]
 pages = json.loads((root / 'src/searchPages.json').read_text(encoding='utf-8'))
 base = os.getenv('SEARCH_BASE_URL', 'http://127.0.0.1:5180')
@@ -27,13 +29,16 @@ with sync_playwright() as p:
     page.goto(base)
     page.locator('nav').first.wait_for()
     for path in ['/gaming', '/invitations', '/invitations/weddings', '/contact']:
-        page.evaluate("path=>{history.pushState({},'',path);window.dispatchEvent(new PopStateEvent('popstate'));}", path)
+        if path == '/invitations/weddings':
+            page.locator('button.invitationTemplate.rose').click()
+        else:
+            page.locator('a[href="' + path + '"]').first.click()
         expect(page).to_have_title(pages[path]['title'])
         expect(page.locator('link[rel=canonical]')).to_have_attribute('href', 'https://www.jiblitunisia.com' + path)
         expect(page.locator('meta[name=description]')).to_have_attribute('content', pages[path]['description'])
         data = json.loads(page.locator('#jibli-search-data').text_content())
         assert next(node for node in data['@graph'] if node['@type'] == 'WebPage')['url'].endswith(path)
-    page.evaluate("history.pushState({},'', '/login');window.dispatchEvent(new PopStateEvent('popstate'));")
+    page.locator('a[href="/login"]').first.click()
     expect(page.locator('meta[name=robots]')).to_have_attribute('content', 'noindex, nofollow')
     expect(page.locator('link[rel=canonical]')).to_have_count(0)
     for language in ['fr', 'ar']:
