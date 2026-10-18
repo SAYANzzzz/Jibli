@@ -8,6 +8,8 @@ const STORAGE_KEY = "jibli_lang";
 
 function detectInitialLanguage(): Language {
   try {
+    const locale = window.location.pathname.match(/^\/(fr|ar)(?:\/|$)/)?.[1];
+    if (locale === "fr" || locale === "ar") return locale;
     const stored = window.localStorage.getItem(STORAGE_KEY);
     if (stored === "en" || stored === "fr" || stored === "ar") {
       return stored;
@@ -36,8 +38,8 @@ function interpolate(template: string, vars?: Record<string, string | number>): 
   });
 }
 
-export function LanguageProvider({ children }: { children: ReactNode }) {
-  const [language, setLanguageState] = useState<Language>(() => detectInitialLanguage());
+export function LanguageProvider({ children, initialLanguage }: { children: ReactNode; initialLanguage?: Language }) {
+  const [language, setLanguageState] = useState<Language>(() => initialLanguage || detectInitialLanguage());
 
   useEffect(() => {
     document.documentElement.lang = language;

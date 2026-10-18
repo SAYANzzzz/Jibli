@@ -6445,6 +6445,11 @@ td {
 }
 
 /* Prepare personalised artwork before its first visible frame. */
+.serviceOverviewGrid { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:20px; }
+.serviceOverviewGrid h3 { margin:0 0 12px; }
+.serviceOverviewGrid h3 a { color:inherit; text-decoration:underline; text-underline-offset:4px; }
+.serviceOverviewGrid p { margin:0; line-height:1.8; }
+@media(max-width:760px) { .serviceOverviewGrid { grid-template-columns:1fr; } }
 .animatedInvite.inviteStory:not(.isOpen) .inviteReveal { position:absolute; inset:0; visibility:hidden; pointer-events:none; }
 .animatedInvite.inviteStory .inviteStage > .inviteEnvelope.isOpening,
 .animatedInvite.inviteStory .inviteStage:has(> .isOpening) > .inviteReveal { animation-duration:.8s; }

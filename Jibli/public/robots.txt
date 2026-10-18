@@ -1,4 +1,10 @@
 User-agent: *
 Allow: /
+Disallow: /api/
 
-Sitemap: https://jiblitunisia.com/sitemap.xml
+# OpenAI search discovery; public pages use the same access rules.
+User-agent: OAI-SearchBot
+Allow: /
+Disallow: /api/
+
+Sitemap: https://www.jiblitunisia.com/sitemap.xml

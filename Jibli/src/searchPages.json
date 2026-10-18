@@ -1,0 +1,362 @@
+{
+  "/": {
+    "component": "Home",
+    "title": "Jibli Tunisia | Digital Invitations, Shopping & Gaming Top-ups",
+    "description": "Discover Jibli in Tunisia: personalised digital invitations, AliExpress, Shein and Temu shopping requests, gaming top-ups and gift cards. Contact us on WhatsApp.",
+    "label": "Jibli Tunisia",
+    "language": "en",
+    "basePath": "/"
+  },
+  "/gaming": {
+    "component": "GamingStore",
+    "title": "Gaming Top-ups & Gift Cards in Tunisia | Jibli",
+    "description": "Explore Robux, Valorant Points, Free Fire, Steam and other gaming top-ups, gift cards and subscriptions in Tunisia. Ask Jibli for current prices and availability.",
+    "label": "Gaming top-ups",
+    "language": "en",
+    "basePath": "/gaming"
+  },
+  "/invitations": {
+    "component": "Invitations",
+    "title": "Personalised Digital Invitations in Tunisia | Jibli",
+    "description": "Create a digital invitation in Tunisia for a wedding, engagement, birthday, graduation or business opening. Personalise your details and share your invitation link.",
+    "label": "Digital invitations",
+    "language": "en",
+    "basePath": "/invitations"
+  },
+  "/invitations/weddings": {
+    "component": "WeddingInvitations",
+    "title": "Digital Wedding Invitations in Tunisia | Jibli",
+    "description": "Choose a wedding invitation design, enter your names, date and venue, and preview your personalised card. Share your wedding invitation online with Jibli Tunisia.",
+    "label": "Wedding invitations",
+    "language": "en",
+    "basePath": "/invitations/weddings"
+  },
+  "/invitations/engagements": {
+    "component": "EngagementInvitations",
+    "title": "Engagement & Henna Invitations in Tunisia | Jibli",
+    "description": "Personalise an engagement or henna invitation with your names, date and location. Browse designs and preview your digital invitation with Jibli Tunisia.",
+    "label": "Engagement invitations",
+    "language": "en",
+    "basePath": "/invitations/engagements"
+  },
+  "/invitations/birthdays": {
+    "component": "BirthdayInvitations",
+    "title": "Personalised Birthday Invitations in Tunisia | Jibli",
+    "description": "Create a birthday invitation with your name, date and venue. Add an optional photo and personalise the age on supported designs. Browse Jibli birthday cards in Tunisia.",
+    "label": "Birthday invitations",
+    "language": "en",
+    "basePath": "/invitations/birthdays"
+  },
+  "/invitations/openings": {
+    "component": "BusinessOpeningInvitations",
+    "title": "Business Opening Invitations in Tunisia | Jibli",
+    "description": "Invite guests to your shop, café or business opening in Tunisia. Personalise a digital opening invitation with your business name, date, location and contact details.",
+    "label": "Business opening invitations",
+    "language": "en",
+    "basePath": "/invitations/openings"
+  },
+  "/invitations/graduations": {
+    "component": "GraduationInvitations",
+    "title": "Digital Graduation Invitations in Tunisia | Jibli",
+    "description": "Celebrate graduation with a personalised digital invitation. Choose a design and add the graduate's name, celebration date and venue with Jibli Tunisia.",
+    "label": "Graduation invitations",
+    "language": "en",
+    "basePath": "/invitations/graduations"
+  },
+  "/invitations/family": {
+    "component": "FamilyGatheringInvitations",
+    "title": "Family Gathering Invitations in Tunisia | Jibli",
+    "description": "Bring your family together with a personalised digital invitation. Add your gathering title, hosts, date and location, then preview your card with Jibli Tunisia.",
+    "label": "Family gathering invitations",
+    "language": "en",
+    "basePath": "/invitations/family"
+  },
+  "/invitations/others": {
+    "component": "OtherInvitations",
+    "title": "School Announcements & Personalised Certificates | Jibli Tunisia",
+    "description": "Browse kindergarten announcements, school registration cards, Eid welcomes and achievement certificates. Personalise a design with your own names and wording.",
+    "label": "School cards and certificates",
+    "language": "en",
+    "basePath": "/invitations/others"
+  },
+  "/about": {
+    "component": "AboutUs",
+    "title": "About Jibli | Shopping, Gaming & Invitations in Tunisia",
+    "description": "Learn about Jibli, a Tunisia-focused service for international shopping requests, gaming products and personalised digital invitations. Discover our services and contact us.",
+    "label": "About Jibli",
+    "language": "en",
+    "basePath": "/about"
+  },
+  "/contact": {
+    "component": "Contact",
+    "title": "Contact Jibli Tunisia | WhatsApp, Email & Instagram",
+    "description": "Contact Jibli Tunisia on WhatsApp at +216 92 001 397 or email jiblitunisia@gmail.com for shopping requests, gaming prices and personalised digital invitations.",
+    "label": "Contact",
+    "language": "en",
+    "basePath": "/contact"
+  },
+  "/terms": {
+    "component": "TermsOfService",
+    "title": "Terms of Service | Jibli Tunisia",
+    "description": "Read the terms for using Jibli's shopping, gaming and personalised invitation services in Tunisia.",
+    "label": "Terms of service",
+    "language": "en",
+    "basePath": "/terms"
+  },
+  "/privacy": {
+    "component": "PrivacyPolicy",
+    "title": "Privacy Policy | Jibli Tunisia",
+    "description": "Read how Jibli handles personal information when you use our website and services.",
+    "label": "Privacy policy",
+    "language": "en",
+    "basePath": "/privacy"
+  },
+  "/refund": {
+    "component": "RefundPolicy",
+    "title": "Refund Policy | Jibli Tunisia",
+    "description": "Read Jibli's refund policy and contact our team with questions about your order.",
+    "label": "Refund policy",
+    "language": "en",
+    "basePath": "/refund"
+  },
+  "/fr": {
+    "component": "Home",
+    "title": "Jibli Tunisie | Invitations digitales, achats et recharge gaming",
+    "description": "Découvrez Jibli en Tunisie : invitations digitales personnalisées, demandes d’achat AliExpress, Shein et Temu, recharges de jeux et cartes cadeaux. Contactez-nous sur WhatsApp.",
+    "label": "Jibli Tunisie",
+    "language": "fr",
+    "basePath": "/"
+  },
+  "/ar": {
+    "component": "Home",
+    "title": "جيبلي تونس | دعوات رقمية وتسوق وشحن ألعاب",
+    "description": "اكتشف خدمات جيبلي في تونس: دعوات رقمية مخصصة، طلبات شراء من علي إكسبريس وشي إن وتيمو، وشحن ألعاب وبطاقات هدايا. تواصل معنا عبر واتساب.",
+    "label": "جيبلي تونس",
+    "language": "ar",
+    "basePath": "/"
+  },
+  "/fr/gaming": {
+    "component": "GamingStore",
+    "title": "Recharge gaming et cartes cadeaux en Tunisie | Jibli",
+    "description": "Découvrez les Robux, Valorant Points, diamants Free Fire, cartes Steam et abonnements proposés par Jibli en Tunisie. Demandez les prix et la disponibilité sur WhatsApp.",
+    "label": "Recharge gaming",
+    "language": "fr",
+    "basePath": "/gaming"
+  },
+  "/ar/gaming": {
+    "component": "GamingStore",
+    "title": "شحن ألعاب وبطاقات هدايا في تونس | جيبلي",
+    "description": "اكتشف خدمات روبوكس وفالورانت وفري فاير وبطاقات ستيم والاشتراكات في تونس. اسأل جيبلي عبر واتساب عن الأسعار والتوفر حسب منصتك ومنطقة حسابك.",
+    "label": "شحن الألعاب",
+    "language": "ar",
+    "basePath": "/gaming"
+  },
+  "/fr/invitations": {
+    "component": "Invitations",
+    "title": "Invitations digitales personnalisées en Tunisie | Jibli",
+    "description": "Créez une invitation digitale pour votre mariage, fiançailles, anniversaire ou remise de diplôme en Tunisie. Personnalisez vos informations et partagez votre lien.",
+    "label": "Invitations digitales",
+    "language": "fr",
+    "basePath": "/invitations"
+  },
+  "/ar/invitations": {
+    "component": "Invitations",
+    "title": "دعوات رقمية مخصصة في تونس | جيبلي",
+    "description": "صمم دعوتك الرقمية للزفاف أو الخطوبة أو عيد الميلاد أو التخرج في تونس. أضف بيانات مناسبتك وعاين التصميم وشارك رابط الدعوة مع ضيوفك.",
+    "label": "الدعوات الرقمية",
+    "language": "ar",
+    "basePath": "/invitations"
+  },
+  "/fr/invitations/weddings": {
+    "component": "WeddingInvitations",
+    "title": "Invitation de mariage digitale en Tunisie | Jibli",
+    "description": "Choisissez votre modèle de faire-part de mariage, ajoutez vos prénoms, la date et le lieu, puis prévisualisez votre invitation personnalisée avec Jibli Tunisie.",
+    "label": "Invitations de mariage",
+    "language": "fr",
+    "basePath": "/invitations/weddings"
+  },
+  "/ar/invitations/weddings": {
+    "component": "WeddingInvitations",
+    "title": "دعوات زفاف رقمية في تونس | جيبلي",
+    "description": "اختر تصميم دعوة زفافك وأضف الأسماء والتاريخ ومكان الحفل، ثم عاين دعوتك المخصصة وشاركها عبر الإنترنت مع جيبلي تونس.",
+    "label": "دعوات الزفاف",
+    "language": "ar",
+    "basePath": "/invitations/weddings"
+  },
+  "/fr/invitations/engagements": {
+    "component": "EngagementInvitations",
+    "title": "Invitations de fiançailles et de henné en Tunisie | Jibli",
+    "description": "Personnalisez votre invitation de fiançailles ou de henné avec vos prénoms, la date et le lieu. Découvrez les modèles et votre aperçu chez Jibli Tunisie.",
+    "label": "Invitations de fiançailles",
+    "language": "fr",
+    "basePath": "/invitations/engagements"
+  },
+  "/ar/invitations/engagements": {
+    "component": "EngagementInvitations",
+    "title": "دعوات خطوبة وحنة في تونس | جيبلي",
+    "description": "خصص دعوة الخطوبة أو الحنة بالأسماء والتاريخ ومكان الحفل. اكتشف التصاميم وعاين دعوتك الرقمية مع جيبلي تونس.",
+    "label": "دعوات الخطوبة",
+    "language": "ar",
+    "basePath": "/invitations/engagements"
+  },
+  "/fr/invitations/birthdays": {
+    "component": "BirthdayInvitations",
+    "title": "Invitations d’anniversaire personnalisées en Tunisie | Jibli",
+    "description": "Créez une invitation d’anniversaire avec votre prénom, la date et le lieu. Ajoutez une photo en option et modifiez l’âge sur les modèles compatibles chez Jibli.",
+    "label": "Invitations d’anniversaire",
+    "language": "fr",
+    "basePath": "/invitations/birthdays"
+  },
+  "/ar/invitations/birthdays": {
+    "component": "BirthdayInvitations",
+    "title": "دعوات عيد ميلاد مخصصة في تونس | جيبلي",
+    "description": "صمم دعوة عيد ميلاد بالاسم والتاريخ ومكان الحفل. يمكنك إضافة صورة اختيارية وتغيير العمر في التصاميم التي تدعم ذلك مع جيبلي تونس.",
+    "label": "دعوات عيد الميلاد",
+    "language": "ar",
+    "basePath": "/invitations/birthdays"
+  },
+  "/fr/invitations/openings": {
+    "component": "BusinessOpeningInvitations",
+    "title": "Invitations d’inauguration en Tunisie | Jibli",
+    "description": "Annoncez l’ouverture de votre boutique, café ou entreprise en Tunisie. Personnalisez votre invitation digitale avec le nom, la date et l’adresse de votre établissement.",
+    "label": "Invitations d’inauguration",
+    "language": "fr",
+    "basePath": "/invitations/openings"
+  },
+  "/ar/invitations/openings": {
+    "component": "BusinessOpeningInvitations",
+    "title": "دعوات افتتاح محلات ومشاريع في تونس | جيبلي",
+    "description": "ادع ضيوفك لافتتاح محلك أو مقهاك أو مشروعك في تونس. خصص دعوة رقمية باسم المشروع وتاريخ الافتتاح والعنوان وبيانات التواصل.",
+    "label": "دعوات الافتتاح",
+    "language": "ar",
+    "basePath": "/invitations/openings"
+  },
+  "/fr/invitations/graduations": {
+    "component": "GraduationInvitations",
+    "title": "Invitations de remise de diplôme en Tunisie | Jibli",
+    "description": "Célébrez votre réussite avec une invitation digitale personnalisée. Ajoutez le nom du diplômé, la date et le lieu de la fête avec Jibli Tunisie.",
+    "label": "Invitations de remise de diplôme",
+    "language": "fr",
+    "basePath": "/invitations/graduations"
+  },
+  "/ar/invitations/graduations": {
+    "component": "GraduationInvitations",
+    "title": "دعوات تخرج رقمية في تونس | جيبلي",
+    "description": "احتفل بالتخرج مع دعوة رقمية مخصصة. اختر التصميم وأضف اسم الخريج وتاريخ الاحتفال والمكان مع جيبلي تونس.",
+    "label": "دعوات التخرج",
+    "language": "ar",
+    "basePath": "/invitations/graduations"
+  },
+  "/fr/invitations/family": {
+    "component": "FamilyGatheringInvitations",
+    "title": "Invitations pour réunions de famille en Tunisie | Jibli",
+    "description": "Réunissez vos proches avec une invitation digitale personnalisée. Ajoutez les noms des hôtes, la date et le lieu de votre réunion de famille avec Jibli.",
+    "label": "Réunions de famille",
+    "language": "fr",
+    "basePath": "/invitations/family"
+  },
+  "/ar/invitations/family": {
+    "component": "FamilyGatheringInvitations",
+    "title": "دعوات لقاءات عائلية في تونس | جيبلي",
+    "description": "اجمع العائلة مع دعوة رقمية مخصصة. أضف عنوان اللقاء وأسماء المضيفين والتاريخ والمكان، ثم عاين التصميم مع جيبلي تونس.",
+    "label": "دعوات عائلية",
+    "language": "ar",
+    "basePath": "/invitations/family"
+  },
+  "/fr/invitations/others": {
+    "component": "OtherInvitations",
+    "title": "Annonces scolaires et certificats personnalisés | Jibli Tunisie",
+    "description": "Découvrez les annonces de jardin d’enfants, cartes d’inscription, messages de l’Aïd et certificats de réussite. Personnalisez votre modèle avec vos noms et votre texte.",
+    "label": "Cartes scolaires et certificats",
+    "language": "fr",
+    "basePath": "/invitations/others"
+  },
+  "/ar/invitations/others": {
+    "component": "OtherInvitations",
+    "title": "إعلانات مدرسية وشهادات مخصصة | جيبلي تونس",
+    "description": "اكتشف إعلانات رياض الأطفال وبطاقات التسجيل والتهاني بالعيد وشهادات التميز. خصص التصميم بالأسماء والعبارات التي تختارها.",
+    "label": "بطاقات مدرسية وشهادات",
+    "language": "ar",
+    "basePath": "/invitations/others"
+  },
+  "/fr/about": {
+    "component": "AboutUs",
+    "title": "À propos de Jibli | Achats, gaming et invitations en Tunisie",
+    "description": "Découvrez Jibli, un service destiné à la Tunisie pour vos demandes d’achats à l’international, produits gaming et invitations digitales personnalisées.",
+    "label": "À propos de Jibli",
+    "language": "fr",
+    "basePath": "/about"
+  },
+  "/ar/about": {
+    "component": "AboutUs",
+    "title": "عن جيبلي | تسوق وألعاب ودعوات في تونس",
+    "description": "تعرف على جيبلي وخدماته الموجهة إلى تونس: طلبات الشراء من الخارج ومنتجات الألعاب والدعوات الرقمية المخصصة.",
+    "label": "عن جيبلي",
+    "language": "ar",
+    "basePath": "/about"
+  },
+  "/fr/contact": {
+    "component": "Contact",
+    "title": "Contacter Jibli Tunisie | WhatsApp, email et Instagram",
+    "description": "Contactez Jibli Tunisie sur WhatsApp au +216 92 001 397 ou par email à jiblitunisia@gmail.com pour vos achats, prix gaming et invitations digitales.",
+    "label": "Contact",
+    "language": "fr",
+    "basePath": "/contact"
+  },
+  "/ar/contact": {
+    "component": "Contact",
+    "title": "تواصل مع جيبلي تونس | واتساب والبريد الإلكتروني",
+    "description": "تواصل مع جيبلي تونس عبر واتساب على الرقم ‎+216 92 001 397 أو البريد jiblitunisia@gmail.com للاستفسار عن التسوق والألعاب والدعوات الرقمية.",
+    "label": "اتصل بنا",
+    "language": "ar",
+    "basePath": "/contact"
+  },
+  "/fr/terms": {
+    "component": "TermsOfService",
+    "title": "Conditions d’utilisation | Jibli Tunisie",
+    "description": "Consultez les conditions d’utilisation des services d’achats, de gaming et d’invitations personnalisées de Jibli en Tunisie.",
+    "label": "Conditions d’utilisation",
+    "language": "fr",
+    "basePath": "/terms"
+  },
+  "/ar/terms": {
+    "component": "TermsOfService",
+    "title": "شروط الاستخدام | جيبلي تونس",
+    "description": "اطلع على شروط استخدام خدمات التسوق والألعاب والدعوات المخصصة لدى جيبلي في تونس.",
+    "label": "شروط الاستخدام",
+    "language": "ar",
+    "basePath": "/terms"
+  },
+  "/fr/privacy": {
+    "component": "PrivacyPolicy",
+    "title": "Politique de confidentialité | Jibli Tunisie",
+    "description": "Découvrez comment Jibli traite vos informations personnelles lors de l’utilisation de notre site et de nos services.",
+    "label": "Confidentialité",
+    "language": "fr",
+    "basePath": "/privacy"
+  },
+  "/ar/privacy": {
+    "component": "PrivacyPolicy",
+    "title": "سياسة الخصوصية | جيبلي تونس",
+    "description": "تعرف على كيفية تعامل جيبلي مع المعلومات الشخصية عند استخدام الموقع والخدمات.",
+    "label": "سياسة الخصوصية",
+    "language": "ar",
+    "basePath": "/privacy"
+  },
+  "/fr/refund": {
+    "component": "RefundPolicy",
+    "title": "Politique de remboursement | Jibli Tunisie",
+    "description": "Consultez la politique de remboursement de Jibli et contactez notre équipe pour toute question concernant votre commande.",
+    "label": "Remboursement",
+    "language": "fr",
+    "basePath": "/refund"
+  },
+  "/ar/refund": {
+    "component": "RefundPolicy",
+    "title": "سياسة الاسترجاع | جيبلي تونس",
+    "description": "اطلع على سياسة الاسترجاع لدى جيبلي وتواصل مع فريقنا لأي سؤال يتعلق بطلبك.",
+    "label": "سياسة الاسترجاع",
+    "language": "ar",
+    "basePath": "/refund"
+  }
+}

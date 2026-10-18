@@ -12,7 +12,7 @@ jobs:
           cache-dependency-path: Jibli/package-lock.json
       - run: npm ci
         working-directory: Jibli
-      - run: npm run lint && npm run build && node scripts/test-invitation-rendering.mjs
+      - run: npm run lint && npm run build && node scripts/test-invitation-rendering.mjs && node scripts/test-search.mjs
         working-directory: Jibli
         env:
           VITE_SUPABASE_URL: https://example.supabase.co
@@ -37,6 +37,7 @@ jobs:
           VITE_SUPABASE_PUBLISHABLE_KEY: test-only
         run: |
           npm --prefix Jibli run dev -- --host 127.0.0.1 > /tmp/jibli-vite.log 2>&1 &
+          npm --prefix Jibli run preview -- --host 127.0.0.1 --port 5180 > /tmp/jibli-preview.log 2>&1 &
           for attempt in $(seq 1 30); do curl -fsS http://127.0.0.1:5173/ >/dev/null && break || sleep 1; done
           cd Jibli/backend
           python tests/platform_browser_smoke.py
@@ -44,3 +45,4 @@ jobs:
           python tests/invitation_browser_smoke.py
           python tests/invitation_consistency_browser.py
           python tests/localisation_browser_smoke.py
+          python tests/search_browser_smoke.py

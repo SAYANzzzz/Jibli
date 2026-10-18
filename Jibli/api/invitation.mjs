@@ -6,7 +6,7 @@ const origin = "https://www.jiblitunisia.com";
 const escape = (value) => String(value).replace(/[&<>"']/g, (character) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[character]);
 
 async function invitationTemplate() {
-  const candidates = [new URL("../dist/index.html", import.meta.url), join(process.cwd(), "dist", "index.html"), join(process.cwd(), "Jibli", "dist", "index.html")];
+  const candidates = [new URL("../dist/_app.html", import.meta.url), join(process.cwd(), "dist", "_app.html"), join(process.cwd(), "Jibli", "dist", "_app.html"), new URL("../dist/index.html", import.meta.url), join(process.cwd(), "dist", "index.html"), join(process.cwd(), "Jibli", "dist", "index.html")];
   for (const path of candidates) {
     try { return await readFile(path, "utf8"); }
     catch (error) { if (error.code !== "ENOENT") throw error; }

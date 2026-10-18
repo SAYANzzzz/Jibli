@@ -30,6 +30,7 @@ const AdminDashboard = lazy(() => import("./pages/AdminDashboard"));
 import { getProfile } from "./api";
 import { getCurrentSession } from "./auth";
 import "./App.css";
+import SearchMetadata from "./components/SearchMetadata";
 
 function ProtectedRoute({ children }: { children: ReactElement }) {
   const location = useLocation();
@@ -185,7 +186,8 @@ function AdminRoute({ children }: { children: ReactElement }) {
 
 function App() {
   return (
-    <BrowserRouter>
+    <BrowserRouter basename={window.location.pathname.match(/^\/(fr|ar)(?:\/|$)/)?.[0].replace(/\/$/, "")}>
+      <SearchMetadata />
       <Suspense fallback={<div className="routeLoading">Loading?</div>}><Routes>
         <Route path="/" element={<Home />} />
         <Route path="/invite/:token" element={<GuestInvitation />} />

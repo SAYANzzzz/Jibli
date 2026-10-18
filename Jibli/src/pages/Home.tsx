@@ -21,8 +21,27 @@ import ProfileNavLink from "../components/ProfileNavLink";
 import { supabase } from "../supabase";
 import { useTranslation } from "../i18n/useTranslation";
 
+const serviceIntro = {
+  en: { title: "Shopping, gaming and invitations in Tunisia", cards: [
+    ["International shopping", "Send an AliExpress, Shein or Temu product link to request a price in Tunisian dinars. Review your quote and follow your order from your Jibli account.", "/request"],
+    ["Gaming top-ups and gift cards", "Browse Robux, Valorant Points, Free Fire, Steam and other gaming products. Ask us on WhatsApp for current prices and availability for your platform and account region.", "/gaming"],
+    ["Personalised digital invitations", "Choose a wedding, engagement, birthday or celebration design. Enter your event details, preview your card and share your published invitation link with guests.", "/invitations"],
+  ] },
+  fr: { title: "Achats, gaming et invitations en Tunisie", cards: [
+    ["Achats à l’international", "Envoyez un lien AliExpress, Shein ou Temu pour demander un prix en dinars tunisiens. Consultez votre devis et suivez votre commande depuis votre compte Jibli.", "/request"],
+    ["Recharges gaming et cartes cadeaux", "Découvrez Robux, Valorant Points, Free Fire, Steam et d’autres produits gaming. Demandez les prix et la disponibilité sur WhatsApp pour votre plateforme et la région de votre compte.", "/gaming"],
+    ["Invitations digitales personnalisées", "Choisissez un modèle pour votre mariage, fiançailles, anniversaire ou fête. Ajoutez vos informations, prévisualisez votre carte et partagez le lien publié avec vos invités.", "/invitations"],
+  ] },
+  ar: { title: "تسوق وألعاب ودعوات في تونس", cards: [
+    ["التسوق من الخارج", "أرسل رابط منتج من علي إكسبريس أو شي إن أو تيمو لطلب السعر بالدينار التونسي. راجع عرض السعر وتابع طلبك من حسابك على جيبلي.", "/request"],
+    ["شحن الألعاب وبطاقات الهدايا", "اكتشف روبوكس وفالورانت وفري فاير وستيم وغيرها من منتجات الألعاب. اسألنا عبر واتساب عن الأسعار والتوفر حسب منصتك ومنطقة حسابك.", "/gaming"],
+    ["دعوات رقمية مخصصة", "اختر تصميماً للزفاف أو الخطوبة أو عيد الميلاد أو غيرها من المناسبات. أضف بيانات الحفل وعاين بطاقتك وشارك رابط الدعوة المنشورة مع ضيوفك.", "/invitations"],
+  ] },
+};
+
 function Home() {
-  const { t } = useTranslation();
+  const { t, language } = useTranslation();
+  const services = serviceIntro[language];
   const [productLink, setProductLink] = useState("");
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const navigate = useNavigate();
@@ -165,6 +184,12 @@ function Home() {
         <Link to="/gaming" className="primaryBtn gamingTeaserBtn"><Gamepad2 size={16} /> {t("home.exploreGaming")}</Link>
       </section>
 
+      <section className="section serviceOverview" aria-labelledby="jibli-services">
+        <h2 id="jibli-services">{services.title}</h2>
+        <div className="serviceOverviewGrid">{services.cards.map(([title, description, path]) => <article className="card" key={path}>
+          <h3><Link to={path}>{title}</Link></h3><p>{description}</p>
+        </article>)}</div>
+      </section>
       <Footer />
     </div>
   );

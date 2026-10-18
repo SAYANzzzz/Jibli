@@ -4,7 +4,7 @@
   "outputDirectory": "dist",
   "functions": {
     "api/invitation.mjs": {
-      "includeFiles": "dist/index.html",
+      "includeFiles": "dist/_app.html",
       "maxDuration": 30
     }
   },
@@ -18,8 +18,300 @@
       "destination": "/api/invitation?slug=:slug"
     },
     {
-      "source": "/(.*)",
-      "destination": "/index.html"
+      "source": "/gaming",
+      "destination": "/gaming/index.html"
+    },
+    {
+      "source": "/invitations",
+      "destination": "/invitations/index.html"
+    },
+    {
+      "source": "/invitations/weddings",
+      "destination": "/invitations/weddings/index.html"
+    },
+    {
+      "source": "/invitations/engagements",
+      "destination": "/invitations/engagements/index.html"
+    },
+    {
+      "source": "/invitations/birthdays",
+      "destination": "/invitations/birthdays/index.html"
+    },
+    {
+      "source": "/invitations/openings",
+      "destination": "/invitations/openings/index.html"
+    },
+    {
+      "source": "/invitations/graduations",
+      "destination": "/invitations/graduations/index.html"
+    },
+    {
+      "source": "/invitations/family",
+      "destination": "/invitations/family/index.html"
+    },
+    {
+      "source": "/invitations/others",
+      "destination": "/invitations/others/index.html"
+    },
+    {
+      "source": "/about",
+      "destination": "/about/index.html"
+    },
+    {
+      "source": "/contact",
+      "destination": "/contact/index.html"
+    },
+    {
+      "source": "/terms",
+      "destination": "/terms/index.html"
+    },
+    {
+      "source": "/privacy",
+      "destination": "/privacy/index.html"
+    },
+    {
+      "source": "/refund",
+      "destination": "/refund/index.html"
+    },
+    {
+      "source": "/fr",
+      "destination": "/fr/index.html"
+    },
+    {
+      "source": "/ar",
+      "destination": "/ar/index.html"
+    },
+    {
+      "source": "/fr/gaming",
+      "destination": "/fr/gaming/index.html"
+    },
+    {
+      "source": "/ar/gaming",
+      "destination": "/ar/gaming/index.html"
+    },
+    {
+      "source": "/fr/invitations",
+      "destination": "/fr/invitations/index.html"
+    },
+    {
+      "source": "/ar/invitations",
+      "destination": "/ar/invitations/index.html"
+    },
+    {
+      "source": "/fr/invitations/weddings",
+      "destination": "/fr/invitations/weddings/index.html"
+    },
+    {
+      "source": "/ar/invitations/weddings",
+      "destination": "/ar/invitations/weddings/index.html"
+    },
+    {
+      "source": "/fr/invitations/engagements",
+      "destination": "/fr/invitations/engagements/index.html"
+    },
+    {
+      "source": "/ar/invitations/engagements",
+      "destination": "/ar/invitations/engagements/index.html"
+    },
+    {
+      "source": "/fr/invitations/birthdays",
+      "destination": "/fr/invitations/birthdays/index.html"
+    },
+    {
+      "source": "/ar/invitations/birthdays",
+      "destination": "/ar/invitations/birthdays/index.html"
+    },
+    {
+      "source": "/fr/invitations/openings",
+      "destination": "/fr/invitations/openings/index.html"
+    },
+    {
+      "source": "/ar/invitations/openings",
+      "destination": "/ar/invitations/openings/index.html"
+    },
+    {
+      "source": "/fr/invitations/graduations",
+      "destination": "/fr/invitations/graduations/index.html"
+    },
+    {
+      "source": "/ar/invitations/graduations",
+      "destination": "/ar/invitations/graduations/index.html"
+    },
+    {
+      "source": "/fr/invitations/family",
+      "destination": "/fr/invitations/family/index.html"
+    },
+    {
+      "source": "/ar/invitations/family",
+      "destination": "/ar/invitations/family/index.html"
+    },
+    {
+      "source": "/fr/invitations/others",
+      "destination": "/fr/invitations/others/index.html"
+    },
+    {
+      "source": "/ar/invitations/others",
+      "destination": "/ar/invitations/others/index.html"
+    },
+    {
+      "source": "/fr/about",
+      "destination": "/fr/about/index.html"
+    },
+    {
+      "source": "/ar/about",
+      "destination": "/ar/about/index.html"
+    },
+    {
+      "source": "/fr/contact",
+      "destination": "/fr/contact/index.html"
+    },
+    {
+      "source": "/ar/contact",
+      "destination": "/ar/contact/index.html"
+    },
+    {
+      "source": "/fr/terms",
+      "destination": "/fr/terms/index.html"
+    },
+    {
+      "source": "/ar/terms",
+      "destination": "/ar/terms/index.html"
+    },
+    {
+      "source": "/fr/privacy",
+      "destination": "/fr/privacy/index.html"
+    },
+    {
+      "source": "/ar/privacy",
+      "destination": "/ar/privacy/index.html"
+    },
+    {
+      "source": "/fr/refund",
+      "destination": "/fr/refund/index.html"
+    },
+    {
+      "source": "/ar/refund",
+      "destination": "/ar/refund/index.html"
+    },
+    {
+      "source": "/auth/callback",
+      "destination": "/_app.html"
+    },
+    {
+      "source": "/reset-password",
+      "destination": "/_app.html"
+    },
+    {
+      "source": "/login",
+      "destination": "/_app.html"
+    },
+    {
+      "source": "/register",
+      "destination": "/_app.html"
+    },
+    {
+      "source": "/account",
+      "destination": "/_app.html"
+    },
+    {
+      "source": "/request",
+      "destination": "/_app.html"
+    },
+    {
+      "source": "/payment",
+      "destination": "/_app.html"
+    },
+    {
+      "source": "/order",
+      "destination": "/_app.html"
+    },
+    {
+      "source": "/tracking",
+      "destination": "/_app.html"
+    },
+    {
+      "source": "/admin",
+      "destination": "/_app.html"
+    },
+    {
+      "source": "/fr/auth/callback",
+      "destination": "/_app.html"
+    },
+    {
+      "source": "/fr/reset-password",
+      "destination": "/_app.html"
+    },
+    {
+      "source": "/fr/login",
+      "destination": "/_app.html"
+    },
+    {
+      "source": "/fr/register",
+      "destination": "/_app.html"
+    },
+    {
+      "source": "/fr/account",
+      "destination": "/_app.html"
+    },
+    {
+      "source": "/fr/request",
+      "destination": "/_app.html"
+    },
+    {
+      "source": "/fr/payment",
+      "destination": "/_app.html"
+    },
+    {
+      "source": "/fr/order",
+      "destination": "/_app.html"
+    },
+    {
+      "source": "/fr/tracking",
+      "destination": "/_app.html"
+    },
+    {
+      "source": "/fr/admin",
+      "destination": "/_app.html"
+    },
+    {
+      "source": "/ar/auth/callback",
+      "destination": "/_app.html"
+    },
+    {
+      "source": "/ar/reset-password",
+      "destination": "/_app.html"
+    },
+    {
+      "source": "/ar/login",
+      "destination": "/_app.html"
+    },
+    {
+      "source": "/ar/register",
+      "destination": "/_app.html"
+    },
+    {
+      "source": "/ar/account",
+      "destination": "/_app.html"
+    },
+    {
+      "source": "/ar/request",
+      "destination": "/_app.html"
+    },
+    {
+      "source": "/ar/payment",
+      "destination": "/_app.html"
+    },
+    {
+      "source": "/ar/order",
+      "destination": "/_app.html"
+    },
+    {
+      "source": "/ar/tracking",
+      "destination": "/_app.html"
+    },
+    {
+      "source": "/ar/admin",
+      "destination": "/_app.html"
     }
   ],
   "headers": [
@@ -31,6 +323,307 @@
           "value": "public, max-age=31536000, immutable"
         }
       ]
+    },
+    {
+      "source": "/account",
+      "headers": [
+        {
+          "key": "X-Robots-Tag",
+          "value": "noindex, nofollow"
+        }
+      ]
+    },
+    {
+      "source": "/request",
+      "headers": [
+        {
+          "key": "X-Robots-Tag",
+          "value": "noindex, nofollow"
+        }
+      ]
+    },
+    {
+      "source": "/payment",
+      "headers": [
+        {
+          "key": "X-Robots-Tag",
+          "value": "noindex, nofollow"
+        }
+      ]
+    },
+    {
+      "source": "/order",
+      "headers": [
+        {
+          "key": "X-Robots-Tag",
+          "value": "noindex, nofollow"
+        }
+      ]
+    },
+    {
+      "source": "/tracking",
+      "headers": [
+        {
+          "key": "X-Robots-Tag",
+          "value": "noindex, nofollow"
+        }
+      ]
+    },
+    {
+      "source": "/admin",
+      "headers": [
+        {
+          "key": "X-Robots-Tag",
+          "value": "noindex, nofollow"
+        }
+      ]
+    },
+    {
+      "source": "/login",
+      "headers": [
+        {
+          "key": "X-Robots-Tag",
+          "value": "noindex, nofollow"
+        }
+      ]
+    },
+    {
+      "source": "/register",
+      "headers": [
+        {
+          "key": "X-Robots-Tag",
+          "value": "noindex, nofollow"
+        }
+      ]
+    },
+    {
+      "source": "/reset-password",
+      "headers": [
+        {
+          "key": "X-Robots-Tag",
+          "value": "noindex, nofollow"
+        }
+      ]
+    },
+    {
+      "source": "/auth/callback",
+      "headers": [
+        {
+          "key": "X-Robots-Tag",
+          "value": "noindex, nofollow"
+        }
+      ]
+    },
+    {
+      "source": "/_app.html",
+      "headers": [
+        {
+          "key": "X-Robots-Tag",
+          "value": "noindex, nofollow"
+        }
+      ]
+    },
+    {
+      "source": "/404.html",
+      "headers": [
+        {
+          "key": "X-Robots-Tag",
+          "value": "noindex, nofollow"
+        }
+      ]
+    },
+    {
+      "source": "/fr/auth/callback",
+      "headers": [
+        {
+          "key": "X-Robots-Tag",
+          "value": "noindex, nofollow"
+        }
+      ]
+    },
+    {
+      "source": "/fr/reset-password",
+      "headers": [
+        {
+          "key": "X-Robots-Tag",
+          "value": "noindex, nofollow"
+        }
+      ]
+    },
+    {
+      "source": "/fr/login",
+      "headers": [
+        {
+          "key": "X-Robots-Tag",
+          "value": "noindex, nofollow"
+        }
+      ]
+    },
+    {
+      "source": "/fr/register",
+      "headers": [
+        {
+          "key": "X-Robots-Tag",
+          "value": "noindex, nofollow"
+        }
+      ]
+    },
+    {
+      "source": "/fr/account",
+      "headers": [
+        {
+          "key": "X-Robots-Tag",
+          "value": "noindex, nofollow"
+        }
+      ]
+    },
+    {
+      "source": "/fr/request",
+      "headers": [
+        {
+          "key": "X-Robots-Tag",
+          "value": "noindex, nofollow"
+        }
+      ]
+    },
+    {
+      "source": "/fr/payment",
+      "headers": [
+        {
+          "key": "X-Robots-Tag",
+          "value": "noindex, nofollow"
+        }
+      ]
+    },
+    {
+      "source": "/fr/order",
+      "headers": [
+        {
+          "key": "X-Robots-Tag",
+          "value": "noindex, nofollow"
+        }
+      ]
+    },
+    {
+      "source": "/fr/tracking",
+      "headers": [
+        {
+          "key": "X-Robots-Tag",
+          "value": "noindex, nofollow"
+        }
+      ]
+    },
+    {
+      "source": "/fr/admin",
+      "headers": [
+        {
+          "key": "X-Robots-Tag",
+          "value": "noindex, nofollow"
+        }
+      ]
+    },
+    {
+      "source": "/ar/auth/callback",
+      "headers": [
+        {
+          "key": "X-Robots-Tag",
+          "value": "noindex, nofollow"
+        }
+      ]
+    },
+    {
+      "source": "/ar/reset-password",
+      "headers": [
+        {
+          "key": "X-Robots-Tag",
+          "value": "noindex, nofollow"
+        }
+      ]
+    },
+    {
+      "source": "/ar/login",
+      "headers": [
+        {
+          "key": "X-Robots-Tag",
+          "value": "noindex, nofollow"
+        }
+      ]
+    },
+    {
+      "source": "/ar/register",
+      "headers": [
+        {
+          "key": "X-Robots-Tag",
+          "value": "noindex, nofollow"
+        }
+      ]
+    },
+    {
+      "source": "/ar/account",
+      "headers": [
+        {
+          "key": "X-Robots-Tag",
+          "value": "noindex, nofollow"
+        }
+      ]
+    },
+    {
+      "source": "/ar/request",
+      "headers": [
+        {
+          "key": "X-Robots-Tag",
+          "value": "noindex, nofollow"
+        }
+      ]
+    },
+    {
+      "source": "/ar/payment",
+      "headers": [
+        {
+          "key": "X-Robots-Tag",
+          "value": "noindex, nofollow"
+        }
+      ]
+    },
+    {
+      "source": "/ar/order",
+      "headers": [
+        {
+          "key": "X-Robots-Tag",
+          "value": "noindex, nofollow"
+        }
+      ]
+    },
+    {
+      "source": "/ar/tracking",
+      "headers": [
+        {
+          "key": "X-Robots-Tag",
+          "value": "noindex, nofollow"
+        }
+      ]
+    },
+    {
+      "source": "/ar/admin",
+      "headers": [
+        {
+          "key": "X-Robots-Tag",
+          "value": "noindex, nofollow"
+        }
+      ]
+    }
+  ],
+  "redirects": [
+    {
+      "source": "/:path*",
+      "has": [
+        {
+          "type": "host",
+          "value": "jiblitunisia.com"
+        }
+      ],
+      "destination": "https://www.jiblitunisia.com/:path*",
+      "permanent": true
     }
   ]
 }
