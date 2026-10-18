@@ -50,6 +50,12 @@ export function invitationHead(template, invitation, path) {
   return clean.replace("</head>", `${metadata}\n</head>`);
 }
 
+export function invitationBootstrap(invitation, token) {
+  if (!invitation) return "";
+  const data = JSON.stringify({ token, invitation }).replace(/[<>&\u2028\u2029]/g, character => `\\u${character.charCodeAt(0).toString(16).padStart(4, "0")}`);
+  return `<script id="jibli-invitation-data" type="application/json">${data}</script>`;
+}
+
 export async function GET(request) {
   const url = new URL(request.url);
   const path = url.searchParams.get("token") ? `/invite/${url.searchParams.get("token")}`
@@ -66,7 +72,7 @@ export async function GET(request) {
       else if (result.status === 404) status = 404;
     }
     const template = await invitationTemplate();
-    return new Response(invitationHead(template, invitation, path), { status, headers: { "Content-Type": "text/html; charset=utf-8", "Cache-Control": "private, no-store", "X-Robots-Tag": "noindex, nofollow" } });
+    return new Response(invitationHead(template, invitation, path).replace("</head>", `${invitationBootstrap(invitation, token)}</head>`), { status, headers: { "Content-Type": "text/html; charset=utf-8", "Cache-Control": "private, no-store", "X-Robots-Tag": "noindex, nofollow" } });
   } catch (error) {
     console.error("Invitation preview unavailable:", error.name);
     try {

@@ -6443,3 +6443,9 @@ td {
   .animatedInvite.inviteStory .inviteStoryPhotos .invitePhotoCollage { padding-inline:14px; }
   .invitePhotoCollage .invitePolaroid { padding:6px 6px 20px; }
 }
+
+/* Prepare personalised artwork before its first visible frame. */
+.animatedInvite.inviteStory:not(.isOpen) .inviteReveal { position:absolute; inset:0; visibility:hidden; pointer-events:none; }
+.animatedInvite.inviteStory .inviteStage > .inviteEnvelope.isOpening,
+.animatedInvite.inviteStory .inviteStage:has(> .isOpening) > .inviteReveal { animation-duration:.8s; }
+.animatedInvite.inviteStory .isOpening .inviteEnvelopeCraftFlap { animation-duration:.5s; animation-delay:.05s; }

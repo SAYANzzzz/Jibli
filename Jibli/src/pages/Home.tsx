@@ -1,3 +1,4 @@
+import { optimizedImage } from "../optimizedImage";
 import { useEffect, useState } from "react";
 import type { FormEvent } from "react";
 import { Link, useNavigate } from "react-router-dom";
@@ -88,7 +89,7 @@ function Home() {
 
         <div className="heroVisual">
           <img
-            src="/yes.png"
+            src={optimizedImage("/yes.png")}
             alt="Jibli — based in Deguach, Tunisia, bringing gaming top-ups and shopping from AliExpress, Shein, Temu and more"
             className="heroImage"
           />
@@ -153,12 +154,12 @@ function Home() {
         <p className="gamingTeaserText">{t("home.gamingSectionText")}</p>
 
         <div className="gamingTeaserLogos">
-          <img src="/games/league-of-legends.jpg" alt="League of Legends" />
-          <img src="/games/valorant.jpg" alt="Valorant" />
-          <img src="/games/freefire.jpg" alt="Free Fire" />
-          <img src="/games/roblox.png" alt="Roblox" />
-          <img src="/games/chess.jpg" alt="Chess.com" />
-          <img src="/games/spotify.png" alt="Spotify" />
+          <img src={optimizedImage("/games/league-of-legends.jpg")} loading="lazy" decoding="async" alt="League of Legends" />
+          <img src={optimizedImage("/games/valorant.jpg")} loading="lazy" decoding="async" alt="Valorant" />
+          <img src={optimizedImage("/games/freefire.jpg")} loading="lazy" decoding="async" alt="Free Fire" />
+          <img src={optimizedImage("/games/roblox.png")} loading="lazy" decoding="async" alt="Roblox" />
+          <img src={optimizedImage("/games/chess.jpg")} loading="lazy" decoding="async" alt="Chess.com" />
+          <img src={optimizedImage("/games/spotify.png")} loading="lazy" decoding="async" alt="Spotify" />
         </div>
 
         <Link to="/gaming" className="primaryBtn gamingTeaserBtn"><Gamepad2 size={16} /> {t("home.exploreGaming")}</Link>

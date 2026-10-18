@@ -1,3 +1,4 @@
+import { optimizedImage } from "../optimizedImage";
 import { useEffect, useId, useRef } from "react";
 
 const SOURCE = "/invitations/others/kindergarten-welcome.png";
@@ -44,11 +45,11 @@ export default function CharacterInvitation({ title, paused }: { title: string; 
     </defs>
     <rect width="736" height="920" fill="#fff0ea" />
     <rect y="900" width="736" height="20" fill="#8b80a5" />
-    <image href="/invitations/others/kindergarten-motion-background.png" width="736" height="920" preserveAspectRatio="none" clipPath={`url(#${id}-background)`} />
-    <image href={SOURCE} width="736" height="920" clipPath={`url(#${id}-text)`} />
+    <image href={optimizedImage("/invitations/others/kindergarten-motion-background.png")}  width="736" height="920" preserveAspectRatio="none" clipPath={`url(#${id}-background)`} />
+    <image href={optimizedImage(SOURCE)} width="736" height="920" clipPath={`url(#${id}-text)`} />
     <g className="characterBookGroup">
     <g className="characterBoy">
-      <image href={SOURCE} width="736" height="920" clipPath={`url(#${id}-boy)`} />
+      <image href={optimizedImage(SOURCE)} width="736" height="920" clipPath={`url(#${id}-boy)`} />
       <g className="characterEyes">
         <ellipse cx="185" cy="605" rx="10" ry="12" fill="#fff9f1" transform="rotate(-27 185 605)" />
         <ellipse cx="230" cy="590" rx="12" ry="14" fill="#fff9f1" transform="rotate(-12 230 590)" />
@@ -56,14 +57,14 @@ export default function CharacterInvitation({ title, paused }: { title: string; 
       </g>
     </g>
     <g className="characterGirl">
-      <image href={SOURCE} width="736" height="920" clipPath={`url(#${id}-girl)`} />
+      <image href={optimizedImage(SOURCE)} width="736" height="920" clipPath={`url(#${id}-girl)`} />
       <g className="characterEyes">
         <ellipse cx="454" cy="552" rx="11" ry="13" fill="#fff9f1" transform="rotate(16 454 552)" />
         <ellipse cx="497" cy="541" rx="11" ry="13" fill="#fff9f1" />
         <g className="characterGaze"><ellipse cx="454" cy="553" rx="7.5" ry="10" fill="#292333" /><ellipse cx="497" cy="542" rx="7.5" ry="10" fill="#292333" /><circle cx="451" cy="548" r="2.6" fill="white" /><circle cx="494" cy="537" r="2.6" fill="white" /></g>
       </g>
     </g>
-    <image href={SOURCE} width="736" height="920" clipPath={`url(#${id}-book)`} />
+    <image href={optimizedImage(SOURCE)} width="736" height="920" clipPath={`url(#${id}-book)`} />
     </g>
   </svg>;
 }

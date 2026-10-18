@@ -1,3 +1,4 @@
+import { resolveInvitationImage, invitationIsCertificate } from "../invitationTemplates";
 import { startPayment } from "../payments";
 import type { InvitationData } from "../invitationData";
 import { useTranslation } from "../i18n/useTranslation";
@@ -15,6 +16,6 @@ export default function PaymentButton({ productKey, requestUrl, orderId, invitat
     const details = requestUrl ? new URL(requestUrl, window.location.origin).searchParams.get("text") ?? "" : "";
     const collection = invitation?.image.split("/")[2];
     const mood = invitation?.mood || (collection === "birthdays" ? "confetti" : collection === "family" ? "garden" : collection === "openings" || collection === "graduations" ? "midnight" : "champagne");
-    startPayment(productKey, invitation ? JSON.stringify({ request: `${details}\nColour mood: ${mood}`, invitation: { ...invitation, mood } }) : details, orderId);
+    startPayment(productKey, invitation ? JSON.stringify({ request: `${details}\nColour mood: ${mood}`, invitation: { ...invitation, image: resolveInvitationImage(invitation, productKey), certificate: invitationIsCertificate(resolveInvitationImage(invitation, productKey), invitation.certificate), mood } }) : details, orderId);
   }}>{language === "fr" ? "Continuer au paiement D17" : language === "ar" ? "متابعة الدفع عبر D17" : "Continue to D17 payment"}</button>;
 }

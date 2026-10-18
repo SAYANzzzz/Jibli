@@ -30,7 +30,7 @@ const venue = (box: TextSlot["box"], size = 3, options: Partial<TextSlot> = {}) 
 export const invitationTextLayouts: Record<string, TextSlot[]> = {
   "arabesque-burgundy": [
     name([20, 50.5, 60, 8.5], 9, { font: "arabic", color: "#795019" }),
-    time([20, 63, 18, 9]), venue([40, 63, 21, 13], 3.2), date([63, 63, 18, 9]),
+    time([20, 63, 18, 16]), venue([39, 63, 23, 16], 3.2), date([63, 63, 18, 16]),
   ],
   "arabic-satin": [name([27, 37, 50, 27], 14, { font: "arabic", color: "#573a26" }), date([27, 65, 50, 7]), time([27, 72, 50, 6]), venue([20, 80, 60, 9])],
   "blush-embossed": [name([22, 51, 56, 14], 9, { font: "arabic", color: "#91694c" }), date([22, 68, 56, 7]), time([22, 75, 56, 5]), venue([20, 81, 60, 8])],

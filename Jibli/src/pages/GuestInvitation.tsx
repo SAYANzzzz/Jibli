@@ -15,11 +15,19 @@ export default function GuestInvitation() {
   return <GuestInvitationContent key={token} token={token} />;
 }
 
+function initialInvitation(token: string | undefined): InvitationData | null {
+  try {
+    const data = JSON.parse(document.getElementById("jibli-invitation-data")?.textContent || "null");
+    if (data?.token === token && data.invitation) return { ...data.invitation, image: resolveInvitationImage(data.invitation) };
+  } catch { /* Client navigation falls back to the public API. */ }
+  return null;
+}
+
 function GuestInvitationContent({ token }: { token: string | undefined }) {
   const navigate = useNavigate();
   const { pathname } = useLocation();
   const copy = useCommerceCopy();
-  const [invitation, setInvitation] = useState<InvitationData | null>(null);
+  const [invitation, setInvitation] = useState<InvitationData | null>(() => initialInvitation(token));
   const [error, setError] = useState("");
   const [attempt, setAttempt] = useState(0);
   useEffect(() => {
@@ -28,6 +36,7 @@ function GuestInvitationContent({ token }: { token: string | undefined }) {
     }
   }, [invitation, pathname, navigate]);
   useEffect(() => {
+    if (attempt === 0 && initialInvitation(token)) return;
     const controller = new AbortController();
     let active = true;
     const timeout = window.setTimeout(() => controller.abort(), 65000);

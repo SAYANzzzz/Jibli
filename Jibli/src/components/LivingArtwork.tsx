@@ -1,9 +1,10 @@
 import { useEffect, useRef } from "react";
 import { invitationMotionProfiles } from "../invitationMotionProfiles";
+import { optimizedImage } from "../optimizedImage";
 
 // Local texture deformation moves pixels already in the artwork, without
 // duplicating a character or adding unrelated decorative illustrations.
-export default function LivingArtwork({ image, title, paused, paperTheme = "", onError }: { image: string; title: string; paused: boolean; paperTheme?: string; onError?: () => void }) {
+export default function LivingArtwork({ image, title, paused, animate = false, paperTheme = "", onError }: { image: string; title: string; paused: boolean; animate?: boolean; paperTheme?: string; onError?: () => void }) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const pausedRef = useRef(paused);
   useEffect(() => { pausedRef.current = paused; }, [paused]);
@@ -11,7 +12,7 @@ export default function LivingArtwork({ image, title, paused, paperTheme = "", o
     const canvas = canvasRef.current;
     const key = image.split("/").pop()?.replace(/\.[^.]+$/, "") || "";
     const regions = invitationMotionProfiles[key];
-    if (!canvas || !regions) return;
+    if (!canvas || !regions || !animate || paused) return;
     const gl = canvas.getContext("webgl", { alpha: false, antialias: false });
     if (!gl) return;
     const synchronized = key === "eid-school-welcome";
@@ -44,6 +45,7 @@ export default function LivingArtwork({ image, title, paused, paperTheme = "", o
     let disposed = false;
     let frame = 0;
     let visible = false;
+    let textureReady = false;
     let time = 0;
     let previous = 0;
     const reduced = window.matchMedia("(prefers-reduced-motion: reduce)");
@@ -344,8 +346,10 @@ export default function LivingArtwork({ image, title, paused, paperTheme = "", o
     const amount = gl.getUniformLocation(program, "amount");
     const pointerLocation = gl.getUniformLocation(program, "pointer");
     const draw = (stamp: number) => {
+      frame = 0;
       if (disposed) return;
       const active = visible && !document.hidden && !pausedRef.current && !reduced.matches;
+      if (!active) return;
       if (active) time += Math.min((stamp-previous)/1000, .05);
       previous = stamp;
       if (visible) {
@@ -355,8 +359,17 @@ export default function LivingArtwork({ image, title, paused, paperTheme = "", o
       }
       frame = requestAnimationFrame(draw);
     };
-    const observer = new IntersectionObserver(([entry]) => { visible = entry.isIntersecting; });
+    const resume = () => {
+      if (!disposed && textureReady && visible && !document.hidden && !frame) frame = requestAnimationFrame(draw);
+    };
+    const observer = new IntersectionObserver(([entry]) => {
+      visible = entry.isIntersecting;
+      if (visible) resume();
+      else { cancelAnimationFrame(frame); frame = 0; }
+    });
     observer.observe(canvas);
+    document.addEventListener("visibilitychange", resume);
+    reduced.addEventListener("change", resume);
     if (followsCursor) {
       window.addEventListener("pointermove", trackPointer, { passive: true });
       document.documentElement.addEventListener("pointerleave", resetPointer);
@@ -376,7 +389,7 @@ export default function LivingArtwork({ image, title, paused, paperTheme = "", o
       };
       let target = paperColours[paperTheme];
       let artworkSource: TexImageSource = source;
-      {
+      if (paperTheme) {
         const paper = document.createElement("canvas");
         paper.width = canvas.width; paper.height = canvas.height;
         const context = paper.getContext("2d", { willReadFrequently: true });
@@ -426,28 +439,32 @@ export default function LivingArtwork({ image, title, paused, paperTheme = "", o
       // Reuse the exact rendered artwork for the invitation's decorative edges.
       const invitation = canvas.closest<HTMLElement>(".animatedInvite");
       if (invitation) {
-        const decoration = artworkSource instanceof HTMLCanvasElement ? artworkSource.toDataURL("image/png") : image;
+        const decoration = artworkSource instanceof HTMLCanvasElement ? artworkSource.toDataURL("image/png") : optimizedImage(image);
         invitation.style.setProperty("--invitation-decoration", `url("${decoration}")`);
         invitation.style.setProperty("--invitation-paper", target ? `rgb(${target.join(",")})` : "var(--paper)");
       }
       gl.texImage2D(gl.TEXTURE_2D,0,gl.RGB,gl.RGB,gl.UNSIGNED_BYTE,artworkSource);
+      gl.drawArrays(gl.TRIANGLES, 0, 6);
+      textureReady = true;
       canvas.dataset.ready = "true";
-      frame = requestAnimationFrame(draw);
+      resume();
     };
-    source.src = image;
+    source.src = optimizedImage(image);
     return () => {
       disposed = true; cancelAnimationFrame(frame); observer.disconnect();
       window.removeEventListener("pointermove", trackPointer);
       document.documentElement.removeEventListener("pointerleave", resetPointer);
+      document.removeEventListener("visibilitychange", resume);
+      reduced.removeEventListener("change", resume);
       source.onload = null; delete canvas.dataset.ready;
       gl.deleteTexture(texture); gl.deleteBuffer(buffer); gl.deleteProgram(program);
       shaders.forEach((shader) => gl.deleteShader(shader));
     };
-  }, [image, paperTheme]);
-  return <div className="livingArtwork"><img className="inviteArtwork" src={image} alt={title} onError={onError} /><canvas ref={canvasRef} aria-hidden="true" />
+  }, [image, paperTheme, animate, paused]);
+  return <div className="livingArtwork"><img className="inviteArtwork" src={optimizedImage(image)} alt={title} onError={onError} loading={animate ? "eager" : "lazy"} decoding="async" /><canvas ref={canvasRef} aria-hidden="true" />
     {image.endsWith("/family-roots.jfif") && <svg className="treeLeaves" viewBox="0 0 736 1030" aria-hidden="true">
       {[{ x: 195, y: 285, dx: -110 }, { x: 235, y: 405, dx: -140 }, { x: 290, y: 220, dx: -125 }, { x: 515, y: 285, dx: 115 }, { x: 510, y: 435, dx: 145 }, { x: 430, y: 225, dx: 140 }, { x: 170, y: 460, dx: -100 }, { x: 565, y: 375, dx: 95 }].map((leaf, index) => <g key={index} transform={`translate(${leaf.x} ${leaf.y})`}>
-        <g className="treeLeaf" style={{ animationPlayState: paused ? "paused" : "running", animationDelay: `${-index * 1.4}s`, animationDuration: `${8 + index % 3}s`, "--leaf-out": `${leaf.dx}px` } as React.CSSProperties}>
+        <g className="treeLeaf" style={{ animationPlayState: paused || !animate ? "paused" : "running", animationDelay: `${-index * 1.4}s`, animationDuration: `${8 + index % 3}s`, "--leaf-out": `${leaf.dx}px` } as React.CSSProperties}>
           <path d="M0 0C-10-3-15-15-8-25C4-24 12-9 0 0Z" fill={index % 2 ? "#e8b642" : "#dca134"} fillOpacity=".85" stroke="#c99436" strokeWidth=".6" />
           <path d="M0 0L-7-21M-3-9L3-15" fill="none" stroke="#b88734" strokeWidth=".7" />
         </g>
@@ -455,13 +472,13 @@ export default function LivingArtwork({ image, title, paused, paperTheme = "", o
     </svg>}
     {image.endsWith("/green-tradition.jfif") && <svg className="risingLeaves" viewBox="0 0 736 1037" aria-hidden="true">
       {[25, 65, 105, 631, 671, 711].map((x, index) => <g key={x} transform={`translate(${x} ${980 - index % 2 * 70})`}>
-        <g className="risingLeaf" style={{ animationPlayState: paused ? "paused" : "running", animationDelay: `${-index * 1.9}s`, animationDuration: `${9 + index % 3}s`, "--leaf-sway": `${index < 3 ? -22 : 22}px` } as React.CSSProperties}>
+        <g className="risingLeaf" style={{ animationPlayState: paused || !animate ? "paused" : "running", animationDelay: `${-index * 1.9}s`, animationDuration: `${9 + index % 3}s`, "--leaf-sway": `${index < 3 ? -22 : 22}px` } as React.CSSProperties}>
           <path d="M0 0C-16-9-20-29-9-43C10-37 20-16 0 0Z" fill={index % 2 ? "#839875" : "#647b50"} stroke="#667c50" strokeWidth="1" />
           <path d="M0 0L-8-36M-4-15L7-26M-6-24L-14-29" fill="none" stroke="#c0c8a2" strokeWidth="1" />
         </g>
       </g>)}
     </svg>}
-    {image.endsWith("/nouveau-florals.jfif") && <svg className="nouveauLeaves" viewBox="0 0 736 1030" aria-hidden="true" style={{ animationPlayState: paused ? "paused" : "running" }}>
+    {image.endsWith("/nouveau-florals.jfif") && <svg className="nouveauLeaves" viewBox="0 0 736 1030" aria-hidden="true" style={{ animationPlayState: paused || !animate ? "paused" : "running" }}>
       {[{ x: 155, y: 170, direction: -1 }, { x: 105, y: 460, direction: -1 }, { x: 165, y: 870, direction: -1 }, { x: 595, y: 140, direction: 1 }, { x: 640, y: 570, direction: 1 }, { x: 595, y: 920, direction: 1 }].map((leaf, index) => <g key={index} transform={`translate(${leaf.x} ${leaf.y})`}>
         <g className="nouveauLeaf" style={{ animationDelay: `${-index * 1.7}s`, animationDuration: `${9 + index % 3}s`, "--leaf-drift": `${leaf.direction * 75}px` } as React.CSSProperties}>
           <path d="M0 0C-9-7-13-21-6-32C8-28 14-13 0 0Z" fill={index % 2 ? "#a4a660" : "#b7b779"} stroke="#9c925b" strokeWidth="1" />

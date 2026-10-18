@@ -24,7 +24,7 @@ type WeddingDesign = {
 };
 
 const WEDDING_DESIGNS: WeddingDesign[] = [
-  { id: "arabesque-burgundy", title: "Arabesque burgundy", style: "Arabic · Luxury floral", image: "/invitations/weddings/arabesque-burgundy.png", description: "Grand arches, burgundy blooms and warm gold details." },
+  { id: "arabesque-burgundy", title: "Arabesque burgundy", style: "Arabic · Luxury floral", image: "/invitations/weddings/arabesque-burgundy.jfif", description: "Grand arches, burgundy blooms and warm gold details." },
   { id: "arabic-satin", title: "Satin ribbons", style: "Arabic · Modern", image: "/invitations/weddings/arabic-satin.jfif", description: "Soft fabric-like florals and elegant Arabic calligraphy." },
   { id: "blush-embossed", title: "Blush embossed", style: "Arabic · Floral", image: "/invitations/weddings/blush-embossed.jfif", description: "Embossed ivory texture with gentle blush florals." },
   { id: "garden-couple", title: "Garden couple", style: "Arabic · Illustrated", image: "/invitations/weddings/garden-couple.jfif", description: "Rose garden framing with a bride-and-groom illustration." },

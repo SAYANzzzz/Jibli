@@ -1,3 +1,4 @@
+import { optimizedImage } from "../optimizedImage";
 import VenueMapLink from "../components/VenueMapLink";
 import VenuePhotos from "../components/VenuePhotos";
 import { useState } from "react";
@@ -102,7 +103,7 @@ export default function OtherInvitations() {
           </div>
           <div className="weddingDesignGrid">
             {DESIGNS.map((design) => <button type="button" className="weddingDesignCard" key={design.id} onClick={() => setSelectedId(design.id)}>
-              {design.id === "school-registration" ? <SchoolRegistrationMotion title={design.title} /> : ["eid-school-welcome", "weekly-star-blue", "weekly-star-pink", "quran-certificate-blue", "quran-certificate-pink"].includes(design.id) ? <LivingArtwork image={`/invitations/others/${design.id}.jfif`} title={`${design.title} card or announcement example`} paused={false} /> : <img src={`/invitations/others/${design.id}.jfif`} alt={`${design.title} card or announcement example`} loading="lazy" decoding="async" />}
+              {design.id === "school-registration" ? <SchoolRegistrationMotion title={design.title} /> : ["eid-school-welcome", "weekly-star-blue", "weekly-star-pink", "quran-certificate-blue", "quran-certificate-pink"].includes(design.id) ? <LivingArtwork image={`/invitations/others/${design.id}.jfif`} title={`${design.title} card or announcement example`} paused={false} /> : <img src={optimizedImage(`/invitations/others/${design.id}.jfif`)} alt={`${design.title} card or announcement example`} loading="lazy" decoding="async" />}
               <div className="weddingDesignOverlay"><span>{design.style}</span><strong>{design.title}</strong><p>{design.description}</p><span className="invitationCardPrice">{copy("10 TND")} </span><b>{copy("Choose design")} <ArrowRight size={15} /></b></div>
             </button>)}
           </div>

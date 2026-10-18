@@ -1,3 +1,4 @@
+import { optimizedImage } from "../optimizedImage";
 import { useEffect, useId, useRef } from "react";
 
 const SOURCE = "/invitations/others/school-registration.jfif";
@@ -70,11 +71,11 @@ export default function SchoolRegistrationMotion({ title, paused = false }: { ti
         {PARTS.map(([name,path]) => <path key={name} d={path} fill="black" stroke="black" strokeWidth="12" strokeLinejoin="round" />)}
       </mask>
     </defs>
-    <image href="/invitations/others/school-registration-motion-background.png" width="736" height="1309" preserveAspectRatio="none" />
-    <image href={SOURCE} width="736" height="1309" mask={`url(#${id}-still)`} />
+    <image href={optimizedImage("/invitations/others/school-registration-motion-background.png")}  width="736" height="1309" preserveAspectRatio="none" />
+    <image href={optimizedImage(SOURCE)} width="736" height="1309" mask={`url(#${id}-still)`} />
     <g className="schoolFloatingPart" style={{ animationPlayState: paused ? "paused" : undefined }}>
       {PARTS.map(([name]) => <g key={name} data-part={name}>
-        <image href={SOURCE} width="736" height="1309" clipPath={`url(#${id}-${name})`} />
+        <image href={optimizedImage(SOURCE)} width="736" height="1309" clipPath={`url(#${id}-${name})`} />
       </g>)}
       {EYES.map(([name,x,y,rx,ry,angle]) => <g key={name} className="schoolEye" data-eye={name} data-x={x} data-y={y} clipPath={`url(#${id}-eye-${name})`}>
         <ellipse cx={x} cy={y} rx={rx} ry={ry} fill="#fffaf2" transform={`rotate(${angle} ${x} ${y})`} />

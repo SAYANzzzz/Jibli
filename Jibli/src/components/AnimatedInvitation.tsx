@@ -8,6 +8,8 @@ import { useTranslation } from "../i18n/useTranslation";
 import { useEffect, useRef, useState } from "react";
 import type { CSSProperties } from "react";
 import { getInvitationDesign } from "../invitationDesigns";
+import { resolveInvitationImage, invitationIsCertificate } from "../invitationTemplates";
+import { optimizedImage } from "../optimizedImage";
 import CharacterInvitation from "./CharacterInvitation";
 import LivingArtwork from "./LivingArtwork";
 import InvitationArtworkText from "./InvitationArtworkText";
@@ -16,27 +18,20 @@ import { MapPin, ArrowDown, CalendarDays, Sparkles, Clock3, Navigation } from "l
 
 type Props = { image: string; title: string; details: Record<string, string>; onMoodChange?: (mood: string) => void; guest?: boolean; certificate?: boolean };
 
-export default function AnimatedInvitation({ image, title, details: savedDetails, guest = false, certificate: suppliedCertificate = false }: Props) {
+export default function AnimatedInvitation({ image: suppliedImage, title, details: savedDetails, guest = false, certificate: suppliedCertificate = false }: Props) {
   const { language } = useTranslation();
+  const image=resolveInvitationImage({image:suppliedImage,title});
   const design = getInvitationDesign(image);
   const kindergartenWelcome = design.key === "eid-school-welcome";
   const registration = design.key === "kindergarten-welcome" || design.key === "school-registration";
-  const certificate = suppliedCertificate || design.layout === "certificate";
+  const certificate = invitationIsCertificate(image, suppliedCertificate || design.layout === "certificate");
   const [failedImage, setFailedImage] = useState("");
   const showPersonalisedCover = !image || failedImage === image;
-  const sampleDate = new Date();
-  sampleDate.setMonth(sampleDate.getMonth() + 3);
-  const sampleDateString = `${sampleDate.getFullYear()}-${String(sampleDate.getMonth() + 1).padStart(2, "0")}-${String(sampleDate.getDate()).padStart(2, "0")}`;
   const isSample = !guest && !certificate && (!(savedDetails.couple || savedDetails.name) || !savedDetails.date || !savedDetails.time || !savedDetails.venue);
-  const details = guest || certificate ? savedDetails : {
-    ...savedDetails,
-    date: savedDetails.date || sampleDateString,
-    time: savedDetails.time || "19:00",
-    venue: savedDetails.venue || "Tunis, Tunisia",
-  };
-  const guestLanguage = details.language?.startsWith("Arabic") ? "ar" : details.language?.startsWith("French") ? "fr" : "en";
-  const copy = useCommerceCopy(guest ? guestLanguage : undefined);
-  const locale = guest ? guestLanguage : language;
+  const details = savedDetails;
+  const guestLanguage = /^(arabic|ar)\b/i.test(details.language || "") ? "ar" : /^(french|fr)\b/i.test(details.language || "") ? "fr" : "en";
+  const locale = details.language ? guestLanguage : language;
+  const copy = useCommerceCopy(locale);
   const [opened, setOpened] = useState(false);
   const [opening, setOpening] = useState(false);
   const [preparing, setPreparing] = useState(false);
@@ -45,7 +40,7 @@ export default function AnimatedInvitation({ image, title, details: savedDetails
   useEffect(() => {
     if (!image) { artworkReady.current = Promise.resolve(); return; }
     const picture = new Image();
-    picture.src = image;
+    picture.src = optimizedImage(image);
     artworkReady.current = picture.decode().catch(() => { /* The artwork renderer supplies its fallback. */ });
   }, [image]);
   useEffect(() => {
@@ -128,7 +123,7 @@ export default function AnimatedInvitation({ image, title, details: savedDetails
   useEffect(() => {
     if (!opening) return;
     // Pausing or disabling CSS animations must not leave the revealed card inert.
-    const timer = window.setTimeout(() => setOpening(false), 1700);
+    const timer = window.setTimeout(() => setOpening(false), 850);
     return () => window.clearTimeout(timer);
   }, [opening]);
   const collection = image.split("/")[2];
@@ -164,7 +159,7 @@ export default function AnimatedInvitation({ image, title, details: savedDetails
   }, [guest]);
   useEffect(() => {
     const root = story.current;
-    if (!opened || !root) return;
+    if (!root) return;
     const picture = root.querySelector<HTMLImageElement>(".inviteMainPicture img");
     const svg = root.querySelector<SVGSVGElement>(".inviteMainPicture svg");
     const measure = () => {
@@ -180,7 +175,7 @@ export default function AnimatedInvitation({ image, title, details: savedDetails
     picture?.addEventListener("load", measure);
     return () => { observer.disconnect(); picture?.removeEventListener("load", measure); };
   }, [opened, image]);
-  const name = details.couple || details.name || (guest ? copy("Your name here") : certificate ? "Nour" : collection === "weddings" || collection === "engagements" ? "Amira & Youssef" : collection === "birthdays" || collection === "graduations" ? "Nour" : collection === "family" ? copy("Together again") : collection === "openings" ? copy("A new beginning") : copy("Welcome, little dreamers"));
+  const name = details.couple || details.name || copy("Your name here");
   const initials = !(savedDetails.couple || savedDetails.name) && guest ? "J" : name.split(/\s+|&/).filter(Boolean).slice(0, 2).map((part) => Array.from(part)[0]).join("").toUpperCase();
   const eventTime = details.date ? new Date(`${details.date}T${details.time || "00:00"}:00+01:00`).getTime() : NaN;
   const remaining = Math.max(0, Math.floor((eventTime - now) / 1000));
@@ -202,7 +197,7 @@ export default function AnimatedInvitation({ image, title, details: savedDetails
   const firstWeekday = validDate ? (new Date(Date.UTC(year, month - 1, 1)).getUTCDay() + 6) % 7 : 0;
   const daysInMonth = validDate ? new Date(Date.UTC(year, month, 0)).getUTCDate() : 0;
 
-  const artwork = showPersonalisedCover ? <div className="invitePersonalisedCover"><Sparkles size={24} aria-hidden="true" /><p>{title}</p><h2 dir="auto">{name}</h2><span>{certificate ? details.school : copy("You are warmly invited")}</span></div> : image === "/invitations/others/kindergarten-welcome.jfif" ? <CharacterInvitation title={title} paused={motionPaused} /> : image === "/invitations/others/school-registration.jfif" ? <SchoolRegistrationMotion title={title} paused={motionPaused} /> : <LivingArtwork image={image} title={guest ? title : `${title} design reference`} paused={motionPaused} onError={() => setFailedImage(image)} />;
+  const artwork = showPersonalisedCover ? <div className="invitePersonalisedCover"><Sparkles size={24} aria-hidden="true" /><p>{title}</p><h2 dir="auto">{name}</h2><span>{certificate ? details.school : copy("You are warmly invited")}</span></div> : image === "/invitations/others/kindergarten-welcome.jfif" ? <CharacterInvitation title={title} paused={!opened || opening || motionPaused} /> : image === "/invitations/others/school-registration.jfif" ? <SchoolRegistrationMotion title={title} paused={!opened || opening || motionPaused} /> : <LivingArtwork animate={opened && !opening} image={image} title={guest ? title : `${title} design reference`} paused={!opened || opening || motionPaused} onError={() => setFailedImage(image)} />;
 
   const floral = ["arabesque-burgundy", "arabic-satin", "blush-embossed", "garden-couple", "classic-ivory", "photo-frame", "blue-florals", "nouveau-florals", "green-tradition", "family-roots"].includes(design.key);
   const personalisedBirthday = !!birthdayLayouts[birthdayDesignKey(image)] && (!!details.birthdayPhoto || (birthdayHasAge(image) && !!details.age));
@@ -214,7 +209,7 @@ export default function AnimatedInvitation({ image, title, details: savedDetails
       {venuePhotoKeys.filter((key) => details[key]).map((key, index) => <figure className="invitePolaroid" key={key}><img src={details[key]} alt={`${copy("Invitation photo")} ${index + 1}`} loading="lazy" /></figure>)}
     </div>
   </div> : null;
-  return <section style={{ ...(image ? design.colours : {}), "--story-artwork": `url("${image}")` } as CSSProperties} data-layout={certificate ? "certificate" : design.layout} data-design={design.key} data-collection={collection} className={`animatedInvite inviteStory inviteMood-${mood} ${opened ? "isOpen" : ""} ${guest ? "inviteGuestFullscreen" : ""}`} data-motion-paused={motionPaused} dir={locale === "ar" ? "rtl" : "ltr"} aria-label="Interactive invitation preview">
+  return <section style={{ ...(image ? design.colours : {}), "--story-artwork": `url("${optimizedImage(image)}")` } as CSSProperties} data-layout={certificate ? "certificate" : design.layout} data-design={design.key} data-collection={collection} className={`animatedInvite inviteStory inviteMood-${mood} ${opened ? "isOpen" : ""} ${guest ? "inviteGuestFullscreen" : ""}`} data-motion-paused={!opened || opening || motionPaused} dir={locale === "ar" ? "rtl" : "ltr"} aria-label="Interactive invitation preview">
     {isSample && <p className="inviteSampleNotice">{copy("Sample event details - fill in the form to personalise your preview.")}</p>}
     <div className="inviteStage">
     {(!opened || opening) && <button type="button" className={`inviteEnvelope ${opening ? "isOpening" : ""}`} disabled={opening || preparing} aria-busy={preparing} onAnimationEnd={(event) => { if (event.target === event.currentTarget && event.animationName === "inviteEnvelopeUnseal") setOpening(false); }} onClick={async (event) => {
@@ -232,9 +227,9 @@ export default function AnimatedInvitation({ image, title, details: savedDetails
       <span className="inviteEnvelopeCaption"><span className="inviteEnvelopeGreeting">{copy("A little invitation for you by")} </span>
       <strong dir="auto">{details.hosts?.trim() || name}</strong><span className="inviteOpenHint">{copy(preparing ? "Opening your invitation…" : "Open invitation")} <ArrowDown size={14} /></span></span>
     </button>}
-    {opened && <>
-    <div ref={story} inert={opening} className="inviteReveal" tabIndex={0} aria-label="Scroll through your invitation">
-      <section className="inviteOriginalArtwork inviteMainPicture"><div className="inviteOriginalArtworkFrame">{coverArtwork}{!showPersonalisedCover && <InvitationArtworkText image={image} details={savedDetails} locale={guestLanguage} />}</div>{!showPersonalisedCover && <InvitationArtworkText image={image} details={savedDetails} locale={guestLanguage} caption />}
+    <>
+    <div ref={story} inert={!opened || opening} aria-hidden={!opened} className="inviteReveal" tabIndex={0} aria-label="Scroll through your invitation">
+      <section className="inviteOriginalArtwork inviteMainPicture"><div className="inviteOriginalArtworkFrame">{coverArtwork}{!showPersonalisedCover && <InvitationArtworkText image={image} details={savedDetails} locale={locale} />}</div>{!showPersonalisedCover && <InvitationArtworkText image={image} details={savedDetails} locale={locale} caption />}
         <button type="button" className="inviteSwipeIndicator" onClick={() => {
           const root = story.current;
           const next = root?.querySelector<HTMLElement>(".inviteStoryPanel");
@@ -284,7 +279,7 @@ export default function AnimatedInvitation({ image, title, details: savedDetails
           <span className="inviteClosingAddress" dir="ltr">www.jiblitunisia.com/invitations</span>
         </section>
       </div>
-    </div></>}
+    </div></>
     </div>
     {!guest && <p className="invitePreviewNote">{copy("Preview your opening animation and event details. The artwork shown is a design example; Jibli personalises the final invitation.")} </p>}
   </section>;

@@ -1,3 +1,4 @@
+import { optimizedImage } from "../optimizedImage";
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { ArrowUpRight, Gamepad2, MessageCircle, Zap } from "lucide-react";
@@ -246,7 +247,7 @@ function GamingStore() {
                 onClick={() => openGame(game.id)}
               >
                 <div className="gamingGameImageWrap">
-                  <img src={game.image} alt={`${game.name} logo / artwork`} className={game.logo ? "gamingBrandLogo" : game.id === "ea-sports-fc" ? "gamingFcLogo" : undefined} loading="lazy" />
+                  <img src={optimizedImage(game.image)} alt={`${game.name} logo / artwork`} className={game.logo ? "gamingBrandLogo" : game.id === "ea-sports-fc" ? "gamingFcLogo" : undefined} loading="lazy" />
                 </div>
                 <strong>{game.name}</strong>
                 <span className="platformBadge">{categoryLabel(game.category)}</span>
@@ -263,7 +264,7 @@ function GamingStore() {
             <div className="card gamingOffersCard">
               <div className="gamingOffersHero">
                 <div className="gamingOffersHeroImageWrap">
-                  <img src={selectedGame.image} alt={`${selectedGame.name} logo / artwork`} className={`gamingOffersHeroImage${selectedGame.logo ? " gamingBrandLogo" : selectedGame.id === "ea-sports-fc" ? " gamingFcLogo" : ""}`} />
+                  <img src={optimizedImage(selectedGame.image)} alt={`${selectedGame.name} logo / artwork`} className={`gamingOffersHeroImage${selectedGame.logo ? " gamingBrandLogo" : selectedGame.id === "ea-sports-fc" ? " gamingFcLogo" : ""}`} />
                 </div>
                 <div>
                   <span className="platformBadge">{categoryLabel(selectedGame.category)}</span>

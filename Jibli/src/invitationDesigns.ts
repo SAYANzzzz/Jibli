@@ -1,3 +1,5 @@
+import { optimizedImage } from "./optimizedImage";
+
 type Palette = readonly [paper: string, deep: string, ink: string, foil: string, glow: string];
 const palettes: Record<string, Palette> = {
   burgundy: ["#fff8ee", "#e9d5cb", "#4d202c", "#893c50", "#d4a476"],
@@ -64,5 +66,5 @@ export function getInvitationDesign(image: string) {
   return { key, layout, colours: { "--paper": paper, "--paper-deep": deep, "--ink": ink, "--foil": foil, "--glow": glow,
     "--envelope-colour": envelopeOverrides[key] || envelopeColours[palette],
     "--envelope-ink": ["burgundy", "teal", "navy", "coral", "noir"].includes(palette) || key === "popup-party" ? "#fff4df" : "#38252d",
-    "--section-background": background ? `url("${background}")` : "none" } };
+    "--section-background": background ? `url("${optimizedImage(background)}")` : "none" } };
 }

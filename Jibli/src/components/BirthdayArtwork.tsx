@@ -1,5 +1,6 @@
 import { useEffect, useId, useState } from "react";
 import { birthdayDesignKey, birthdayLayouts } from "../birthdayPersonalisation";
+import { optimizedImage } from "../optimizedImage";
 
 export default function BirthdayArtwork({ image, title, details }: { image:string; title:string; details:Record<string,string> }) {
   const id=useId().replaceAll(":", "");
@@ -17,7 +18,7 @@ export default function BirthdayArtwork({ image, title, details }: { image:strin
   },[photo]);
   if(!layout) return <img src={image} alt={title} />;
   const age=/^\d{1,3}$/.test(details.age || "") ? details.age : "";
-  const background=photo ? `/invitations/birthdays/${key}-photo-template.png` : age && layout.ages.length ? `/invitations/birthdays/${key}-age-template.png` : image;
+  const background=optimizedImage(photo ? `/invitations/birthdays/${key}-photo-template.png` : age && layout.ages.length ? `/invitations/birthdays/${key}-age-template.png` : image);
   const [x,y,w,h]=layout.portrait;
   const zoom=Math.max(1,Math.min(3,Number(details.birthdayPhotoZoom)||1));
   const offsetX=Math.max(0,Math.min(100,Number(details.birthdayPhotoX ?? "50")));
@@ -49,7 +50,7 @@ export default function BirthdayArtwork({ image, title, details }: { image:strin
       </> : null}
     </g>
     <image href={background} width="100" height="100" preserveAspectRatio="none" clipPath={`url(#${id}-foreground)`} mask={`url(#${id}-without-ages)`}/>
-    {key==="disco-eighteen"&&age&&photo&&<image href={image} width="100" height="100" preserveAspectRatio="none" clipPath={`url(#${id}-birthday-title)`}/>}
+    {key==="disco-eighteen"&&age&&photo&&<image href={optimizedImage(image)} width="100" height="100" preserveAspectRatio="none" clipPath={`url(#${id}-birthday-title)`}/>}
     {age && layout.ages.map(({box:[ax,ay,aw,ah],rotate=0,style,digit},i)=>{
       const value=digit===undefined?age:age.length===1?(digit===0?age:""):digit===0?age.slice(0,-1):age.slice(-1);
       if(!value)return null;
@@ -58,7 +59,7 @@ export default function BirthdayArtwork({ image, title, details }: { image:strin
           const number=Number(character);
           const digitWidth=Math.min(aw/value.length,ah*.9);
           const left=ax+(aw-digitWidth*value.length)/2+index*digitWidth;
-          return <svg key={index} x={left} y={ay} width={digitWidth} height={ah} style={{width:digitWidth,height:ah}} viewBox={`${number%5*20} ${Math.floor(number/5)*50} 20 50`} preserveAspectRatio="none" overflow="hidden"><image href={`/invitations/birthdays/balloon-digits-${style}.png`} width="100" height="100" preserveAspectRatio="none"/></svg>;
+          return <svg key={index} x={left} y={ay} width={digitWidth} height={ah} style={{width:digitWidth,height:ah}} viewBox={`${number%5*20} ${Math.floor(number/5)*50} 20 50`} preserveAspectRatio="none" overflow="hidden"><image href={optimizedImage(`/invitations/birthdays/balloon-digits-${style}.png`)} width="100" height="100" preserveAspectRatio="none"/></svg>;
         })}
       </g>;
     })}
