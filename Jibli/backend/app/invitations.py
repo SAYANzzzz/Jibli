@@ -17,9 +17,10 @@ from .supabase_client import get_supabase_admin
 
 router = APIRouter(route_class=PaymentRoute)
 PUBLIC_FIELDS = {"name", "couple", "hosts", "school", "age", "date", "time", "venue", "language", "rsvp", "contact", "note"}
-PHOTO_FIELDS = {"venuePhoto1", "venuePhoto2", "venuePhoto3", "birthdayPhoto"}
+PHOTO_FIELDS = {"venuePhoto1", "venuePhoto2", "venuePhoto3", "birthdayPhoto", "partnerPhoto1", "partnerPhoto2", "couplePhoto"}
 PUBLIC_FIELDS |= PHOTO_FIELDS
 PUBLIC_FIELDS |= {"birthdayPhotoX", "birthdayPhotoY", "birthdayPhotoZoom"}
+PUBLIC_FIELDS |= {f"{photo}{suffix}" for photo in ("partnerPhoto1", "partnerPhoto2", "couplePhoto") for suffix in ("X", "Y", "Zoom")}
 PUBLIC_FIELDS.add("mapsUrl")
 
 
@@ -74,7 +75,7 @@ class InvitationIn(BaseModel):
     @field_validator("details")
     @classmethod
     def valid_details(cls, value):
-        if len(value) > 20 or any(len(v) > 3000 for v in value.values()):
+        if len(value) > 40 or any(len(v) > 3000 for v in value.values()):
             raise ValueError("Invitation text is too long.")
         result = {k: v.strip() for k, v in value.items() if k in PUBLIC_FIELDS}
         if result.get("mapsUrl"):
@@ -87,14 +88,14 @@ class InvitationIn(BaseModel):
         for key in PHOTO_FIELDS:
             if result.get(key) and not re.fullmatch(r"https://[^\s]+", result[key]):
                 raise ValueError("Venue photos must use HTTPS URLs.")
-        for key, minimum, maximum in [("birthdayPhotoX", 0, 100), ("birthdayPhotoY", 0, 100), ("birthdayPhotoZoom", 1, 3)]:
+        for key, minimum, maximum in [(f"{photo}{suffix}", minimum, maximum) for photo in ("birthdayPhoto", "partnerPhoto1", "partnerPhoto2", "couplePhoto") for suffix, minimum, maximum in (("X", 0, 100), ("Y", 0, 100), ("Zoom", 1, 3))]:
             if result.get(key):
                 try:
                     number = float(result[key])
                 except ValueError:
-                    raise ValueError("Invalid birthday photo crop.")
+                    raise ValueError("Invalid invitation photo crop.")
                 if not minimum <= number <= maximum:
-                    raise ValueError("Invalid birthday photo crop.")
+                    raise ValueError("Invalid invitation photo crop.")
         if not (result.get("name") or result.get("couple")):
             raise ValueError("Add the recipient or host name.")
         if result.get("date"):

@@ -1,21 +1,35 @@
 import { useEffect, useId, useState } from "react";
 import { birthdayDesignKey, birthdayLayouts } from "../birthdayPersonalisation";
 import { optimizedImage } from "../optimizedImage";
+import { prepareBirthdayPhoto } from "../birthdayPhotoCutout";
 
 export default function BirthdayArtwork({ image, title, details }: { image:string; title:string; details:Record<string,string> }) {
   const id=useId().replaceAll(":", "");
   const key=birthdayDesignKey(image);
   const layout=birthdayLayouts[key];
   const photo=details.birthdayPhoto;
-  const [dimensions,setDimensions]=useState({url:"",ratio:1});
+  const [prepared,setPrepared]=useState({source:"",url:""});
+  const portrait=prepared.source===photo?prepared.url:"";
   useEffect(()=>{
     if(!photo)return;
     let cancelled=false;
-    const source=new Image();
-    source.onload=()=>{if(!cancelled&&source.naturalHeight)setDimensions({url:photo,ratio:source.naturalWidth/source.naturalHeight});};
-    source.src=photo;
-    return()=>{cancelled=true;source.onload=null;};
+    let objectUrl="";
+    prepareBirthdayPhoto(photo).then(blob=>{
+      if(cancelled)return;
+      objectUrl=URL.createObjectURL(blob);
+      setPrepared({source:photo,url:objectUrl});
+    }).catch(()=>{if(!cancelled)setPrepared({source:photo,url:photo});});
+    return()=>{cancelled=true;if(objectUrl)URL.revokeObjectURL(objectUrl);};
   },[photo]);
+  const [dimensions,setDimensions]=useState({url:"",ratio:1});
+  useEffect(()=>{
+    if(!portrait)return;
+    let cancelled=false;
+    const source=new Image();
+    source.onload=()=>{if(!cancelled&&source.naturalHeight)setDimensions({url:portrait,ratio:source.naturalWidth/source.naturalHeight});};
+    source.src=portrait;
+    return()=>{cancelled=true;source.onload=null;};
+  },[portrait]);
   if(!layout) return <img src={image} alt={title} />;
   const age=/^\d{1,3}$/.test(details.age || "") ? details.age : "";
   const background=optimizedImage(photo ? `/invitations/birthdays/${key}-photo-template.png` : age && layout.ages.length ? `/invitations/birthdays/${key}-age-template.png` : image);
@@ -27,12 +41,14 @@ export default function BirthdayArtwork({ image, title, details }: { image:strin
   const eraseBoxes=layout.ages.map(({box})=>key==="disco-eighteen"?[60,47,39,27]:box);
   const ratio = key==="pink-night" ? 735/1041 : key==="tiffs-party" ? 735/1105 : key==="cool-kid" ? 736/1030 : key==="silver-fourteen" ? 736/1308 : 675/1200;
   const portraitRatio=w*ratio/h;
-  const photoRatio=dimensions.url===photo?dimensions.ratio:portraitRatio;
-  const photoWidth=Math.max(100,100*photoRatio/portraitRatio)*zoom;
-  const photoHeight=Math.max(100,100*portraitRatio/photoRatio)*zoom;
-  return <svg className="birthdayPersonalisedArtwork" viewBox="0 0 100 100" preserveAspectRatio="none" role="img" aria-label={title} data-birthday-design={key} data-artwork-ratio={ratio}>
+  const photoRatio=dimensions.url===portrait?dimensions.ratio:portraitRatio;
+  const photoWidth=Math.min(100,100*photoRatio/portraitRatio)*zoom;
+  const photoHeight=Math.min(100,100*portraitRatio/photoRatio)*zoom;
+  return <svg className="birthdayPersonalisedArtwork" viewBox="0 0 100 100" preserveAspectRatio="none" role="img" aria-label={title} aria-busy={!!photo&&!portrait} data-birthday-design={key} data-artwork-ratio={ratio}>
     <defs>
-      <clipPath id={`${id}-portrait`}><path d={layout.silhouette} /></clipPath>
+      <clipPath id={`${id}-portrait`}><rect x={x} y={y} width={w} height={h}/></clipPath>
+      <linearGradient id={`${id}-portrait-fade`} x1="0" y1="0" x2="0" y2="1"><stop offset="0" stopColor="white"/><stop offset=".93" stopColor="white"/><stop offset="1" stopColor="black"/></linearGradient>
+      <mask id={`${id}-portrait-matte`} maskContentUnits="objectBoundingBox"><rect width="1" height="1" fill={`url(#${id}-portrait-fade)`}/></mask>
       <clipPath id={`${id}-foreground`}><path d={layout.foreground || ""} /></clipPath>
       <mask id={`${id}-without-ages`} maskUnits="userSpaceOnUse" x="0" y="0" width="100" height="100"><rect width="100" height="100" fill="white"/>{age&&eraseBoxes.map(([ax,ay,aw,ah],i)=><rect key={i} x={ax} y={ay} width={aw} height={ah} fill="black"/>)}</mask>
       <clipPath id={`${id}-birthday-title`}><rect x="0" y="72" width="76" height="9"/></clipPath>
@@ -42,10 +58,9 @@ export default function BirthdayArtwork({ image, title, details }: { image:strin
     {/* Erase only printed ages; the portrait and foreground are restored above. */}
     {age && photo && eraseBoxes.map(([ax,ay,aw,ah],i)=><rect key={i} x={ax} y={ay} width={aw} height={ah} fill={`url(#${id}-paper)`} />)}
     <g clipPath={`url(#${id}-portrait)`}>
-      {photo ? <>
-        <path d={layout.silhouette} fill={layout.paper}/>
+      {portrait ? <>
         <svg x={x} y={y} width={w} height={h} style={{width:w,height:h}} viewBox="0 0 100 100" preserveAspectRatio="none" overflow="hidden">
-          <image href={photo} x={-(photoWidth-100)*offsetX/100} y={-(photoHeight-100)*offsetY/100} width={photoWidth} height={photoHeight} preserveAspectRatio="none" style={{filter:layout.filter}} />
+          <g mask={`url(#${id}-portrait-matte)`}><image data-birthday-portrait="true" href={portrait} x={(100-photoWidth)*offsetX/100} y={(100-photoHeight)*offsetY/100} width={photoWidth} height={photoHeight} preserveAspectRatio="none" style={{filter:layout.filter}} /></g>
         </svg>
       </> : null}
     </g>

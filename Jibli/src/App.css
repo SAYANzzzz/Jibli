@@ -6255,7 +6255,7 @@ td {
 .venuePhotoPreviews img { width:130px; height:100px; object-fit:cover; border-radius:10px; }
 .birthdayPhotoThumbnail { display:block; width:100px; height:120px; object-fit:cover; border-radius:10px; margin-block:12px; }
 .birthdayPhotoUpload input[type=range] { width:100%; padding:0; min-height:40px; accent-color:#642c32; }
-.birthdayPersonalisedArtwork { display:block; width:100%; height:100%; }
+.birthdayPersonalisedArtwork, .couplePersonalisedArtwork { display:block; width:100%; height:100%; }
 .venuePhotoPreviews button { padding:8px; cursor:pointer; }
 
 /* Show complete game artwork and brand marks throughout the store. */

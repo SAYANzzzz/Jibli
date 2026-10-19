@@ -11,6 +11,7 @@
     "optimize:assets": "node scripts/optimize-assets.mjs"
   },
   "dependencies": {
+    "@mediapipe/tasks-vision": "^1.1.1",
     "@supabase/supabase-js": "^2.108.2",
     "lucide-react": "^1.22.0",
     "react": "^19.2.7",

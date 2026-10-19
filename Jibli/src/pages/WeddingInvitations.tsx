@@ -1,3 +1,4 @@
+import CouplePhotoInput from "../components/CouplePhotoInput";
 import VenueMapLink from "../components/VenueMapLink";
 import VenuePhotos from "../components/VenuePhotos";
 import { useCommerceCopy } from "../i18n/commerceCopy";
@@ -44,7 +45,7 @@ function weddingWhatsappUrl(design: WeddingDesign, details: Record<string, strin
     `Venue: ${details.venue || "Not decided"}`,
     `Language: ${details.language}`,
     details.hosts?.trim() ? `Hosts: ${details.hosts.trim()}` : "", details.rsvp.trim() ? `RSVP / contact: ${details.rsvp.trim()}` : "",
-    design.needsPhotos ? "Photos: I will send the couple's photos on WhatsApp." : "",
+    design.needsPhotos ? "Photos: see the uploaded portraits in the invitation preview." : "",
     details.note ? `Extra request: ${details.note}` : "",
   ].filter(Boolean);
 
@@ -100,7 +101,7 @@ function WeddingInvitations() {
             </div>
             <div className="weddingOrderHeading"><span className="eyebrow">{selected.style}</span><h1>{copy("Personalise")} {selected.title}</h1><strong className="invitationPrice">{copy("15 TND")} </strong><p>{copy("Your selected design is below. Send the essentials and we will confirm the final wording and delivery time before we start.")} </p></div>
             <div className="weddingOrderGrid">
-              <div className="weddingSelectedDesign"><AnimatedInvitation key={selected.id} image={selected.image} title={selected.title} details={details} onMoodChange={(mood) => setDetails((current) => ({ ...current, mood }))} /><div><strong>{selected.title}</strong><span>{selected.description}</span>{selected.needsPhotos && <p><ImagePlus size={15} />{copy("Send your photos in the WhatsApp chat after submitting.")} </p>}</div></div>
+              <div className="weddingSelectedDesign"><AnimatedInvitation key={selected.id} image={selected.image} title={selected.title} details={details} onMoodChange={(mood) => setDetails((current) => ({ ...current, mood }))} /><div><strong>{selected.title}</strong><span>{selected.description}</span>{selected.needsPhotos && <p><ImagePlus size={15} />{copy("Upload your photos below and adjust them in the preview.")} </p>}</div></div>
               <form className="invitationForm weddingOrderForm" onSubmit={(event) => event.preventDefault()}>
                 <label>{copy("Couple's names")} <input required maxLength={160} value={details.couple} onChange={(event) => updateDetail("couple", event.target.value)} placeholder={copy("Example: Aymen & Balkis")} /></label>
                 <div className="invitationFormRow"><label>{copy("Date")} <input required type="date" value={details.date} onChange={(event) => updateDetail("date", event.target.value)} /></label><label>{copy("Time")} <input required type="time" value={details.time} onChange={(event) => updateDetail("time", event.target.value)} /></label></div>
@@ -113,6 +114,7 @@ function WeddingInvitations() {
                   <label>{copy("RSVP / contact")} <input maxLength={160} value={details.rsvp} onChange={(event) => updateDetail("rsvp", event.target.value)} placeholder={copy("Phone number or name")} /></label>
                   <label>{copy("Special wording or changes")} <textarea maxLength={1500} value={details.note} onChange={(event) => updateDetail("note", event.target.value)} placeholder={copy("Quran verse, family names, dress code...")} /></label>
                 </details>
+                <CouplePhotoInput image={selected.image} details={details} onChange={(photos)=>setDetails(current=>({...current,...photos}))}/>
                 <VenueMapLink value={(details as Record<string, string>).mapsUrl || ""} onChange={(mapsUrl) => setDetails((current) => ({ ...current, mapsUrl }))} />
 <VenuePhotos details={details} onChange={(photos) => setDetails((current) => ({ ...current, ...photos }))} />
 <PaymentButton productKey={`invitation:weddings:${selected.id}`} requestUrl={weddingWhatsappUrl(selected, details)} invitation={{ image: selected.image, title: selected.title, mood: details.mood, details, certificate: selected.id.includes("certificate") || selected.id.includes("weekly-star") }} />

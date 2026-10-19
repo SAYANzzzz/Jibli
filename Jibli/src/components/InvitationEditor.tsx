@@ -1,4 +1,5 @@
 import BirthdayPhotoInput from "./BirthdayPhotoInput";
+import CouplePhotoInput from "./CouplePhotoInput";
 import { birthdayHasAge, birthdayDesignKey, birthdayLayouts } from "../birthdayPersonalisation";
 import VenueMapLink from "./VenueMapLink";
 import VenuePhotos from "./VenuePhotos";
@@ -43,6 +44,7 @@ export default function InvitationEditor({ order, onSave }: { order: PaymentOrde
 {birthdayHasAge(artwork) && <label>Age on the invitation<input type="number" min="0" max="120" step="1" value={details.age || ""} onChange={(event) => setDetails((current) => ({ ...current, age: event.target.value }))} /></label>}
 <BirthdayPhotoInput details={details} disabled={busy || uploadingPhotos} onBusyChange={setUploadingPhotos} onChange={(fields) => setDetails((current) => ({ ...current, ...fields }))} />
 </>}
+<CouplePhotoInput image={artwork} details={details} disabled={busy || uploadingPhotos} onBusyChange={setUploadingPhotos} onChange={(photos)=>setDetails(current=>({...current,...photos}))}/>
 <VenuePhotos details={details} disabled={busy || uploadingPhotos} onBusyChange={setUploadingPhotos} onChange={(photos) => setDetails((current) => ({ ...current, ...photos }))} />
     <div className="weddingSelectedDesign"><AnimatedInvitation key={`${artwork}-${certificate}`} title={title} image={artwork} details={{ ...details, mood }} onMoodChange={setMood} certificate={certificate} /></div>
     {error && <p role="alert">{error}</p>}{notice && <p role="status">{notice}</p>}<div className="d17Actions"><button className="primaryBtn" disabled={busy || uploadingPhotos}>{uploadingPhotos ? "Uploading photos…" : busy ? "Saving…" : "Save & publish"}</button><button type="button" className="outlineBtn" disabled={busy || uploadingPhotos} onClick={() => save(false)}>Save & unpublish</button></div>

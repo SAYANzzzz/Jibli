@@ -90,6 +90,21 @@ class InvitationTests(unittest.TestCase):
         for link in ["javascript:alert(1)", "https://example.com/maps", "https://google.com.evil.com/maps", "https://google.com/search", "https://user@google.com/maps", "http://maps.app.goo.gl/Example"]:
             self.assertEqual(self.publish(details={**self.payload["details"], "mapsUrl": link}).status_code, 422, link)
 
+    def test_couple_portraits_and_crops_survive_publication(self):
+        details = {**self.payload["details"]}
+        for field in ("partnerPhoto1", "partnerPhoto2", "couplePhoto"):
+            details.update({field: f"https://example.com/{field}.png", f"{field}X": "25", f"{field}Y": "75", f"{field}Zoom": "1.5"})
+        result = self.publish(details=details)
+        self.assertEqual(result.status_code, 200, result.text)
+        token = result.json()["url"].rsplit("/", 1)[1]
+        public = self.client.get(f"/invitations/{token}").json()["invitation"]["details"]
+        for field in ("partnerPhoto1", "partnerPhoto2", "couplePhoto"):
+            self.assertEqual(public[field], details[field])
+            self.assertEqual(public[f"{field}Zoom"], "1.5")
+            for suffix, invalid in (("X", "101"), ("Y", "-1"), ("Zoom", "4"), ("Zoom", "nan")):
+                self.assertEqual(self.publish(details={**details, f"{field}{suffix}": invalid}).status_code, 422)
+            self.assertEqual(self.publish(details={**details, field: "javascript:alert(1)"}).status_code, 422)
+
     def test_authenticated_photo_upload_and_validation(self):
         storage = MagicMock()
         bucket = storage.from_.return_value

@@ -9,7 +9,7 @@ export type BirthdayLayout = {
 };
 
 // All coordinates use the original artwork's 100 × 100 coordinate space.
-// Photo masks follow the existing cutout; foreground decorations stay above it.
+// Portrait bounds place the client's own transparent cutout; decorations stay above it.
 export const birthdayLayouts: Record<string, BirthdayLayout> = {
   "disco-eighteen": {
     portrait:[10,26,64,45], silhouette:"M31 33 Q30 27 44 27 Q62 26 70 40 L74 51 L68 71 L47 71 L45 65 L23 65 L12 61 L10 55 L19 49 L25 43 Z",

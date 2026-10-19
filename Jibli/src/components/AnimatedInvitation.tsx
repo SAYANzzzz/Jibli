@@ -1,6 +1,8 @@
 import { isGoogleMapsLink, invitationMapQuery, invitationDirectionsUrl } from "../invitationMaps";
 import InvitationEnvelopeArtwork from "./InvitationEnvelopeArtwork";
 import BirthdayArtwork from "./BirthdayArtwork";
+import CoupleArtwork from "./CoupleArtwork";
+import { hasCouplePhotos, couplePhotoFields } from "../couplePersonalisation";
 import { birthdayDesignKey, birthdayHasAge, birthdayLayouts } from "../birthdayPersonalisation";
 import { venuePhotoKeys } from "../invitationPhotos";
 import { useCommerceCopy } from "../i18n/commerceCopy";
@@ -201,7 +203,8 @@ export default function AnimatedInvitation({ image: suppliedImage, title, detail
 
   const floral = ["arabesque-burgundy", "arabic-satin", "blush-embossed", "garden-couple", "classic-ivory", "photo-frame", "blue-florals", "nouveau-florals", "green-tradition", "family-roots"].includes(design.key);
   const personalisedBirthday = !!birthdayLayouts[birthdayDesignKey(image)] && (!!details.birthdayPhoto || (birthdayHasAge(image) && !!details.age));
-  const coverArtwork = personalisedBirthday ? <BirthdayArtwork image={image} title={title} details={details}/> : artwork;
+  const personalisedCouple = hasCouplePhotos(image) && couplePhotoFields(image).some(field=>!!details[field]);
+  const coverArtwork = personalisedBirthday ? <BirthdayArtwork image={image} title={title} details={details}/> : personalisedCouple ? <CoupleArtwork image={image} title={title} details={details}/> : artwork;
   const driftingLeaves = floral ? <div className="inviteFloralMotion" aria-hidden="true">{Array.from({ length: 6 }, (_, index) => <span key={index} className={`inviteDriftingLeaf inviteDriftingLeaf-${index}`} />)}</div> : null;
   const hasVenue = !certificate && !!(details.venue || isGoogleMapsLink(details.mapsUrl || ""));
   const photoCollage = venuePhotoKeys.some((key) => details[key]) ? <div className="inviteStoryPhotos">

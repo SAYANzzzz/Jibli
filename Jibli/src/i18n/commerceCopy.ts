@@ -1,6 +1,17 @@
 import { useTranslation } from "./useTranslation";
 
 const copy: Record<string, [string, string]> = {
+  "First partner photo (optional)": ["Photo du premier partenaire (facultatif)", "صورة الشريك الأول (اختياري)"],
+  "Second partner photo (optional)": ["Photo du second partenaire (facultatif)", "صورة الشريك الثاني (اختياري)"],
+  "Couple photo (optional)": ["Photo du couple (facultatif)", "صورة العروسين (اختياري)"],
+  "Upload first partner photo": ["Ajouter la photo du premier partenaire", "إضافة صورة الشريك الأول"],
+  "Upload second partner photo": ["Ajouter la photo du second partenaire", "إضافة صورة الشريك الثاني"],
+  "Upload couple photo": ["Ajouter une photo du couple", "إضافة صورة العروسين"],
+  "Choose a clear portrait of one partner. We remove its background and blend it into the design. Adjust each portrait separately.": ["Choisissez un portrait net de chaque partenaire. Nous retirons le fond et intégrons la photo au modèle. Ajustez chaque portrait séparément.", "اختر صورة واضحة لكل شريك. نزيل الخلفية وندمج الصورة في التصميم. اضبط كل صورة على حدة."],
+  "Choose a photo of you together. It replaces the sample photo; adjust the crop in the preview.": ["Choisissez une photo de vous deux. Elle remplace la photo du modèle ; ajustez le cadrage dans l’aperçu.", "اختر صورة تجمعكما. ستحل محل صورة النموذج؛ اضبط موضعها في المعاينة."],
+  "Upload your photos below and adjust them in the preview.": ["Ajoutez vos photos ci-dessous et ajustez-les dans l’aperçu.", "أضف صوركما أدناه واضبطها في المعاينة."],
+  "We remove the photo background and replace the original child. Choose a clear portrait of one person, then adjust the preview.": ["Nous retirons le fond de la photo et remplaçons l’enfant du modèle. Choisissez un portrait net d’une seule personne, puis ajustez l’aperçu.", "نزيل خلفية الصورة ونستبدل الطفل الأصلي. اختر صورة واضحة لشخص واحد، ثم اضبط المعاينة."],
+  "Preparing your portrait and uploading…": ["Préparation et envoi de votre portrait…", "جارٍ تجهيز صورتك ورفعها…"],
   "Birthday photo (optional)": ["Photo d’anniversaire (facultatif)", "صورة صاحب عيد الميلاد (اختياري)"],
   "Age on the invitation": ["Âge sur l’invitation", "العمر على الدعوة"],
   "Upload birthday photo": ["Ajouter la photo d’anniversaire", "إضافة صورة صاحب عيد الميلاد"],
